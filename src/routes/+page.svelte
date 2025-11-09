@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { fetchBuilderContent } from '$lib/builder';
+	import StorySectionCard from '$lib/components/StorySectionCard.svelte';
 
 	interface StorySection {
 		id: string;
