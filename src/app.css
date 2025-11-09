@@ -77,3 +77,12 @@ audio {
 ::selection {
 	@apply bg-primary-300 text-primary-900;
 }
+
+/* Parallax Background */
+.parallax-bg {
+	background-attachment: fixed;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	z-index: 0;
+}
