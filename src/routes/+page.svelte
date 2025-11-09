@@ -68,27 +68,38 @@
 	});
 </script>
 
-<div class="min-h-screen bg-gradient-warm">
-	<!-- Hero Section -->
-	<section class="relative overflow-hidden px-4 py-24 sm:px-6 lg:px-8">
+<div class="relative min-h-screen">
+	<!-- Parallax Background -->
+	<div
+		class="parallax-bg absolute inset-0"
+		style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/a/a1/Ex_libris_Delpech_de_Frayssinet.jpg');"
+	></div>
+
+	<!-- Dark Overlay for Text Readability -->
+	<div class="absolute inset-0 bg-black/40"></div>
+
+	<!-- Content Container -->
+	<div class="relative z-10">
+		<!-- Hero Section -->
+		<section class="relative overflow-hidden px-4 py-24 sm:px-6 lg:px-8">
 		<div class="mx-auto max-w-4xl text-center">
-			<h1 class="mb-6 font-serif text-5xl font-bold tracking-tight text-primary-900 md:text-6xl">
+			<h1 class="mb-6 font-serif text-5xl font-bold tracking-tight text-cream md:text-6xl">
 				Histoire de Famille
 			</h1>
-			<p class="mb-8 text-xl leading-relaxed text-primary-700 md:text-2xl">
+			<p class="mb-8 text-xl leading-relaxed text-cream/90 md:text-2xl">
 				Découvrez les histoires fascinantes de notre famille à travers deux siècles d'histoire.
 				Des souvenirs préservés, des voix enregistrées, et des secrets révélés.
 			</p>
 			<div class="flex justify-center gap-4">
 				<a
 					href="/histoires"
-					class="inline-block rounded-lg bg-primary-900 px-8 py-3 font-semibold text-cream transition-colors hover:bg-primary-800"
+					class="inline-block rounded-lg bg-gold px-8 py-3 font-semibold text-primary-900 transition-colors hover:bg-gold/90"
 				>
 					Lire les Histoires
 				</a>
 				<a
 					href="/chat"
-					class="inline-block rounded-lg border-2 border-primary-900 px-8 py-3 font-semibold text-primary-900 transition-colors hover:bg-primary-900 hover:text-cream"
+					class="inline-block rounded-lg border-2 border-cream px-8 py-3 font-semibold text-cream transition-colors hover:bg-cream hover:text-primary-900"
 				>
 					Poser une Question
 				</a>
@@ -96,8 +107,8 @@
 		</div>
 	</section>
 
-	<!-- Storytelling Sections -->
-	<section class="px-4 py-24 sm:px-6 lg:px-8">
+		<!-- Storytelling Sections -->
+		<section class="px-4 py-24 sm:px-6 lg:px-8 bg-gradient-warm">
 		<div class="mx-auto max-w-5xl">
 			<h2 class="mb-16 text-center font-serif text-4xl font-bold text-primary-900">
 				Un Voyage à Travers le Temps
@@ -150,8 +161,8 @@
 		</div>
 	</section>
 
-	<!-- Call to Action Section -->
-	<section class="bg-primary-900 px-4 py-20 text-center sm:px-6 lg:px-8">
+		<!-- Call to Action Section -->
+		<section class="bg-primary-900 px-4 py-20 text-center sm:px-6 lg:px-8">
 		<div class="mx-auto max-w-2xl">
 			<h2 class="mb-6 font-serif text-3xl font-bold text-cream">Vous Avez des Questions ?</h2>
 			<p class="mb-8 text-lg text-cream/80">
@@ -167,29 +178,30 @@
 		</div>
 	</section>
 
-	<!-- Interesting Facts Section -->
-	<section class="px-4 py-20 sm:px-6 lg:px-8">
-		<div class="mx-auto max-w-5xl">
-			<h2 class="mb-12 text-center font-serif text-3xl font-bold text-primary-900">
-				Faits Intéressants
-			</h2>
-			<div class="grid gap-8 md:grid-cols-3">
-				<div class="rounded-xl bg-white p-8 text-center shadow-md">
-					<div class="mb-4 text-4xl font-bold text-gold">50</div>
-					<h3 class="mb-2 font-serif font-semibold text-primary-900">Livres Historiques</h3>
-					<p class="text-primary-700">Explorez 50 livres d'histoire familiale du XIXe siècle</p>
-				</div>
-				<div class="rounded-xl bg-white p-8 text-center shadow-md">
-					<div class="mb-4 text-4xl font-bold text-gold">100</div>
-					<h3 class="mb-2 font-serif font-semibold text-primary-900">Ans d'Histoire</h3>
-					<p class="text-primary-700">De 1800 à 1900, un siècle de souvenirs préservés</p>
-				</div>
-				<div class="rounded-xl bg-white p-8 text-center shadow-md">
-					<div class="mb-4 text-4xl font-bold text-gold">∞</div>
-					<h3 class="mb-2 font-serif font-semibold text-primary-900">Générations</h3>
-					<p class="text-primary-700">Une héritage transmis à travers les générations</p>
+		<!-- Interesting Facts Section -->
+		<section class="px-4 py-20 sm:px-6 lg:px-8 bg-gradient-warm">
+			<div class="mx-auto max-w-5xl">
+				<h2 class="mb-12 text-center font-serif text-3xl font-bold text-primary-900">
+					Faits Intéressants
+				</h2>
+				<div class="grid gap-8 md:grid-cols-3">
+					<div class="rounded-xl bg-white p-8 text-center shadow-md">
+						<div class="mb-4 text-4xl font-bold text-gold">50</div>
+						<h3 class="mb-2 font-serif font-semibold text-primary-900">Livres Historiques</h3>
+						<p class="text-primary-700">Explorez 50 livres d'histoire familiale du XIXe siècle</p>
+					</div>
+					<div class="rounded-xl bg-white p-8 text-center shadow-md">
+						<div class="mb-4 text-4xl font-bold text-gold">100</div>
+						<h3 class="mb-2 font-serif font-semibold text-primary-900">Ans d'Histoire</h3>
+						<p class="text-primary-700">De 1800 à 1900, un siècle de souvenirs préservés</p>
+					</div>
+					<div class="rounded-xl bg-white p-8 text-center shadow-md">
+						<div class="mb-4 text-4xl font-bold text-gold">∞</div>
+						<h3 class="mb-2 font-serif font-semibold text-primary-900">Générations</h3>
+						<p class="text-primary-700">Une héritage transmis à travers les générations</p>
+					</div>
 				</div>
 			</div>
-		</div>
-	</section>
+		</section>
+	</div>
 </div>
