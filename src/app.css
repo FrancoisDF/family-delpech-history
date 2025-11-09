@@ -2,45 +2,78 @@
 @tailwind components;
 @tailwind utilities;
 
-#root {
-	max-width: 1280px;
-	margin: 0 auto;
-	padding: 2rem;
-	text-align: center;
+@import url('https://fonts.googleapis.com/css2?family=Georgia:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
+
+* {
+	@apply antialiased;
 }
 
-.logo {
-	height: 6em;
-	padding: 1.5em;
-	will-change: filter;
-	transition: filter 300ms;
-}
-.logo:hover {
-	filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-	filter: drop-shadow(0 0 2em #61dafbaa);
+html {
+	scroll-behavior: smooth;
 }
 
-@keyframes logo-spin {
-	from {
-		transform: rotate(0deg);
-	}
-	to {
-		transform: rotate(360deg);
-	}
+body {
+	@apply bg-cream text-primary-900;
+	font-family: 'Georgia', serif;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-	a:nth-of-type(2) .logo {
-		animation: logo-spin infinite 20s linear;
-	}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	@apply font-serif font-semibold tracking-tight;
 }
 
-.card {
-	padding: 2em;
+h1 {
+	@apply text-5xl;
 }
 
-.read-the-docs {
-	color: #888;
+h2 {
+	@apply text-4xl;
+}
+
+h3 {
+	@apply text-2xl;
+}
+
+p {
+	@apply leading-relaxed;
+}
+
+a {
+	@apply transition-colors duration-200;
+}
+
+button {
+	@apply transition-all duration-200;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+	width: 10px;
+	height: 10px;
+}
+
+::-webkit-scrollbar-track {
+	@apply bg-cream;
+}
+
+::-webkit-scrollbar-thumb {
+	@apply rounded-full bg-primary-300;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	@apply bg-primary-400;
+}
+
+/* Audio player styling */
+audio {
+	@apply w-full;
+}
+
+/* Selection styling */
+::selection {
+	@apply bg-primary-300 text-primary-900;
 }
