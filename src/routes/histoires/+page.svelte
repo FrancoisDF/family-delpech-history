@@ -78,25 +78,15 @@
 		<div class="mx-auto max-w-4xl">
 			<div class="space-y-8">
 				{#each blogPosts as post (post.id)}
-					<article
-						class="group rounded-xl border border-primary-200 bg-white p-8 shadow-md transition-all hover:shadow-lg hover:border-gold"
-					>
-						<div class="mb-4 flex items-center gap-4">
-							<span class="font-semibold text-primary-900">{post.date}</span>
-							<span class="text-sm text-primary-600">•</span>
-							<span class="text-sm text-primary-600">{post.readTime} de lecture</span>
-						</div>
-						<h2 class="mb-3 font-serif text-2xl font-bold text-primary-900 transition-colors group-hover:text-gold">
-							{post.title}
-						</h2>
-						<p class="mb-6 text-primary-700">{post.excerpt}</p>
-						<a
-							href={`/histoires/${post.id}`}
-							class="inline-block font-semibold text-primary-900 transition-colors hover:text-gold"
-						>
-							Lire l'article complet →
-						</a>
-					</article>
+					<BlogPostCard
+						id={post.id}
+						title={post.title}
+						excerpt={post.excerpt}
+						date={post.date}
+						readTime={post.readTime}
+						featuredImage={post.featuredImage || ''}
+						category={post.category || ''}
+					/>
 				{/each}
 			</div>
 
