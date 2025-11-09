@@ -56,7 +56,23 @@
 
 	let activeAudio: string | null = null;
 
-	onMount(() => {
+	onMount(async () => {
+		// Fetch story sections from Builder.io
+		try {
+			const builderSections = await fetchBuilderContent('story-section');
+			if (builderSections && builderSections.length > 0) {
+				storySections = builderSections.map((section: any) => ({
+					id: section.id,
+					title: section.data?.title || '',
+					description: section.data?.description || '',
+					audioUrl: section.data?.audioUrl || '',
+					year: section.data?.year || 1800
+				}));
+			}
+		} catch (error) {
+			console.error('Error fetching story sections from Builder.io:', error);
+		}
+
 		// Handle audio playback
 		const audioElements = document.querySelectorAll('audio');
 		audioElements.forEach((audio) => {
