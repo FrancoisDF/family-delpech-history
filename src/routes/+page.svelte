@@ -68,7 +68,7 @@
 	});
 </script>
 
-<div class="relative min-h-screen">
+<div class="relative">
 	<!-- Parallax Background -->
 	<div
 		class="parallax-bg absolute inset-0"
@@ -80,17 +80,17 @@
 
 	<!-- Content Container -->
 	<div class="relative z-10">
-		<!-- Hero Section -->
-		<section class="relative overflow-hidden px-4 py-24 sm:px-6 lg:px-8">
+		<!-- Hero Section - Full Screen -->
+		<section class="relative overflow-hidden flex items-center justify-center min-h-screen px-4 sm:px-6 lg:px-8">
 		<div class="mx-auto max-w-4xl text-center">
-			<h1 class="mb-6 font-serif text-5xl font-bold tracking-tight text-cream md:text-6xl">
+			<h1 class="mb-6 font-serif text-5xl font-bold tracking-tight text-cream md:text-6xl lg:text-7xl">
 				Histoire de Famille
 			</h1>
-			<p class="mb-8 text-xl leading-relaxed text-cream/90 md:text-2xl">
+			<p class="mb-8 text-xl leading-relaxed text-cream/90 md:text-2xl lg:text-3xl">
 				Découvrez les histoires fascinantes de notre famille à travers deux siècles d'histoire.
 				Des souvenirs préservés, des voix enregistrées, et des secrets révélés.
 			</p>
-			<div class="flex justify-center gap-4">
+			<div class="flex flex-col sm:flex-row justify-center gap-4">
 				<a
 					href="/histoires"
 					class="inline-block rounded-lg bg-gold px-8 py-3 font-semibold text-primary-900 transition-colors hover:bg-gold/90"
