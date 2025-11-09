@@ -1,13 +1,19 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+	import { fetchBuilderContent } from '$lib/builder';
+	import BlogPostCard from '$lib/components/BlogPostCard.svelte';
+
 	interface BlogPost {
 		id: string;
 		title: string;
 		excerpt: string;
 		date: string;
 		readTime: string;
+		featuredImage?: string;
+		category?: string;
 	}
 
-	const blogPosts: BlogPost[] = [
+	let blogPosts: BlogPost[] = [
 		{
 			id: '1',
 			title: 'Le Grand Voyage de 1852 : De France en Angleterre',
@@ -33,6 +39,26 @@
 			readTime: '10 min'
 		}
 	];
+
+	onMount(async () => {
+		// Fetch blog posts from Builder.io
+		try {
+			const builderPosts = await fetchBuilderContent('blog-post');
+			if (builderPosts && builderPosts.length > 0) {
+				blogPosts = builderPosts.map((post: any) => ({
+					id: post.id,
+					title: post.data?.title || '',
+					excerpt: post.data?.excerpt || '',
+					date: post.data?.date || '',
+					readTime: post.data?.readTime || '',
+					featuredImage: post.data?.featuredImage,
+					category: post.data?.category
+				}));
+			}
+		} catch (error) {
+			console.error('Error fetching blog posts from Builder.io:', error);
+		}
+	});
 </script>
 
 <div class="min-h-screen bg-gradient-warm">
