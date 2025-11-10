@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+
 	export let id: string = '';
 	export let title: string = 'Article Sans Titre';
 	export let excerpt: string = '';
@@ -6,10 +8,22 @@
 	export let readTime: string = '';
 	export let featuredImage: string = '';
 	export let category: string = '';
+
+	function handleCardClick() {
+		goto(`/histoires/${id}`);
+	}
 </script>
 
 <article
-	class="group rounded-xl border border-primary-200 bg-white p-8 shadow-md transition-all hover:shadow-lg hover:border-gold"
+	class="group cursor-pointer rounded-xl border border-primary-200 bg-white p-8 shadow-md transition-all hover:shadow-lg hover:border-accent"
+	onclick={handleCardClick}
+	onkeydown={(e) => {
+		if (e.key === 'Enter' || e.key === ' ') {
+			handleCardClick();
+		}
+	}}
+	role="button"
+	tabindex="0"
 >
 	{#if featuredImage}
 		<div class="mb-6 overflow-hidden rounded-lg h-48">
