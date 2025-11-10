@@ -52,7 +52,7 @@
 		{/if}
 	</div>
 
-	<h2 class="mb-3 font-serif text-2xl font-bold text-primary-900 transition-colors group-hover:text-gold">
+	<h2 class="mb-3 font-serif text-2xl font-bold text-primary-900 transition-colors group-hover:text-accent">
 		{title}
 	</h2>
 
@@ -60,10 +60,7 @@
 		<p class="mb-6 text-primary-700">{excerpt}</p>
 	{/if}
 
-	<a
-		href={`/histoires/${id}`}
-		class="inline-block font-semibold text-primary-900 transition-colors hover:text-gold"
-	>
+	<div class="inline-block font-semibold text-primary-900 transition-colors group-hover:text-accent">
 		Lire l'article complet →
-	</a>
+	</div>
 </article>
