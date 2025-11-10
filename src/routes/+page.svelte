@@ -48,7 +48,7 @@
 			id: '5',
 			title: 'L\'Héritage - 1900',
 			description:
-				'À l\'aube du nouveau siècle, notre famille a consolidé son héritage. Les traditions établies durant le XIXe siècle continuent à nous guider.',
+				'À l\'aube du nouveau si��cle, notre famille a consolidé son héritage. Les traditions établies durant le XIXe siècle continuent à nous guider.',
 			audioUrl: '/audio/section-5.mp3',
 			year: 1900
 		}
@@ -166,24 +166,24 @@
 		<!-- Interesting Facts Section -->
 		<section class="px-4 py-20 sm:px-6 lg:px-8 bg-gradient-warm">
 			<div class="mx-auto max-w-5xl">
-				<h2 class="mb-12 text-center font-serif text-3xl font-bold text-primary-900">
+				<h2 class="mb-12 text-center font-serif text-3xl font-medium text-primary-800">
 					Faits Intéressants
 				</h2>
 				<div class="grid gap-8 md:grid-cols-3">
-					<div class="rounded-xl bg-white p-8 text-center shadow-md">
-						<div class="mb-4 text-4xl font-bold text-gold">50</div>
-						<h3 class="mb-2 font-serif font-semibold text-primary-900">Livres Historiques</h3>
-						<p class="text-primary-700">Explorez 50 livres d'histoire familiale du XIXe siècle</p>
+					<div class="rounded-xl bg-white p-8 text-center shadow-sm">
+						<div class="mb-4 text-4xl font-bold text-accent">50</div>
+						<h3 class="mb-2 font-serif font-medium text-primary-800">Livres Historiques</h3>
+						<p class="text-primary-600">Explorez 50 livres d'histoire familiale du XIXe siècle</p>
 					</div>
-					<div class="rounded-xl bg-white p-8 text-center shadow-md">
-						<div class="mb-4 text-4xl font-bold text-gold">100</div>
-						<h3 class="mb-2 font-serif font-semibold text-primary-900">Ans d'Histoire</h3>
-						<p class="text-primary-700">De 1800 à 1900, un siècle de souvenirs préservés</p>
+					<div class="rounded-xl bg-white p-8 text-center shadow-sm">
+						<div class="mb-4 text-4xl font-bold text-accent">100</div>
+						<h3 class="mb-2 font-serif font-medium text-primary-800">Ans d'Histoire</h3>
+						<p class="text-primary-600">De 1800 à 1900, un siècle de souvenirs préservés</p>
 					</div>
-					<div class="rounded-xl bg-white p-8 text-center shadow-md">
-						<div class="mb-4 text-4xl font-bold text-gold">∞</div>
-						<h3 class="mb-2 font-serif font-semibold text-primary-900">Générations</h3>
-						<p class="text-primary-700">Une héritage transmis à travers les générations</p>
+					<div class="rounded-xl bg-white p-8 text-center shadow-sm">
+						<div class="mb-4 text-4xl font-bold text-accent">∞</div>
+						<h3 class="mb-2 font-serif font-medium text-primary-800">Générations</h3>
+						<p class="text-primary-600">Une héritage transmis à travers les générations</p>
 					</div>
 				</div>
 			</div>
