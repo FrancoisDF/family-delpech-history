@@ -93,31 +93,31 @@
 		style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/a/a1/Ex_libris_Delpech_de_Frayssinet.jpg');"
 	></div>
 
-	<!-- Dark Overlay for Text Readability -->
-	<div class="absolute inset-0 bg-black/40"></div>
+	<!-- Soft Overlay for Text Readability -->
+	<div class="absolute inset-0 bg-black/25"></div>
 
 	<!-- Content Container -->
 	<div class="relative z-10">
 		<!-- Hero Section - Full Screen -->
 		<section class="relative overflow-hidden flex items-center justify-center min-h-screen px-4 sm:px-6 lg:px-8">
 		<div class="mx-auto max-w-4xl text-center">
-			<h1 class="mb-6 font-serif text-5xl font-bold tracking-tight text-cream md:text-6xl lg:text-7xl">
+			<h1 class="mb-6 font-serif text-5xl font-medium tracking-tight text-white md:text-6xl lg:text-7xl">
 				Histoire de Famille
 			</h1>
-			<p class="mb-8 text-xl leading-relaxed text-cream/90 md:text-2xl lg:text-3xl">
+			<p class="mb-8 text-xl leading-relaxed text-white/80 md:text-2xl lg:text-3xl">
 				Découvrez les histoires fascinantes de notre famille à travers deux siècles d'histoire.
 				Des souvenirs préservés, des voix enregistrées, et des secrets révélés.
 			</p>
 			<div class="flex flex-col sm:flex-row justify-center gap-4">
 				<a
 					href="/histoires"
-					class="inline-block rounded-lg bg-gold px-8 py-3 font-semibold text-primary-900 transition-colors hover:bg-gold/90"
+					class="inline-block rounded-lg bg-accent px-8 py-3 font-semibold text-white transition-colors hover:bg-accent/90"
 				>
 					Lire les Histoires
 				</a>
 				<a
 					href="/chat"
-					class="inline-block rounded-lg border-2 border-cream px-8 py-3 font-semibold text-cream transition-colors hover:bg-cream hover:text-primary-900"
+					class="inline-block rounded-lg border-2 border-white px-8 py-3 font-semibold text-white transition-colors hover:bg-white hover:text-primary-800"
 				>
 					Poser une Question
 				</a>
