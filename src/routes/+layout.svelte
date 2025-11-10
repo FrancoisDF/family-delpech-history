@@ -19,9 +19,9 @@
 
 			<!-- Desktop Navigation -->
 			<div class="hidden items-center gap-8 md:flex">
-				<a href="/" class="text-cream transition-colors hover:text-gold">Accueil</a>
-				<a href="/histoires" class="text-cream transition-colors hover:text-gold">Histoires</a>
-				<a href="/chat" class="text-cream transition-colors hover:text-gold">Questions</a>
+				<a href="/" class="text-primary-800 transition-colors hover:text-accent">Accueil</a>
+				<a href="/histoires" class="text-primary-800 transition-colors hover:text-accent">Histoires</a>
+				<a href="/chat" class="text-primary-800 transition-colors hover:text-accent">Questions</a>
 			</div>
 
 			<!-- Mobile Menu Button -->
