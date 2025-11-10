@@ -11,14 +11,14 @@
 	<div
 		class="absolute -left-4 top-1/2 hidden -translate-y-1/2 transform md:flex md:flex-col md:items-center"
 	>
-		<div class="h-2 w-2 rounded-full bg-gold"></div>
-		<div class="mt-2 rounded-lg bg-primary-900 px-3 py-1 text-xs font-bold text-cream">
+		<div class="h-2 w-2 rounded-full bg-accent"></div>
+		<div class="mt-2 rounded-lg bg-primary-800 px-3 py-1 text-xs font-medium text-white">
 			{year}
 		</div>
 	</div>
 
 	<div class="md:pl-12">
-		<h3 class="mb-4 font-serif text-3xl font-bold text-primary-900">{title}</h3>
+		<h3 class="mb-4 font-serif text-3xl font-medium text-primary-800">{title}</h3>
 
 		<p class="mb-8 text-lg leading-relaxed text-primary-700">{description}</p>
 
@@ -27,17 +27,17 @@
 			<div class="rounded-lg bg-primary-50 p-6">
 				<div class="mb-3 flex items-center gap-2">
 					<svg
-						class="h-5 w-5 text-primary-900"
+						class="h-5 w-5 text-primary-800"
 						fill="currentColor"
 						viewBox="0 0 20 20"
 					>
 						<path d="M9 3a6 6 0 100 12A6 6 0 009 3z" />
 					</svg>
-					<span class="text-sm font-semibold text-primary-900">Récit Audio</span>
+					<span class="text-sm font-medium text-primary-800">Récit Audio</span>
 				</div>
 				<audio
 					id={id}
-					class="w-full accent-primary-900"
+					class="w-full accent-primary-800"
 					controls
 					controlsList="nodownload"
 				>
