@@ -147,16 +147,16 @@
 	</section>
 
 		<!-- Call to Action Section -->
-		<section class="bg-primary-900 px-4 py-20 text-center sm:px-6 lg:px-8">
+		<section class="bg-primary-700 px-4 py-20 text-center sm:px-6 lg:px-8">
 		<div class="mx-auto max-w-2xl">
-			<h2 class="mb-6 font-serif text-3xl font-bold text-cream">Vous Avez des Questions ?</h2>
-			<p class="mb-8 text-lg text-cream/80">
+			<h2 class="mb-6 font-serif text-3xl font-medium text-white">Vous Avez des Questions ?</h2>
+			<p class="mb-8 text-lg text-white/70">
 				Explorez nos archives complètes grâce à notre assistant IA. Posez toutes vos questions sur
 				l'histoire de notre famille.
 			</p>
 			<a
 				href="/chat"
-				class="inline-block rounded-lg bg-gold px-8 py-4 font-semibold text-primary-900 transition-all hover:scale-105 hover:shadow-lg"
+				class="inline-block rounded-lg bg-accent px-8 py-4 font-semibold text-white transition-all hover:scale-105 hover:shadow-lg"
 			>
 				Accéder à l'Assistant IA
 			</a>
