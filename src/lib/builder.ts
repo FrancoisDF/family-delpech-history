@@ -62,16 +62,23 @@ export async function fetchBuilderContentById(
 			apiKey: BUILDER_API_KEY
 		});
 
-		const response = await fetch(`${BUILDER_API_URL}/${model}/${id}?${params.toString()}`);
+		const url = `${BUILDER_API_URL}/${model}/${id}?${params.toString()}`;
+		const response = await fetch(url);
 
 		if (!response.ok) {
-			throw new Error(`Builder.io API error: ${response.statusText}`);
+			console.error(`Builder.io API Error (${response.status}) for ${model}/${id}`);
+			throw new Error(
+				`Builder.io API error: ${response.status} ${response.statusText}`
+			);
 		}
 
 		const data = await response.json();
 		return data.data || null;
 	} catch (error) {
-		console.error(`Error fetching Builder.io content for ${model}/${id}:`, error);
+		console.warn(
+			`Could not fetch Builder.io content for ${model}/${id}. Error:`,
+			error instanceof Error ? error.message : error
+		);
 		return null;
 	}
 }
