@@ -9,24 +9,24 @@ export default {
 			},
 			colors: {
 				primary: {
-					50: '#f8f5f0',
-					100: '#f0ebe3',
-					200: '#e1d7c7',
-					300: '#d1c3ab',
-					400: '#c2af8f',
-					500: '#a68f6f',
-					600: '#8a7359',
-					700: '#6e5843',
-					800: '#523d2f',
-					900: '#3d2918'
+					50: '#faf8f6',
+					100: '#f5f1ed',
+					200: '#eae2dc',
+					300: '#dfd4cc',
+					400: '#c9b5a0',
+					500: '#a89989',
+					600: '#7d6f65',
+					700: '#5d5450',
+					800: '#3e3835',
+					900: '#2a2620'
 				},
-				cream: '#fdf9f5',
-				gold: '#d4af37',
-				sage: '#8b9a7f'
+				cream: '#fafaf8',
+				accent: '#c9a882',
+				sage: '#9aa89a'
 			},
 			backgroundImage: {
-				'gradient-warm': 'linear-gradient(135deg, #fdf9f5 0%, #f0ebe3 100%)',
-				'gradient-dark': 'linear-gradient(135deg, #3d2918 0%, #523d2f 100%)'
+				'gradient-warm': 'linear-gradient(135deg, #fafaf8 0%, #f5f1ed 100%)',
+				'gradient-dark': 'linear-gradient(135deg, #5d5450 0%, #3e3835 100%)'
 			},
 			fontSize: {
 				xs: ['0.75rem', { lineHeight: '1rem' }],
