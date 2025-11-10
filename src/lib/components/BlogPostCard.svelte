@@ -37,10 +37,10 @@
 
 	<div class="mb-4 flex flex-wrap items-center gap-3">
 		{#if date}
-			<span class="font-semibold text-primary-900">{date}</span>
+			<span class="font-medium text-primary-800">{date}</span>
 		{/if}
 		{#if category}
-			<span class="inline-block rounded-full bg-primary-100 px-3 py-1 text-xs font-semibold text-primary-900">
+			<span class="inline-block rounded-full bg-primary-100 px-3 py-1 text-xs font-medium text-primary-800">
 				{category}
 			</span>
 		{/if}
@@ -52,15 +52,15 @@
 		{/if}
 	</div>
 
-	<h2 class="mb-3 font-serif text-2xl font-bold text-primary-900 transition-colors group-hover:text-accent">
+	<h2 class="mb-3 font-serif text-2xl font-medium text-primary-800 transition-colors group-hover:text-accent">
 		{title}
 	</h2>
 
 	{#if excerpt}
-		<p class="mb-6 text-primary-700">{excerpt}</p>
+		<p class="mb-6 text-primary-700 text-base">{excerpt}</p>
 	{/if}
 
-	<div class="inline-block font-semibold text-primary-900 transition-colors group-hover:text-accent">
+	<div class="inline-block font-medium text-primary-800 transition-colors group-hover:text-accent">
 		Lire l'article complet →
 	</div>
 </article>
