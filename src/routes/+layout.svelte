@@ -81,7 +81,7 @@
 		<div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
 			<div class="grid grid-cols-1 gap-8 md:grid-cols-3">
 				<div>
-					<h3 class="mb-4 font-serif text-lg font-semibold">Histoire de Famille</h3>
+					<h3 class="mb-4 font-serif text-lg font-medium">Histoire de Famille</h3>
 					<p class="text-sm text-cream/70">
 						Découvrez les histoires et les secrets de notre famille à travers 50 livres d'histoire
 						familiale du XIXe siècle.
