@@ -7,7 +7,7 @@
 
 <div class="flex min-h-screen flex-col">
 	<!-- Navigation -->
-	<nav class="sticky top-0 z-50 bg-primary-900 shadow-md">
+	<nav class="sticky top-0 z-50 bg-white shadow-sm border-b border-primary-100">
 		<div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
 			<!-- Logo/Title -->
 			<a href="/" class="flex items-center gap-2">
@@ -30,7 +30,7 @@
 				onclick={() => (isMenuOpen = !isMenuOpen)}
 				aria-label="Toggle menu"
 			>
-				<svg class="h-6 w-6 text-cream" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<svg class="h-6 w-6 text-primary-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path
 						stroke-linecap="round"
 						stroke-linejoin="round"
@@ -43,25 +43,25 @@
 
 		<!-- Mobile Navigation -->
 		{#if isMenuOpen}
-			<div class="border-t border-primary-800 bg-primary-800 px-4 py-4 md:hidden">
+			<div class="border-t border-primary-100 bg-primary-50 px-4 py-4 md:hidden">
 				<div class="flex flex-col gap-4">
 					<a
 						href="/"
-						class="text-cream transition-colors hover:text-gold"
+						class="text-primary-800 transition-colors hover:text-accent"
 						onclick={() => (isMenuOpen = false)}
 					>
 						Accueil
 					</a>
 					<a
 						href="/histoires"
-						class="text-cream transition-colors hover:text-gold"
+						class="text-primary-800 transition-colors hover:text-accent"
 						onclick={() => (isMenuOpen = false)}
 					>
 						Histoires
 					</a>
 					<a
 						href="/chat"
-						class="text-cream transition-colors hover:text-gold"
+						class="text-primary-800 transition-colors hover:text-accent"
 						onclick={() => (isMenuOpen = false)}
 					>
 						Questions
