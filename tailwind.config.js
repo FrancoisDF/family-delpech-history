@@ -3,6 +3,10 @@ export default {
 	content: ['./src/**/*.{html,js,svelte,ts}'],
 	theme: {
 		extend: {
+			fontFamily: {
+				serif: ['EB Garamond', 'ui-serif', 'serif'],
+				sans: ['Roboto', 'ui-sans-serif', 'sans-serif']
+			},
 			colors: {
 				primary: {
 					50: '#f8f5f0',
@@ -19,10 +23,6 @@ export default {
 				cream: '#fdf9f5',
 				gold: '#d4af37',
 				sage: '#8b9a7f'
-			},
-			fontFamily: {
-				serif: ['Georgia', 'ui-serif', 'serif'],
-				sans: ['Segoe UI', 'ui-sans-serif', 'sans-serif']
 			},
 			backgroundImage: {
 				'gradient-warm': 'linear-gradient(135deg, #fdf9f5 0%, #f0ebe3 100%)',
