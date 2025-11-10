@@ -31,16 +31,24 @@ export async function fetchBuilderContent(
 			params.append('query', JSON.stringify(options.query));
 		}
 
-		const response = await fetch(`${BUILDER_API_URL}/${model}?${params.toString()}`);
+		const url = `${BUILDER_API_URL}/${model}?${params.toString()}`;
+		const response = await fetch(url);
 
 		if (!response.ok) {
-			throw new Error(`Builder.io API error: ${response.statusText}`);
+			const errorText = await response.text();
+			console.error(`Builder.io API Error (${response.status}):`, errorText);
+			throw new Error(
+				`Builder.io API error: ${response.status} ${response.statusText}. Ensure the model "${model}" exists in Builder.io CMS.`
+			);
 		}
 
 		const data = await response.json();
 		return data.results || [];
 	} catch (error) {
-		console.error(`Error fetching Builder.io content for model ${model}:`, error);
+		console.warn(
+			`Could not fetch Builder.io content for model "${model}". Using fallback data. Error:`,
+			error instanceof Error ? error.message : error
+		);
 		return [];
 	}
 }
