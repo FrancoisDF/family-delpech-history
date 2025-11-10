@@ -75,8 +75,8 @@
 
 	<!-- Blog Posts Grid -->
 	<section class="px-4 py-16 sm:px-6 lg:px-8">
-		<div class="mx-auto max-w-4xl">
-			<div class="space-y-8">
+		<div class="mx-auto max-w-6xl">
+			<div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
 				{#each blogPosts as post (post.id)}
 					<BlogPostCard
 						id={post.id}
@@ -92,7 +92,7 @@
 
 			<!-- CMS Integration Notice -->
 			<div class="mt-16 rounded-xl border-2 border-dashed border-primary-300 bg-primary-50 p-8 text-center">
-				<h3 class="mb-2 font-serif text-xl font-semibold text-primary-900">
+				<h3 class="mb-2 font-serif text-xl font-medium text-primary-800">
 					Contenu Géré par Builder.io CMS
 				</h3>
 				<p class="text-primary-700">
