@@ -48,7 +48,7 @@
 			id: '5',
 			title: 'L\'Héritage - 1900',
 			description:
-				'À l\'aube du nouveau si��cle, notre famille a consolidé son héritage. Les traditions établies durant le XIXe siècle continuent à nous guider.',
+				'À l\'aube du nouveau siècle, notre famille a consolidé son héritage. Les traditions établies durant le XIXe siècle continuent à nous guider.',
 			audioUrl: '/audio/section-5.mp3',
 			year: 1900
 		}
@@ -111,7 +111,7 @@
 			<div class="flex flex-col sm:flex-row justify-center gap-4">
 				<a
 					href="/histoires"
-					class="inline-block rounded-lg bg-accent px-8 py-3 font-semibold text-white transition-colors hover:bg-accent/90"
+					class="inline-block rounded-lg bg-primary-700 px-8 py-3 font-semibold text-white transition-colors hover:bg-primary-800"
 				>
 					Lire les Histoires
 				</a>
