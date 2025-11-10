@@ -14,7 +14,7 @@
 				<div class="rounded-lg bg-gold px-3 py-2">
 					<span class="font-serif text-xl font-bold text-primary-900">Famille</span>
 				</div>
-				<span class="hidden text-lg font-semibold text-cream sm:inline">Histoire de Famille</span>
+				<span class="hidden text-lg font-medium text-primary-800 sm:inline">Histoire de Famille</span>
 			</a>
 
 			<!-- Desktop Navigation -->
