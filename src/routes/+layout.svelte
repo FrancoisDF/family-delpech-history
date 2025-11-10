@@ -77,7 +77,7 @@
 	</main>
 
 	<!-- Footer -->
-	<footer class="bg-primary-900 text-cream">
+	<footer class="bg-primary-800 text-white">
 		<div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
 			<div class="grid grid-cols-1 gap-8 md:grid-cols-3">
 				<div>
@@ -88,23 +88,23 @@
 					</p>
 				</div>
 				<div>
-					<h4 class="mb-4 font-serif font-semibold">Navigation</h4>
+					<h4 class="mb-4 font-serif font-medium">Navigation</h4>
 					<ul class="space-y-2 text-sm">
-						<li><a href="/" class="text-cream/70 hover:text-gold">Accueil</a></li>
-						<li><a href="/histoires" class="text-cream/70 hover:text-gold">Histoires</a></li>
-						<li><a href="/chat" class="text-cream/70 hover:text-gold">Questions</a></li>
+						<li><a href="/" class="text-white/70 hover:text-accent">Accueil</a></li>
+						<li><a href="/histoires" class="text-white/70 hover:text-accent">Histoires</a></li>
+						<li><a href="/chat" class="text-white/70 hover:text-accent">Questions</a></li>
 					</ul>
 				</div>
 				<div>
 					<h4 class="mb-4 font-serif font-semibold">Informations</h4>
 					<ul class="space-y-2 text-sm">
-						<li><a href="#" class="text-cream/70 hover:text-gold">Conditions d'utilisation</a></li>
-						<li><a href="#" class="text-cream/70 hover:text-gold">Confidentialité</a></li>
-						<li><a href="#" class="text-cream/70 hover:text-gold">Contact</a></li>
+						<li><a href="#" class="text-white/70 hover:text-accent">Conditions d'utilisation</a></li>
+						<li><a href="#" class="text-white/70 hover:text-accent">Confidentialité</a></li>
+						<li><a href="#" class="text-white/70 hover:text-accent">Contact</a></li>
 					</ul>
 				</div>
 			</div>
-			<div class="border-t border-primary-800 pt-8 text-center text-sm text-cream/50">
+			<div class="border-t border-primary-700 pt-8 text-center text-sm text-white/50">
 				<p>&copy; 2024 Histoire de Famille. Tous droits réservés.</p>
 			</div>
 		</div>
