@@ -11,8 +11,8 @@
 		<div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
 			<!-- Logo/Title -->
 			<a href="/" class="flex items-center gap-2">
-				<div class="rounded-lg bg-gold px-3 py-2">
-					<span class="font-serif text-xl font-bold text-primary-900">Famille</span>
+				<div class="rounded-lg bg-accent px-3 py-2">
+					<span class="font-serif text-xl font-medium text-white">Famille</span>
 				</div>
 				<span class="hidden text-lg font-medium text-primary-800 sm:inline">Histoire de Famille</span>
 			</a>
