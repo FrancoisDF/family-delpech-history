@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { fetchBuilderContent } from '$lib/builder';
-	import StorySectionCard from '$lib/components/StorySectionCard.svelte';
+	import Timeline from '$lib/components/Timeline.svelte';
 
 	interface StorySection {
 		id: string;
@@ -54,8 +54,6 @@
 		}
 	];
 
-	let activeAudio: string | null = null;
-
 	onMount(async () => {
 		// Fetch story sections from Builder.io
 		try {
@@ -73,14 +71,13 @@
 			console.error('Error fetching story sections from Builder.io:', error);
 		}
 
-		// Handle audio playback
+		// Handle exclusive audio playback
 		const audioElements = document.querySelectorAll('audio');
 		audioElements.forEach((audio) => {
 			audio.addEventListener('play', () => {
 				audioElements.forEach((other) => {
 					if (other !== audio) other.pause();
 				});
-				activeAudio = audio.id;
 			});
 		});
 	});
@@ -125,26 +122,20 @@
 		</div>
 	</section>
 
-		<!-- Storytelling Sections -->
-		<section class="px-4 py-24 sm:px-6 lg:px-8 bg-gradient-warm">
-		<div class="mx-auto max-w-5xl">
-			<h2 class="mb-16 text-center font-serif text-4xl font-bold text-primary-900">
-				Un Voyage à Travers le Temps
-			</h2>
-
-			<div class="space-y-16">
-				{#each storySections as section (section.id)}
-					<StorySectionCard
-						id={section.id}
-						title={section.title}
-						description={section.description}
-						audioUrl={section.audioUrl}
-						year={section.year}
-					/>
-				{/each}
+		<!-- Storytelling Sections - Timeline -->
+		<section class="bg-gradient-warm">
+			<div class="px-4 py-12 sm:px-6 lg:px-8">
+				<div class="mx-auto max-w-5xl">
+					<h2 class="mb-8 text-center font-serif text-4xl font-bold text-primary-900">
+						Un Voyage à Travers le Temps
+					</h2>
+					<p class="mb-12 text-center text-lg text-primary-700">
+						Écoutez et suivez votre progression à travers les différentes périodes de notre histoire
+					</p>
+				</div>
 			</div>
-		</div>
-	</section>
+			<Timeline sections={storySections} />
+		</section>
 
 		<!-- Call to Action Section -->
 		<section class="bg-primary-700 px-4 py-20 text-center sm:px-6 lg:px-8">
