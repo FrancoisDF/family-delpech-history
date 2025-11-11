@@ -45,11 +45,11 @@
 >
 	<!-- Timeline Indicator with Completion Status -->
 	<div
-		class="absolute -left-6 top-1/2 hidden -translate-y-1/2 transform md:flex md:flex-col md:items-center"
+		class="absolute -left-4 top-4 flex flex-col items-center gap-2 sm:-left-6 sm:top-1/2 sm:-translate-y-1/2 md:top-1/2"
 	>
 		<button
 			onclick={toggleCompletion}
-			class={`flex h-8 w-8 items-center justify-center rounded-full transition-all ${
+			class={`flex h-7 w-7 items-center justify-center rounded-full transition-all sm:h-8 sm:w-8 ${
 				isCompleted
 					? 'bg-accent text-white shadow-md'
 					: 'border-2 border-primary-300 bg-white hover:border-accent'
@@ -58,7 +58,7 @@
 			aria-label={isCompleted ? 'Marquer comme non écouté' : 'Marquer comme écouté'}
 		>
 			{#if isCompleted}
-				<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+				<svg class="h-4 w-4 sm:h-5 sm:w-5" fill="currentColor" viewBox="0 0 20 20">
 					<path
 						fill-rule="evenodd"
 						d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -67,12 +67,12 @@
 				</svg>
 			{/if}
 		</button>
-		<div class="mt-3 rounded-lg bg-primary-800 px-3 py-1 text-xs font-medium text-white">
+		<div class="rounded-lg bg-primary-800 px-2 py-0.5 text-xs font-medium text-white sm:px-3 sm:py-1">
 			{year}
 		</div>
 	</div>
 
-	<div class="md:pl-12">
+	<div class="pl-10 sm:pl-12 md:pl-12">
 		<div class="mb-4 flex items-start justify-between">
 			<h3 class="font-serif text-3xl font-medium text-primary-800">{title}</h3>
 			{#if isCompleted}
