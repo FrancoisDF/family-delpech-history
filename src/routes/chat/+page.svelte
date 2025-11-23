@@ -64,6 +64,14 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Assistant Familial IA - Histoire de Famille</title>
+	<meta
+		name="description"
+		content="Posez vos questions sur l'histoire de notre famille et explorez nos archives numériques avec notre assistant IA."
+	/>
+</svelte:head>
+
 <div class="flex min-h-screen flex-col bg-gradient-warm">
 	<!-- Header -->
 	<section class="border-b border-primary-200 px-4 py-8 sm:px-6 lg:px-8">

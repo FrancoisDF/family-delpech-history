@@ -7,7 +7,17 @@
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
+
+	const pageTitle = data?.pageContent?.data?.title || 'Histoire de Famille';
+	const pageDescription =
+		data?.pageContent?.data?.description ||
+		'Découvrez les histoires et les secrets de notre famille à travers 50 livres d\'histoire familiale du XIXe siècle.';
 </script>
+
+<svelte:head>
+	<title>{pageTitle}</title>
+	<meta name="description" content={pageDescription} />
+</svelte:head>
 
 {#if !data?.pageContent}
 	<PageNotFound />

@@ -10,7 +10,19 @@
 	let { data } = $props<{ data: PageData }>();
 
 	const post = data.post;
+
+	const pageTitle = post?.data?.title
+		? `${post.data.title} - Histoire de Famille`
+		: 'Histoire de Famille';
+	const pageDescription =
+		post?.data?.excerpt ||
+		'Découvrez les histoires et les secrets de notre famille à travers 50 livres d\'histoire familiale du XIXe siècle.';
 </script>
+
+<svelte:head>
+	<title>{pageTitle}</title>
+	<meta name="description" content={pageDescription} />
+</svelte:head>
 
 {#if post}
 	<ArticleHeaderBlock
