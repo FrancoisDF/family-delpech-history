@@ -4,7 +4,7 @@ import ArticleHeaderBlock from './ArticleHeaderBlock.svelte';
 export const articleHeaderBlockInfo: ComponentInfo = {
 	component: ArticleHeaderBlock,
 	name: 'ArticleHeaderBlock',
-	tag: 'Article Content',
+	tag: 'Headers & Titles',
 	inputs: [
 		{
 			name: 'title',

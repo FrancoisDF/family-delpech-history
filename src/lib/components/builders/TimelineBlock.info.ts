@@ -4,7 +4,7 @@ import TimelineBlock from './TimelineBlock.svelte';
 export const timelineBlockInfo: ComponentInfo = {
 	component: TimelineBlock,
 	name: 'TimelineBlock',
-	tag: 'Page Sections',
+	tag: 'Timeline & History',
 	inputs: [
 		{
 			name: 'title',
@@ -14,7 +14,8 @@ export const timelineBlockInfo: ComponentInfo = {
 		{
 			name: 'description',
 			type: 'string',
-			defaultValue: 'Écoutez et suivez votre progression à travers les différentes périodes de notre histoire'
+			defaultValue:
+				'Écoutez et suivez votre progression à travers les différentes périodes de notre histoire'
 		},
 		{
 			name: 'sections',

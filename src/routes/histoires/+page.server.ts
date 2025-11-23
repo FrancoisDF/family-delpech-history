@@ -3,11 +3,6 @@ import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
 	try {
-		// Fetch blog section configuration
-		const blogSectionContent = await fetchBuilderContentServer('blog-section', {
-			limit: 1
-		});
-
 		// Fetch blog posts from the blog-articles model
 		const blogPosts = await fetchBuilderContentServer('blog-articles', {
 			limit: 100,
@@ -15,7 +10,6 @@ export const load: PageServerLoad = async () => {
 		});
 
 		return {
-			blogSection: blogSectionContent[0] || null,
 			blogPosts: blogPosts.map((post: any) => ({
 				id: post.id,
 				title: post.data?.title || '',
@@ -33,7 +27,6 @@ export const load: PageServerLoad = async () => {
 	} catch (error) {
 		console.error('Error loading blog posts:', error);
 		return {
-			blogSection: null,
 			blogPosts: []
 		};
 	}

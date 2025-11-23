@@ -17,83 +17,97 @@ The header and footer are now fully configurable from Builder.io CMS without edi
 ### Header Configuration Fields
 
 #### `headerLogo`
+
 The text/logo displayed in the header navigation bar.
 
 **Example:** `"Histoire de Famille"`
 
 #### `headerLinks`
+
 Array of navigation links in the header. Each link has:
+
 - `label` - Display text (e.g., "Accueil")
 - `url` - Link destination (e.g., "/")
 - `ariaLabel` - Accessibility label (optional, e.g., "Retour à la page d'accueil")
 
 **Example Structure:**
+
 ```json
 [
-  {
-    "label": "Accueil",
-    "url": "/",
-    "ariaLabel": "Retour à la page d'accueil"
-  },
-  {
-    "label": "Histoires",
-    "url": "/histoires",
-    "ariaLabel": "Voir toutes les histoires"
-  },
-  {
-    "label": "Questions",
-    "url": "/chat",
-    "ariaLabel": "Poser une question à notre assistant"
-  }
+	{
+		"label": "Accueil",
+		"url": "/",
+		"ariaLabel": "Retour à la page d'accueil"
+	},
+	{
+		"label": "Histoires",
+		"url": "/histoires",
+		"ariaLabel": "Voir toutes les histoires"
+	},
+	{
+		"label": "Questions",
+		"url": "/chat",
+		"ariaLabel": "Poser une question à notre assistant"
+	}
 ]
 ```
 
 ### Footer Configuration Fields
 
 #### `siteName`
+
 The site/brand name displayed in the footer's first column.
 
 **Example:** `"Histoire de Famille"`
 
 #### `footerDescription`
+
 Description text displayed under the site name in the footer.
 
 **Example:** `"Découvrez les histoires et les secrets de notre famille à travers 50 livres d'histoire familiale du XIXe siècle."`
 
 #### `footerLinks`
+
 Navigation links in the "Navigation" section of the footer. Each link has:
+
 - `label` - Display text
 - `url` - Link destination
 
 **Example Structure:**
+
 ```json
 [
-  {"label": "Accueil", "url": "/"},
-  {"label": "Histoires", "url": "/histoires"},
-  {"label": "Questions", "url": "/chat"}
+	{ "label": "Accueil", "url": "/" },
+	{ "label": "Histoires", "url": "/histoires" },
+	{ "label": "Questions", "url": "/chat" }
 ]
 ```
 
 #### `footerInfoTitle`
+
 Title for the third footer column.
 
 **Example:** `"Informations"`
 
 #### `footerInfoLinks`
+
 Links in the info section (usually legal/policy links). Each link has:
+
 - `label` - Display text
 - `url` - Link destination
 
 **Example Structure:**
+
 ```json
 [
-  {"label": "Conditions d'utilisation", "url": "#"},
-  {"label": "Confidentialité", "url": "#"},
-  {"label": "Contact", "url": "#"}
+	{ "label": "Conditions d'utilisation", "url": "#" },
+	{ "label": "Confidentialité", "url": "#" },
+	{ "label": "Contact", "url": "#" }
 ]
 ```
 
 #### `footerCopyright`
+
 Copyright text displayed at the bottom of the footer.
 
 **Example:** `"© 2024 Histoire de Famille. Tous droits réservés."`
@@ -172,13 +186,13 @@ User sees updated header/footer
 
 ## Troubleshooting
 
-| Issue | Solution |
-|-------|----------|
-| Header/Footer not updating | Publish your changes in Builder.io (check the "Published" status) |
-| Old content still showing | Clear browser cache (Ctrl+Shift+Delete) and refresh |
-| Links not working | Verify URLs are correct (use "/" for root, check spelling) |
-| Mobile layout broken | Reduce the number of header links or shorten text |
-| Special characters not showing | Ensure content is saved as UTF-8 in Builder.io |
+| Issue                          | Solution                                                          |
+| ------------------------------ | ----------------------------------------------------------------- |
+| Header/Footer not updating     | Publish your changes in Builder.io (check the "Published" status) |
+| Old content still showing      | Clear browser cache (Ctrl+Shift+Delete) and refresh               |
+| Links not working              | Verify URLs are correct (use "/" for root, check spelling)        |
+| Mobile layout broken           | Reduce the number of header links or shorten text                 |
+| Special characters not showing | Ensure content is saved as UTF-8 in Builder.io                    |
 
 ## Advanced: Add More Configuration Fields
 
@@ -191,15 +205,16 @@ To add more configurable fields (e.g., social media links, colors, etc.):
 5. Update `src/lib/components/Header.svelte` or `Footer.svelte` to use the new fields
 
 Example: Adding social media links to the footer:
+
 ```svelte
 <!-- In Footer.svelte -->
 {#if socialLinks && socialLinks.length > 0}
-  <div class="flex gap-4 justify-center">
-    {#each socialLinks as link}
-      <a href={link.url} aria-label={link.label}>
-        <!-- Social icon here -->
-      </a>
-    {/each}
-  </div>
+	<div class="flex justify-center gap-4">
+		{#each socialLinks as link}
+			<a href={link.url} aria-label={link.label}>
+				<!-- Social icon here -->
+			</a>
+		{/each}
+	</div>
 {/if}
 ```

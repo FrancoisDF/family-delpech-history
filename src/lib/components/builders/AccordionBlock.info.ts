@@ -4,7 +4,7 @@ import AccordionBlock from './AccordionBlock.svelte';
 export const accordionBlockInfo: ComponentInfo = {
 	component: AccordionBlock,
 	name: 'AccordionBlock',
-	tag: 'Article Content',
+	tag: 'Interactive Elements',
 	inputs: [
 		{
 			name: 'title',
@@ -23,10 +23,22 @@ export const accordionBlockInfo: ComponentInfo = {
 				},
 				{
 					name: 'answer',
-					type: 'longText',
+					type: 'richText',
 					defaultValue: 'Réponse détaillée...'
 				}
 			]
+		},
+		{
+			name: 'connectTop',
+			type: 'boolean',
+			defaultValue: false,
+			helperText: 'Remove top spacing to connect with section above'
+		},
+		{
+			name: 'connectBottom',
+			type: 'boolean',
+			defaultValue: false,
+			helperText: 'Remove bottom spacing to connect with section below'
 		}
 	]
 };

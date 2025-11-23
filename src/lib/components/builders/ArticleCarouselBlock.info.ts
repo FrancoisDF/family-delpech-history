@@ -4,7 +4,7 @@ import ArticleCarouselBlock from './ArticleCarouselBlock.svelte';
 export const articleCarouselBlockInfo: ComponentInfo = {
 	component: ArticleCarouselBlock,
 	name: 'ArticleCarouselBlock',
-	tag: 'Page Sections',
+	tag: 'Carousels & Sliders',
 	inputs: [
 		{
 			name: 'title',

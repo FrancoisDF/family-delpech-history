@@ -104,14 +104,20 @@
 <div class="relative">
 	<!-- Continue Button (visible if there's progress) -->
 	{#if lastListenedId}
-		<div class="sticky top-0 z-20 bg-gradient-to-b from-primary-50 to-transparent px-4 py-6 sm:px-6 lg:px-8">
+		<div
+			class="sticky top-0 z-20 bg-gradient-to-b from-primary-50 to-transparent px-4 py-6 sm:px-6 lg:px-8"
+		>
 			<div class="mx-auto max-w-5xl">
 				<button
 					onclick={continueListen}
 					class="inline-flex items-center gap-3 rounded-lg bg-accent px-6 py-3 font-semibold text-white shadow-lg transition-all hover:scale-105 hover:shadow-xl"
 				>
 					<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-						<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+						<path
+							fill-rule="evenodd"
+							d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+							clip-rule="evenodd"
+						/>
 					</svg>
 					Continuer depuis la dernière écoute
 				</button>
@@ -120,10 +126,12 @@
 	{/if}
 
 	<!-- Progress Bar -->
-	<div class="sticky top-14 z-20 bg-white px-4 py-4 sm:px-6 lg:px-8 shadow-sm">
+	<div class="sticky top-14 z-20 bg-white px-4 py-4 shadow-sm sm:px-6 lg:px-8">
 		<div class="mx-auto max-w-5xl">
 			<div class="mb-2 flex items-center justify-between">
-				<span class="text-sm font-medium text-primary-700">Progression: {Math.round(progressPercentage)}%</span>
+				<span class="text-sm font-medium text-primary-700"
+					>Progression: {Math.round(progressPercentage)}%</span
+				>
 				<span class="text-sm text-primary-600">{completedCount}/{sections.length}</span>
 			</div>
 			<div class="h-2 w-full overflow-hidden rounded-full bg-primary-100">
@@ -139,7 +147,9 @@
 	<div bind:this={timelineContainer} class="relative px-4 py-16 sm:px-6 lg:px-8">
 		<div class="mx-auto max-w-5xl">
 			<!-- Timeline Line -->
-			<div class="absolute left-4 top-0 h-full w-0.5 bg-gradient-to-b from-transparent via-primary-200 to-transparent sm:left-6 md:left-1/2 md:-translate-x-1/2 lg:left-1/2 lg:-translate-x-1/2"></div>
+			<div
+				class="absolute left-4 top-0 h-full w-0.5 bg-gradient-to-b from-transparent via-primary-200 to-transparent sm:left-6 md:left-1/2 md:-translate-x-1/2 lg:left-1/2 lg:-translate-x-1/2"
+			></div>
 
 			<!-- Sections -->
 			<div class="space-y-12 md:space-y-20">

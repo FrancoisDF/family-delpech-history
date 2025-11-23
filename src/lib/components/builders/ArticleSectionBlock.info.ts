@@ -4,7 +4,7 @@ import ArticleSectionBlock from './ArticleSectionBlock.svelte';
 export const articleSectionBlockInfo: ComponentInfo = {
 	component: ArticleSectionBlock,
 	name: 'ArticleSectionBlock',
-	tag: 'Article Content',
+	tag: 'Content Sections',
 	inputs: [
 		{
 			name: 'title',
@@ -13,7 +13,7 @@ export const articleSectionBlockInfo: ComponentInfo = {
 		},
 		{
 			name: 'content',
-			type: 'longText',
+			type: 'richText',
 			defaultValue: 'Votre contenu de section ici...'
 		},
 		{

@@ -11,7 +11,7 @@
 			id: '1',
 			type: 'assistant',
 			content:
-				'Bonjour ! Je suis votre assistant IA spécialisé dans l\'histoire de votre famille. N\'hésitez pas à me poser des questions sur nos ancêtres, nos traditions, et les événements importants qui ont marqué notre histoire. Je suis ici pour vous aider à explorer notre héritage familial.',
+				"Bonjour ! Je suis votre assistant IA spécialisé dans l'histoire de votre famille. N'hésitez pas à me poser des questions sur nos ancêtres, nos traditions, et les événements importants qui ont marqué notre histoire. Je suis ici pour vous aider à explorer notre héritage familial.",
 			timestamp: new Date()
 		}
 	]);
@@ -41,7 +41,7 @@
 				id: (Date.now() + 1).toString(),
 				type: 'assistant',
 				content:
-					'Merci pour votre question ! En attente de la configuration de l\'API. Cette section sera bientôt connectée à notre système IA pour répondre en temps réel à vos questions sur l\'histoire familiale.',
+					"Merci pour votre question ! En attente de la configuration de l'API. Cette section sera bientôt connectée à notre système IA pour répondre en temps réel à vos questions sur l'histoire familiale.",
 				timestamp: new Date()
 			};
 
@@ -77,19 +77,15 @@
 
 	<!-- Chat Container -->
 	<div class="flex flex-1 flex-col">
-		<div
-			bind:this={chatContainer}
-			class="flex-1 overflow-y-auto px-4 py-8 sm:px-6 lg:px-8"
-		>
+		<div bind:this={chatContainer} class="flex-1 overflow-y-auto px-4 py-8 sm:px-6 lg:px-8">
 			<div class="mx-auto max-w-2xl space-y-6">
 				{#each messages as message (message.id)}
-					<div
-						class="flex gap-4"
-						class:justify-end={message.type === 'user'}
-					>
+					<div class="flex gap-4" class:justify-end={message.type === 'user'}>
 						{#if message.type === 'assistant'}
 							<div class="flex-shrink-0">
-								<div class="flex h-8 w-8 items-center justify-center rounded-full bg-primary-900 text-cream">
+								<div
+									class="flex h-8 w-8 items-center justify-center rounded-full bg-primary-900 text-cream"
+								>
 									<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
 										<path d="M10 0a10 10 0 110 20 10 10 0 010-20zm0 2a8 8 0 100 16 8 8 0 000-16z" />
 									</svg>
@@ -97,10 +93,7 @@
 							</div>
 						{/if}
 
-						<div
-							class="flex max-w-xs flex-col"
-							class:max-w-md={message.type === 'user'}
-						>
+						<div class="flex max-w-xs flex-col" class:max-w-md={message.type === 'user'}>
 							<div
 								class="rounded-lg p-4"
 								class:bg-white={message.type === 'assistant'}
@@ -123,7 +116,7 @@
 
 						{#if message.type === 'user'}
 							<div class="flex-shrink-0">
-								<div class="flex h-8 w-8 items-center justify-center rounded-full bg-gold">
+								<div class="bg-gold flex h-8 w-8 items-center justify-center rounded-full">
 									<svg class="h-5 w-5 text-primary-900" fill="currentColor" viewBox="0 0 20 20">
 										<path d="M10 0a10 10 0 110 20 10 10 0 010-20zm0 2a8 8 0 100 16 8 8 0 000-16z" />
 									</svg>
@@ -136,7 +129,9 @@
 				{#if isLoading}
 					<div class="flex gap-4">
 						<div class="flex-shrink-0">
-							<div class="flex h-8 w-8 items-center justify-center rounded-full bg-primary-900 text-cream">
+							<div
+								class="flex h-8 w-8 items-center justify-center rounded-full bg-primary-900 text-cream"
+							>
 								<svg class="h-5 w-5 animate-spin" fill="currentColor" viewBox="0 0 20 20">
 									<path d="M10 0a10 10 0 110 20 10 10 0 010-20zm0 2a8 8 0 100 16 8 8 0 000-16z" />
 								</svg>
@@ -155,7 +150,13 @@
 		<!-- Input Area -->
 		<div class="border-t border-primary-200 bg-white px-4 py-6 sm:px-6 lg:px-8">
 			<div class="mx-auto max-w-2xl">
-				<form onsubmit={(e) => { e.preventDefault(); handleSendMessage(); }} class="flex gap-4">
+				<form
+					onsubmit={(e) => {
+						e.preventDefault();
+						handleSendMessage();
+					}}
+					class="flex gap-4"
+				>
 					<input
 						type="text"
 						bind:value={messageInput}
@@ -166,7 +167,7 @@
 					<button
 						type="submit"
 						disabled={isLoading || !messageInput.trim()}
-						class="rounded-lg bg-primary-900 px-6 py-3 font-semibold text-cream transition-all hover:bg-primary-800 disabled:opacity-50 disabled:cursor-not-allowed"
+						class="rounded-lg bg-primary-900 px-6 py-3 font-semibold text-cream transition-all hover:bg-primary-800 disabled:cursor-not-allowed disabled:opacity-50"
 					>
 						<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
 							<path

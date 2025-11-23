@@ -4,11 +4,11 @@ import QuoteBlock from './QuoteBlock.svelte';
 export const quoteBlockInfo: ComponentInfo = {
 	component: QuoteBlock,
 	name: 'QuoteBlock',
-	tag: 'Article Content',
+	tag: 'Quotes & Highlights',
 	inputs: [
 		{
 			name: 'quote',
-			type: 'longText',
+			type: 'richText',
 			defaultValue: 'Your inspiring quote here...'
 		},
 		{

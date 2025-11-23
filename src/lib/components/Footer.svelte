@@ -38,7 +38,7 @@
 				<ul class="space-y-2 text-sm">
 					{#each navigationLinks as link (link.url)}
 						<li>
-							<a href={link.url} class="text-white/70 hover:text-accent transition-colors">
+							<a href={link.url} class="text-white/70 transition-colors hover:text-accent">
 								{link.label}
 							</a>
 						</li>
@@ -52,7 +52,7 @@
 				<ul class="space-y-2 text-sm">
 					{#each infoLinks as link (link.url)}
 						<li>
-							<a href={link.url} class="text-white/70 hover:text-accent transition-colors">
+							<a href={link.url} class="text-white/70 transition-colors hover:text-accent">
 								{link.label}
 							</a>
 						</li>

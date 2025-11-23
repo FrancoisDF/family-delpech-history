@@ -4,7 +4,7 @@ import CalloutBlock from './CalloutBlock.svelte';
 export const calloutBlockInfo: ComponentInfo = {
 	component: CalloutBlock,
 	name: 'CalloutBlock',
-	tag: 'Article Content',
+	tag: 'Callouts & Alerts',
 	inputs: [
 		{
 			name: 'title',
@@ -13,7 +13,7 @@ export const calloutBlockInfo: ComponentInfo = {
 		},
 		{
 			name: 'content',
-			type: 'longText',
+			type: 'richText',
 			defaultValue: 'Information importante à mettre en évidence...'
 		},
 		{

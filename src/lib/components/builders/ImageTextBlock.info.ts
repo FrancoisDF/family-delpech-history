@@ -4,7 +4,7 @@ import ImageTextBlock from './ImageTextBlock.svelte';
 export const imageTextBlockInfo: ComponentInfo = {
 	component: ImageTextBlock,
 	name: 'ImageTextBlock',
-	tag: 'Article Content',
+	tag: 'Content Sections',
 	inputs: [
 		{
 			name: 'image',
@@ -24,7 +24,7 @@ export const imageTextBlockInfo: ComponentInfo = {
 		},
 		{
 			name: 'content',
-			type: 'longText',
+			type: 'richText',
 			defaultValue: 'Your content here...'
 		},
 		{
@@ -38,6 +38,18 @@ export const imageTextBlockInfo: ComponentInfo = {
 			type: 'string',
 			enum: ['w-1/3', 'w-1/2', 'w-2/3'],
 			defaultValue: 'w-1/2'
+		},
+		{
+			name: 'connectTop',
+			type: 'boolean',
+			defaultValue: false,
+			helperText: 'Remove top spacing to connect with section above'
+		},
+		{
+			name: 'connectBottom',
+			type: 'boolean',
+			defaultValue: false,
+			helperText: 'Remove bottom spacing to connect with section below'
 		}
 	]
 };

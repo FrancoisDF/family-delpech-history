@@ -4,7 +4,7 @@ import VideoEmbedBlock from './VideoEmbedBlock.svelte';
 export const videoEmbedBlockInfo: ComponentInfo = {
 	component: VideoEmbedBlock,
 	name: 'VideoEmbedBlock',
-	tag: 'Article Content',
+	tag: 'Images & Media',
 	inputs: [
 		{
 			name: 'videoUrl',
@@ -27,6 +27,18 @@ export const videoEmbedBlockInfo: ComponentInfo = {
 			type: 'string',
 			enum: ['16/9', '4/3', '1/1'],
 			defaultValue: '16/9'
+		},
+		{
+			name: 'connectTop',
+			type: 'boolean',
+			defaultValue: false,
+			helperText: 'Remove top spacing to connect with section above'
+		},
+		{
+			name: 'connectBottom',
+			type: 'boolean',
+			defaultValue: false,
+			helperText: 'Remove bottom spacing to connect with section below'
 		}
 	]
 };

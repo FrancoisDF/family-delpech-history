@@ -4,7 +4,7 @@ import FeaturesBlock from './FeaturesBlock.svelte';
 export const featuresBlockInfo: ComponentInfo = {
 	component: FeaturesBlock,
 	name: 'FeaturesBlock',
-	tag: 'Page Sections',
+	tag: 'Features & Benefits',
 	inputs: [
 		{
 			name: 'title',

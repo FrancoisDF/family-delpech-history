@@ -4,12 +4,13 @@ import RichTextBlock from './RichTextBlock.svelte';
 export const richTextBlockInfo: ComponentInfo = {
 	component: RichTextBlock,
 	name: 'RichTextBlock',
-	tag: 'Article Content',
+	tag: 'Rich Text & Markdown',
 	inputs: [
 		{
 			name: 'content',
-			type: 'longText',
-			defaultValue: '# Titre Principal\n\nVotre contenu ici avec **gras**, *italique*, et [liens](https://example.com).\n\n## Sous-titre\n\nPlus de contenu...\n\n* Liste item 1\n* Liste item 2'
+			type: 'richText',
+			defaultValue:
+				'# Titre Principal\n\nVotre contenu ici avec **gras**, *italique*, et [liens](https://example.com).\n\n## Sous-titre\n\nPlus de contenu...\n\n* Liste item 1\n* Liste item 2'
 		},
 		{
 			name: 'backgroundColor',

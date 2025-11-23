@@ -50,11 +50,10 @@ This file gives focused, actionable guidance for AI coding agents working in thi
 - Preserve any handwritten guidance and only add or update entries that reflect real, discoverable patterns in the codebase (routing, builder folders, scripts above).
 
 ---
+
 If anything above is unclear or you'd like me to expand on examples (e.g., show a canonical `+page.server.ts` snippet or a builder component), tell me which part to expand and I will iterate.
 
-
 You are able to use the Svelte MCP server, where you have access to comprehensive Svelte 5 and SvelteKit documentation. Here's how to use the available tools effectively:
-
 
 ## Available MCP Tools:
 

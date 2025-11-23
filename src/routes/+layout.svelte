@@ -22,11 +22,12 @@
 		siteName: 'Histoire de Famille',
 		headerLogo: 'Histoire de Famille',
 		headerLinks: [
-			{ label: 'Accueil', url: '/', ariaLabel: 'Retour à la page d\'accueil' },
+			{ label: 'Accueil', url: '/', ariaLabel: "Retour à la page d'accueil" },
 			{ label: 'Histoires', url: '/histoires', ariaLabel: 'Voir toutes les histoires' },
 			{ label: 'Questions', url: '/chat', ariaLabel: 'Poser une question à notre assistant' }
 		],
-		footerDescription: 'Découvrez les histoires et les secrets de notre famille à travers 50 livres d\'histoire familiale du XIXe siècle.',
+		footerDescription:
+			"Découvrez les histoires et les secrets de notre famille à travers 50 livres d'histoire familiale du XIXe siècle.",
 		footerLinks: [
 			{ label: 'Accueil', url: '/' },
 			{ label: 'Histoires', url: '/histoires' },
@@ -34,7 +35,7 @@
 		],
 		footerInfoTitle: 'Informations',
 		footerInfoLinks: [
-			{ label: 'Conditions d\'utilisation', url: '#' },
+			{ label: "Conditions d'utilisation", url: '#' },
 			{ label: 'Confidentialité', url: '#' },
 			{ label: 'Contact', url: '#' }
 		],

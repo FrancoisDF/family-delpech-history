@@ -17,7 +17,7 @@
 				{title}
 			</h2>
 		{/if}
-		
+
 		<div class="grid gap-8 md:grid-cols-{columns}">
 			{#each stats as stat}
 				<div class="text-center">

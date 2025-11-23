@@ -1,22 +1,36 @@
 <script lang="ts">
-
-	let { title = 'Questions Fréquentes', items = [] }: { title?: string; items?: Array<{ question: string; answer: string }> } = $props();
+	let {
+		title = 'Questions Fréquentes',
+		items = [],
+		connectTop = false,
+		connectBottom = false
+	}: {
+		title?: string;
+		items?: Array<{ question: string; answer: string }>;
+		connectTop?: boolean;
+		connectBottom?: boolean;
+	} = $props();
 
 	let openItems = $state<Record<number, boolean>>({});
+
+	const spacingTop = $derived(connectTop ? '' : 'pt-12');
+	const spacingBottom = $derived(connectBottom ? '' : 'pb-12');
+
+	// Note: Accordion items have individual rounded corners, so we don't apply connect styling
 
 	function toggleItem(index: number) {
 		openItems[index] = !openItems[index];
 	}
 </script>
 
-<section class="bg-gradient-warm px-4 py-12 sm:px-6 lg:px-8">
+<section class="bg-gradient-warm px-4 {spacingTop} {spacingBottom} sm:px-6 lg:px-8">
 	<div class="mx-auto max-w-4xl">
 		{#if title}
 			<h2 class="mb-8 text-center font-serif text-3xl font-bold text-primary-900">
 				{title}
 			</h2>
 		{/if}
-		
+
 		<div class="space-y-4">
 			{#each items as item, index (index)}
 				<div class="overflow-hidden rounded-lg bg-white shadow-md">
@@ -24,7 +38,7 @@
 						onclick={() => toggleItem(index)}
 						class="flex w-full items-center justify-between p-6 text-left transition-colors hover:bg-primary-50"
 					>
-						<h3 class="font-serif text-lg font-semibold text-primary-900 pr-4">
+						<h3 class="pr-4 font-serif text-lg font-semibold text-primary-900">
 							{item.question}
 						</h3>
 						<svg
@@ -34,13 +48,18 @@
 							stroke="currentColor"
 							viewBox="0 0 24 24"
 						>
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M19 9l-7 7-7-7"
+							/>
 						</svg>
 					</button>
-					
+
 					{#if openItems[index]}
 						<div class="border-t border-primary-200 p-6">
-							<p class="leading-relaxed text-primary-700 whitespace-pre-wrap">
+							<p class="whitespace-pre-wrap leading-relaxed text-primary-700">
 								{item.answer}
 							</p>
 						</div>

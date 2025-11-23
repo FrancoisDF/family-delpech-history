@@ -108,33 +108,33 @@ export {
 };
 
 Builder.register('insertMenu', {
-  name: 'Article Content Components',
-  items: [
-    { name: textSectionBlockInfo.tag, item: textSectionBlockInfo.name },
-    { name: imageBlockInfo.tag, item: imageBlockInfo.name },
-	{ name: richTextBlockInfo.tag, item: richTextBlockInfo.name },
-	{ name: articleSectionBlockInfo.tag, item: articleSectionBlockInfo.name },
-	{ name: quoteBlockInfo.tag, item: quoteBlockInfo.name },
-	{ name: calloutBlockInfo.tag, item: calloutBlockInfo.name },
-	{ name: imageTextBlockInfo.tag, item: imageTextBlockInfo.name },
-	{ name: videoEmbedBlockInfo.tag, item: videoEmbedBlockInfo.name },
-	{ name: dividerBlockInfo.tag, item: dividerBlockInfo.name },
-	{ name: accordionBlockInfo.tag, item: accordionBlockInfo.name },
-	{ name: articleContentBlockInfo.tag, item: articleContentBlockInfo.name },
-  ],
-})
+	name: 'Article Content Components',
+	items: [
+		{ name: textSectionBlockInfo.tag, item: textSectionBlockInfo.name },
+		{ name: imageBlockInfo.tag, item: imageBlockInfo.name },
+		{ name: richTextBlockInfo.tag, item: richTextBlockInfo.name },
+		{ name: articleSectionBlockInfo.tag, item: articleSectionBlockInfo.name },
+		{ name: quoteBlockInfo.tag, item: quoteBlockInfo.name },
+		{ name: calloutBlockInfo.tag, item: calloutBlockInfo.name },
+		{ name: imageTextBlockInfo.tag, item: imageTextBlockInfo.name },
+		{ name: videoEmbedBlockInfo.tag, item: videoEmbedBlockInfo.name },
+		{ name: dividerBlockInfo.tag, item: dividerBlockInfo.name },
+		{ name: accordionBlockInfo.tag, item: accordionBlockInfo.name },
+		{ name: articleContentBlockInfo.tag, item: articleContentBlockInfo.name }
+	]
+});
 Builder.register('insertMenu', {
-  name: 'Page Section Components',
-  items: [
-    { name: heroBlockInfo.tag, item: heroBlockInfo.name },
-	{ name: blogGridBlockInfo.tag, item: blogGridBlockInfo.name },
-	{ name: articleCarouselBlockInfo.tag, item: articleCarouselBlockInfo.name },
-	{ name: ctaBlockInfo.tag, item: ctaBlockInfo.name },
-	{ name: featuresBlockInfo.tag, item: featuresBlockInfo.name },
-	{ name: timelineBlockInfo.tag, item: timelineBlockInfo.name },
-	{ name: statsBlockInfo.tag, item: statsBlockInfo.name },
-	{ name: imageGalleryBlockInfo.tag, item: imageGalleryBlockInfo.name },
-	{ name: twoColumnTextBlockInfo.tag, item: twoColumnTextBlockInfo.name },
-	{ name: blogDetailBlockInfo.tag, item: blogDetailBlockInfo.name }
-  ],
-})
+	name: 'Page Section Components',
+	items: [
+		{ name: heroBlockInfo.tag, item: heroBlockInfo.name },
+		{ name: blogGridBlockInfo.tag, item: blogGridBlockInfo.name },
+		{ name: articleCarouselBlockInfo.tag, item: articleCarouselBlockInfo.name },
+		{ name: ctaBlockInfo.tag, item: ctaBlockInfo.name },
+		{ name: featuresBlockInfo.tag, item: featuresBlockInfo.name },
+		{ name: timelineBlockInfo.tag, item: timelineBlockInfo.name },
+		{ name: statsBlockInfo.tag, item: statsBlockInfo.name },
+		{ name: imageGalleryBlockInfo.tag, item: imageGalleryBlockInfo.name },
+		{ name: twoColumnTextBlockInfo.tag, item: twoColumnTextBlockInfo.name },
+		{ name: blogDetailBlockInfo.tag, item: blogDetailBlockInfo.name }
+	]
+});

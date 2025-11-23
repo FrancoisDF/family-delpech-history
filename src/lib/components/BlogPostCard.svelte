@@ -29,6 +29,7 @@
 	role="button"
 	tabindex="0"
 >
+	GNNNNNNNNNNN NNQNQDQD
 	<!-- Featured Image -->
 	<div class="relative h-56 overflow-hidden bg-gradient-to-br from-primary-100 to-primary-200">
 		{#if featuredImage}
@@ -64,7 +65,9 @@
 		<!-- Meta Information -->
 		<div class="mb-3 flex flex-wrap items-center gap-2">
 			{#if category}
-				<span class="inline-block rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent">
+				<span
+					class="inline-block rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent"
+				>
 					{category}
 				</span>
 			{/if}
@@ -78,19 +81,23 @@
 		</div>
 
 		<!-- Title -->
-		<h2 class="mb-3 font-serif text-xl font-medium text-primary-800 transition-colors duration-300 group-hover:text-accent">
+		<h2
+			class="mb-3 font-serif text-xl font-medium text-primary-800 transition-colors duration-300 group-hover:text-accent"
+		>
 			{title}
 		</h2>
 
 		<!-- Excerpt -->
 		{#if excerpt}
-			<p class="mb-4 flex-1 text-sm leading-relaxed text-primary-700 line-clamp-2">
+			<p class="mb-4 line-clamp-2 flex-1 text-sm leading-relaxed text-primary-700">
 				{excerpt}
 			</p>
 		{/if}
 
 		<!-- Read More Link -->
-		<div class="inline-flex items-center gap-2 font-semibold text-accent transition-all duration-300 group-hover:gap-3">
+		<div
+			class="inline-flex items-center gap-2 font-semibold text-accent transition-all duration-300 group-hover:gap-3"
+		>
 			<span>Lire plus</span>
 			<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />

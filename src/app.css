@@ -88,3 +88,86 @@ audio {
 	background-size: cover;
 	z-index: 0;
 }
+
+/* Global prose styling for HTML content injection */
+:global(.prose) {
+	color: inherit;
+}
+
+:global(.prose a) {
+	@apply text-accent underline transition-colors hover:text-primary-900;
+}
+
+:global(.prose strong) {
+	@apply font-semibold text-primary-900;
+}
+
+:global(.prose em) {
+	@apply italic;
+}
+
+:global(.prose h1),
+:global(.prose h2),
+:global(.prose h3),
+:global(.prose h4),
+:global(.prose h5),
+:global(.prose h6) {
+	@apply mb-4 mt-6 font-serif font-bold text-primary-900;
+}
+
+:global(.prose h1) {
+	@apply text-4xl;
+}
+
+:global(.prose h2) {
+	@apply text-3xl;
+}
+
+:global(.prose h3) {
+	@apply text-2xl;
+}
+
+:global(.prose h4) {
+	@apply text-xl;
+}
+
+:global(.prose p) {
+	@apply mb-4 leading-relaxed;
+}
+
+:global(.prose p:last-child) {
+	@apply mb-0;
+}
+
+:global(.prose ul),
+:global(.prose ol) {
+	@apply mb-4 ml-6;
+}
+
+:global(.prose li) {
+	@apply mb-2 leading-relaxed;
+}
+
+:global(.prose ul li) {
+	@apply list-disc;
+}
+
+:global(.prose ol li) {
+	@apply list-decimal;
+}
+
+:global(.prose blockquote) {
+	@apply border-l-4 border-accent pl-4 italic text-primary-700;
+}
+
+:global(.prose code) {
+	@apply rounded bg-primary-100 px-2 py-1 font-mono text-sm text-primary-900;
+}
+
+:global(.prose pre) {
+	@apply mb-4 overflow-x-auto rounded-lg bg-primary-900 p-4;
+}
+
+:global(.prose pre code) {
+	@apply bg-transparent px-0 py-0 text-cream;
+}

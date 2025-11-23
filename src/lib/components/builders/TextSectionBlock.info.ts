@@ -4,11 +4,11 @@ import TextSectionBlock from './TextSectionBlock.svelte';
 export const textSectionBlockInfo: ComponentInfo = {
 	component: TextSectionBlock,
 	name: 'TextSectionBlock',
-	tag: 'Article Content',
+	tag: 'Text & Paragraphs',
 	inputs: [
 		{
 			name: 'content',
-			type: 'longText',
+			type: 'richText',
 			defaultValue: 'Votre texte ici...'
 		},
 		{

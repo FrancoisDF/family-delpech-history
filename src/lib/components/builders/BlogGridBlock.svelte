@@ -57,7 +57,9 @@
 						aria-label={`Lire ${post.title}`}
 					>
 						<!-- Featured Image -->
-						<div class="relative h-56 overflow-hidden bg-gradient-to-br from-primary-100 to-primary-200">
+						<div
+							class="relative h-56 overflow-hidden bg-gradient-to-br from-primary-100 to-primary-200"
+						>
 							{#if post.featuredImage}
 								<img
 									src={post.featuredImage}
@@ -90,7 +92,9 @@
 							<!-- Meta Information -->
 							<div class="mb-3 flex flex-wrap items-center gap-2">
 								{#if post.category}
-									<span class="inline-block rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent">
+									<span
+										class="inline-block rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent"
+									>
 										{post.category}
 									</span>
 								{/if}
@@ -104,22 +108,31 @@
 							</div>
 
 							<!-- Title -->
-							<h3 class="mb-3 font-serif text-xl font-medium text-primary-800 transition-colors duration-300 group-hover:text-accent">
+							<h3
+								class="mb-3 font-serif text-xl font-medium text-primary-800 transition-colors duration-300 group-hover:text-accent"
+							>
 								{post.title}
 							</h3>
 
 							<!-- Excerpt -->
 							{#if post.excerpt}
-								<p class="mb-4 flex-1 text-sm leading-relaxed text-primary-700 line-clamp-2">
+								<p class="mb-4 line-clamp-2 flex-1 text-sm leading-relaxed text-primary-700">
 									{post.excerpt}
 								</p>
 							{/if}
 
 							<!-- Read More Link -->
-							<div class="inline-flex items-center gap-2 font-semibold text-accent transition-all duration-300 group-hover:gap-3">
+							<div
+								class="inline-flex items-center gap-2 font-semibold text-accent transition-all duration-300 group-hover:gap-3"
+							>
 								<span>Lire plus</span>
 								<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M9 5l7 7-7 7"
+									/>
 								</svg>
 							</div>
 						</div>
@@ -127,7 +140,9 @@
 				{/each}
 			</div>
 		{:else}
-			<div class="rounded-lg border-2 border-dashed border-primary-300 bg-primary-50 p-8 text-center">
+			<div
+				class="rounded-lg border-2 border-dashed border-primary-300 bg-primary-50 p-8 text-center"
+			>
 				<p class="text-primary-700">Aucun article blog disponible pour le moment.</p>
 			</div>
 		{/if}

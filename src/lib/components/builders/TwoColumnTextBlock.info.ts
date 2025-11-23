@@ -4,7 +4,7 @@ import TwoColumnTextBlock from './TwoColumnTextBlock.svelte';
 export const twoColumnTextBlockInfo: ComponentInfo = {
 	component: TwoColumnTextBlock,
 	name: 'TwoColumnTextBlock',
-	tag: 'Page Sections',
+	tag: 'Layout & Columns',
 	inputs: [
 		{
 			name: 'title',
@@ -13,13 +13,25 @@ export const twoColumnTextBlockInfo: ComponentInfo = {
 		},
 		{
 			name: 'leftContent',
-			type: 'longText',
+			type: 'richText',
 			defaultValue: 'Contenu de la colonne gauche...'
 		},
 		{
 			name: 'rightContent',
-			type: 'longText',
+			type: 'richText',
 			defaultValue: 'Contenu de la colonne droite...'
+		},
+		{
+			name: 'connectTop',
+			type: 'boolean',
+			defaultValue: false,
+			helperText: 'Remove top spacing to connect with section above'
+		},
+		{
+			name: 'connectBottom',
+			type: 'boolean',
+			defaultValue: false,
+			helperText: 'Remove bottom spacing to connect with section below'
 		}
 	]
 };

@@ -10,7 +10,14 @@
 		isActive?: boolean;
 	}
 
-	let { id = '', title = '', description = '', audioUrl = '', year = 1800, isActive = false } = $props();
+	let {
+		id = '',
+		title = '',
+		description = '',
+		audioUrl = '',
+		year = 1800,
+		isActive = false
+	} = $props();
 
 	let isCompleted: boolean = $state(false);
 
@@ -67,7 +74,9 @@
 				</svg>
 			{/if}
 		</button>
-		<div class="rounded-lg bg-primary-800 px-2 py-0.5 text-xs font-medium text-white sm:px-3 sm:py-1">
+		<div
+			class="rounded-lg bg-primary-800 px-2 py-0.5 text-xs font-medium text-white sm:px-3 sm:py-1"
+		>
 			{year}
 		</div>
 	</div>
@@ -96,17 +105,13 @@
 		{#if audioUrl}
 			<div class="rounded-lg bg-primary-50 p-6">
 				<div class="mb-3 flex items-center gap-2">
-					<svg
-						class="h-5 w-5 text-primary-800"
-						fill="currentColor"
-						viewBox="0 0 20 20"
-					>
+					<svg class="h-5 w-5 text-primary-800" fill="currentColor" viewBox="0 0 20 20">
 						<path d="M9 3a6 6 0 100 12A6 6 0 009 3z" />
 					</svg>
 					<span class="text-sm font-medium text-primary-800">Récit Audio</span>
 				</div>
 				<audio
-					id={id}
+					{id}
 					class="w-full accent-primary-800"
 					controls
 					controlsList="nodownload"

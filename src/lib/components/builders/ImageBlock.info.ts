@@ -4,7 +4,7 @@ import ImageBlock from './ImageBlock.svelte';
 export const imageBlockInfo: ComponentInfo = {
 	component: ImageBlock,
 	name: 'ImageBlock',
-	tag: 'Article Content',
+	tag: 'Images & Media',
 	inputs: [
 		{
 			name: 'imageUrl',

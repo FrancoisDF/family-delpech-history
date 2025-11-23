@@ -4,7 +4,7 @@ import HeroBlock from './HeroBlock.svelte';
 export const heroBlockInfo: ComponentInfo = {
 	component: HeroBlock,
 	name: 'HeroBlock',
-	tag: 'Page Sections',
+	tag: 'Hero & Headers',
 	inputs: [
 		{
 			name: 'title',

@@ -4,7 +4,7 @@ import ImageGalleryBlock from './ImageGalleryBlock.svelte';
 export const imageGalleryBlockInfo: ComponentInfo = {
 	component: ImageGalleryBlock,
 	name: 'ImageGalleryBlock',
-	tag: 'Page Sections',
+	tag: 'Galleries & Collections',
 	inputs: [
 		{
 			name: 'title',
@@ -38,6 +38,18 @@ export const imageGalleryBlockInfo: ComponentInfo = {
 			type: 'number',
 			enum: [2, 3, 4],
 			defaultValue: 3
+		},
+		{
+			name: 'connectTop',
+			type: 'boolean',
+			defaultValue: false,
+			helperText: 'Remove top spacing to connect with section above'
+		},
+		{
+			name: 'connectBottom',
+			type: 'boolean',
+			defaultValue: false,
+			helperText: 'Remove bottom spacing to connect with section below'
 		}
 	]
 };

@@ -8,7 +8,7 @@
 	} = $props();
 </script>
 
-<section class="px-4 py-20 sm:px-6 lg:px-8 bg-gradient-warm">
+<section class="bg-gradient-warm px-4 py-20 sm:px-6 lg:px-8">
 	<div class="mx-auto max-w-6xl">
 		<h2 class="mb-12 text-center font-serif text-3xl font-medium text-primary-800">
 			{title}

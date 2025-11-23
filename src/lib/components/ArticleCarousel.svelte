@@ -84,7 +84,7 @@
 					{#each articles as article (article.id)}
 						<div
 							data-carousel-item
-							class="group flex-shrink-0 w-full sm:w-1/2 lg:w-1/3 cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:shadow-xl"
+							class="group w-full flex-shrink-0 cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:shadow-xl sm:w-1/2 lg:w-1/3"
 							onclick={() => handleCardClick(article)}
 							onkeydown={(e) => {
 								if (e.key === 'Enter' || e.key === ' ') {
@@ -95,7 +95,9 @@
 							tabindex="0"
 						>
 							<!-- Featured Image -->
-							<div class="relative h-56 overflow-hidden bg-gradient-to-br from-primary-100 to-primary-200">
+							<div
+								class="relative h-56 overflow-hidden bg-gradient-to-br from-primary-100 to-primary-200"
+							>
 								{#if article.featuredImage}
 									<img
 										src={article.featuredImage}
@@ -126,7 +128,9 @@
 								<!-- Meta Information -->
 								<div class="mb-3 flex flex-wrap items-center gap-2">
 									{#if article.category}
-										<span class="inline-block rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent">
+										<span
+											class="inline-block rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent"
+										>
 											{article.category}
 										</span>
 									{/if}
@@ -140,22 +144,31 @@
 								</div>
 
 								<!-- Title -->
-								<h3 class="mb-3 font-serif text-lg font-medium text-primary-800 transition-colors duration-300 group-hover:text-accent line-clamp-2">
+								<h3
+									class="mb-3 line-clamp-2 font-serif text-lg font-medium text-primary-800 transition-colors duration-300 group-hover:text-accent"
+								>
 									{article.title}
 								</h3>
 
 								<!-- Excerpt -->
 								{#if article.excerpt}
-									<p class="mb-4 flex-1 text-sm leading-relaxed text-primary-700 line-clamp-2">
+									<p class="mb-4 line-clamp-2 flex-1 text-sm leading-relaxed text-primary-700">
 										{article.excerpt}
 									</p>
 								{/if}
 
 								<!-- Read More Link -->
-								<div class="inline-flex items-center gap-2 font-semibold text-accent transition-all duration-300 group-hover:gap-3">
+								<div
+									class="inline-flex items-center gap-2 font-semibold text-accent transition-all duration-300 group-hover:gap-3"
+								>
 									<span>Lire plus</span>
 									<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="M9 5l7 7-7 7"
+										/>
 									</svg>
 								</div>
 							</div>
@@ -169,11 +182,21 @@
 						<button
 							onclick={() => scroll('left')}
 							disabled={!canScrollLeft}
-							class="rounded-full bg-white p-3 shadow-lg transition-all duration-300 hover:bg-primary-50 disabled:opacity-50 disabled:cursor-not-allowed"
+							class="rounded-full bg-white p-3 shadow-lg transition-all duration-300 hover:bg-primary-50 disabled:cursor-not-allowed disabled:opacity-50"
 							aria-label="Scroll left"
 						>
-							<svg class="h-5 w-5 text-primary-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+							<svg
+								class="h-5 w-5 text-primary-900"
+								fill="none"
+								stroke="currentColor"
+								viewBox="0 0 24 24"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M15 19l-7-7 7-7"
+								/>
 							</svg>
 						</button>
 					</div>
@@ -182,18 +205,30 @@
 						<button
 							onclick={() => scroll('right')}
 							disabled={!canScrollRight}
-							class="rounded-full bg-white p-3 shadow-lg transition-all duration-300 hover:bg-primary-50 disabled:opacity-50 disabled:cursor-not-allowed"
+							class="rounded-full bg-white p-3 shadow-lg transition-all duration-300 hover:bg-primary-50 disabled:cursor-not-allowed disabled:opacity-50"
 							aria-label="Scroll right"
 						>
-							<svg class="h-5 w-5 text-primary-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+							<svg
+								class="h-5 w-5 text-primary-900"
+								fill="none"
+								stroke="currentColor"
+								viewBox="0 0 24 24"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M9 5l7 7-7 7"
+								/>
 							</svg>
 						</button>
 					</div>
 				{/if}
 			</div>
 		{:else}
-			<div class="rounded-lg border-2 border-dashed border-primary-300 bg-primary-50 p-8 text-center">
+			<div
+				class="rounded-lg border-2 border-dashed border-primary-300 bg-primary-50 p-8 text-center"
+			>
 				<p class="text-primary-700">Aucun article connexe disponible.</p>
 			</div>
 		{/if}
@@ -213,7 +248,7 @@
 		display: none;
 	}
 
-	div[style*="scroll-behavior: smooth"]::-webkit-scrollbar {
+	div[style*='scroll-behavior: smooth']::-webkit-scrollbar {
 		display: none;
 	}
 </style>

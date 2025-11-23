@@ -67,9 +67,7 @@ export async function fetchBuilderContentByIdServer(
 
 		if (!response.ok) {
 			console.error(`Builder.io API Error (${response.status}) for ${model}/${id}`);
-			throw new Error(
-				`Builder.io API error: ${response.status} ${response.statusText}`
-			);
+			throw new Error(`Builder.io API error: ${response.status} ${response.statusText}`);
 		}
 
 		const responseData = await response.json();
@@ -102,9 +100,7 @@ export async function fetchBuilderContentByHandleServer(
 
 		if (!response.ok) {
 			console.error(`Builder.io API Error (${response.status}) for ${model} handle:${handle}`);
-			throw new Error(
-				`Builder.io API error: ${response.status} ${response.statusText}`
-			);
+			throw new Error(`Builder.io API error: ${response.status} ${response.statusText}`);
 		}
 
 		const data = await response.json();

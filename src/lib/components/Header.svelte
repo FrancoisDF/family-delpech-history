@@ -5,10 +5,7 @@
 		ariaLabel?: string;
 	}
 
-	let {
-		logo = 'Histoire de Famille',
-		links = []
-	} = $props<{
+	let { logo = 'Histoire de Famille', links = [] } = $props<{
 		logo?: string | null;
 		links?: HeaderLink[] | null;
 	}>();
@@ -17,10 +14,10 @@
 
 	// Safe getters with defaults
 	const headerLogo = logo || 'Histoire de Famille';
-	const headerLinks = (links && Array.isArray(links) && links.length > 0) ? links : [];
+	const headerLinks = links && Array.isArray(links) && links.length > 0 ? links : [];
 </script>
 
-<nav class="sticky top-0 z-50 bg-white shadow-sm border-b border-primary-100">
+<nav class="sticky top-0 z-50 border-b border-primary-100 bg-white shadow-sm">
 	<div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
 		<!-- Logo/Title -->
 		<a href="/" class="flex items-center gap-2">
@@ -41,11 +38,7 @@
 		</div>
 
 		<!-- Mobile Menu Button -->
-		<button
-			class="md:hidden"
-			onclick={() => (isMenuOpen = !isMenuOpen)}
-			aria-label="Toggle menu"
-		>
+		<button class="md:hidden" onclick={() => (isMenuOpen = !isMenuOpen)} aria-label="Toggle menu">
 			<svg class="h-6 w-6 text-primary-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 				<path
 					stroke-linecap="round"

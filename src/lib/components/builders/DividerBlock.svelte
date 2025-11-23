@@ -1,16 +1,12 @@
 <script lang="ts">
-	let {
-		style = 'solid',
-		thickness = 'medium',
-		spacing = 'medium'
-	} = $props();
-	
+	let { style = 'solid', thickness = 'medium', spacing = 'medium' } = $props();
+
 	const spacingClasses = {
 		small: 'py-4',
 		medium: 'py-8',
 		large: 'py-12'
 	};
-	
+
 	const thicknessClasses = {
 		thin: 'border-t',
 		medium: 'border-t-2',
