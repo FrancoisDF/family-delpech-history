@@ -11,7 +11,7 @@ export const load: PageServerLoad = async (event) => {
 			apiKey: PUBLIC_BUILDER_API_KEY,
 			options: getBuilderSearchParams(event.url.searchParams),
 			userAttributes: {
-				urlPath: event.params.catchall ?? '/'
+				urlPath: '/'
 			}
 		});
 
