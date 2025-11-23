@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { getLastListenedId } from '$lib/progress';
 	import StorySectionCard from './StorySectionCard.svelte';
@@ -12,19 +11,15 @@
 		year: number;
 	}
 
-	interface Props {
-		sections?: Section[];
-	}
+	let { sections = [] }: { sections?: Section[] } = $props();
 
-	let { sections = [] } = $props<Props>();
+	let timelineContainer = $state<HTMLElement>();
+	let lastListenedId = $state<string | null>(null);
+	let activeSectionId = $state<string | null>(null);
+	let progressPercentage = $state(0);
+	let completedCount = $state(0);
 
-	let timelineContainer: HTMLElement;
-	let lastListenedId: string | null = $state(null);
-	let activeSectionId: string | null = $state(null);
-	let progressPercentage: number = $state(0);
-	let completedCount: number = $state(0);
-
-	onMount(() => {
+	$effect(() => {
 		lastListenedId = getLastListenedId();
 		activeSectionId = lastListenedId;
 		updateProgress();
@@ -90,8 +85,8 @@
 			scrollToSection(lastListenedId);
 			// Auto-play the audio after scrolling
 			setTimeout(() => {
-				const audio = document.getElementById(lastListenedId) as HTMLAudioElement;
-				if (audio) {
+				const audio = document.getElementById(lastListenedId || '') as HTMLAudioElement;
+				if (audio && lastListenedId) {
 					audio.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 					// Try to play after a short delay
 					setTimeout(() => {
@@ -125,7 +120,7 @@
 	{/if}
 
 	<!-- Progress Bar -->
-	<div class="sticky top-16 z-20 bg-white px-4 py-4 sm:px-6 lg:px-8 shadow-sm">
+	<div class="sticky top-14 z-20 bg-white px-4 py-4 sm:px-6 lg:px-8 shadow-sm">
 		<div class="mx-auto max-w-5xl">
 			<div class="mb-2 flex items-center justify-between">
 				<span class="text-sm font-medium text-primary-700">Progression: {Math.round(progressPercentage)}%</span>

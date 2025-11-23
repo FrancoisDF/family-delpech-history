@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { fetchBuilderContent } from '$lib/builder';
-	import BlogPostCard from '$lib/components/BlogPostCard.svelte';
+	import BlogGridBlock from '$lib/components/builders/BlogGridBlock.svelte';
+	import type { PageData } from './$types';
 
 	interface BlogPost {
 		id: string;
@@ -11,16 +10,35 @@
 		readTime: string;
 		featuredImage?: string;
 		category?: string;
+		slug?: string;
+		content?: string;
+		author?: string;
 	}
 
-	let blogPosts: BlogPost[] = [
+	interface Block {
+		'@type'?: string;
+		component?: {
+			name: string;
+			options: Record<string, unknown>;
+		};
+		id?: string;
+	}
+
+	let { data } = $props<{ data: PageData }>();
+
+	const componentMap: Record<string, any> = {
+		BlogGridBlock
+	};
+
+	const defaultBlogPosts: BlogPost[] = [
 		{
 			id: '1',
 			title: 'Le Grand Voyage de 1852 : De France en Angleterre',
 			excerpt:
 				'Découvrez le récit fascinant du voyage qui a changé le cours de notre histoire familiale.',
 			date: '1852',
-			readTime: '8 min'
+			readTime: '8 min',
+			category: 'Voyages'
 		},
 		{
 			id: '2',
@@ -28,7 +46,8 @@
 			excerpt:
 				'Une nuit inoubliable à la cour royale qui a marqué le prestige de notre famille à jamais.',
 			date: '1875',
-			readTime: '6 min'
+			readTime: '6 min',
+			category: 'Événements'
 		},
 		{
 			id: '3',
@@ -36,70 +55,55 @@
 			excerpt:
 				'Explorez les documents et lettres cachés qui révèlent les mystères de notre passé.',
 			date: '1890',
-			readTime: '10 min'
+			readTime: '10 min',
+			category: 'Archives'
 		}
 	];
 
-	onMount(async () => {
-		// Fetch blog posts from Builder.io
-		try {
-			const builderPosts = await fetchBuilderContent('blog-post');
-			if (builderPosts && builderPosts.length > 0) {
-				blogPosts = builderPosts.map((post: any) => ({
-					id: post.id,
-					title: post.data?.title || '',
-					excerpt: post.data?.excerpt || '',
-					date: post.data?.date || '',
-					readTime: post.data?.readTime || '',
-					featuredImage: post.data?.featuredImage,
-					category: post.data?.category
-				}));
+	const blogPosts: BlogPost[] = (data.blogPosts && data.blogPosts.length > 0 ? data.blogPosts : defaultBlogPosts) as BlogPost[];
+
+	let blocks: Block[] = [];
+
+	// Parse blocks from blog section
+	if (data.blogSection?.data) {
+		const pageData = data.blogSection.data as Record<string, unknown>;
+		const rawBlocks = pageData.blocks || pageData.blocksString;
+
+		if (typeof rawBlocks === 'string') {
+			try {
+				blocks = JSON.parse(rawBlocks) as Block[];
+			} catch (e) {
+				console.error('Failed to parse blocks:', e);
+				blocks = [];
 			}
-		} catch (error) {
-			console.error('Error fetching blog posts from Builder.io:', error);
+		} else if (Array.isArray(rawBlocks)) {
+			blocks = rawBlocks as Block[];
 		}
-	});
+	}
+
+	// If no blocks from Builder, render default grid
+	const shouldUseBuilderContent = blocks && blocks.length > 0;
 </script>
 
-<div class="min-h-screen bg-gradient-warm">
-	<!-- Page Header -->
-	<section class="border-b border-primary-200 px-4 py-16 sm:px-6 lg:px-8">
-		<div class="mx-auto max-w-4xl text-center">
-			<h1 class="mb-4 font-serif text-5xl font-bold text-primary-900">Histoires de Famille</h1>
-			<p class="text-lg text-primary-700">
-				Plongez dans les récits fascinants de nos ancêtres et découvrez les moments qui ont façonné
-				notre histoire.
-			</p>
-		</div>
-	</section>
+<div class="bg-gradient-warm">
+	{#if shouldUseBuilderContent}
+		<!-- Render blocks from Builder -->
+		<div class="relative">
+			{#each blocks as block (block.id || block.component?.name || Math.random())}
+				{@const Component = block.component?.name ? componentMap[block.component.name] : null}
+				{@const options = block.component?.options || {}}
 
-	<!-- Blog Posts Grid -->
-	<section class="px-4 py-16 sm:px-6 lg:px-8">
-		<div class="mx-auto max-w-6xl">
-			<div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-				{#each blogPosts as post (post.id)}
-					<BlogPostCard
-						id={post.id}
-						title={post.title}
-						excerpt={post.excerpt}
-						date={post.date}
-						readTime={post.readTime}
-						featuredImage={post.featuredImage || ''}
-						category={post.category || ''}
-					/>
-				{/each}
-			</div>
-
-			<!-- CMS Integration Notice -->
-			<div class="mt-16 rounded-xl border-2 border-dashed border-primary-300 bg-primary-50 p-8 text-center">
-				<h3 class="mb-2 font-serif text-xl font-medium text-primary-800">
-					Contenu Géré par Builder.io CMS
-				</h3>
-				<p class="text-primary-700">
-					Cette section est gérée depuis Builder.io CMS pour faciliter la publication et la mise à jour
-					des histoires familiales.
-				</p>
-			</div>
+				{#if Component}
+					<svelte:component this={Component} {...options} posts={blogPosts} />
+				{/if}
+			{/each}
 		</div>
-	</section>
+	{:else}
+		<!-- Default fallback: render basic blog grid -->
+		<BlogGridBlock
+			title="Histoires de Famille"
+			description="Plongez dans les récits fascinants de nos ancêtres et découvrez les moments qui ont façonné notre histoire."
+			posts={blogPosts}
+		/>
+	{/if}
 </div>

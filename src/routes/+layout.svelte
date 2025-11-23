@@ -1,72 +1,59 @@
 <script lang="ts">
 	import '../app.css';
+	import Header from '$lib/components/Header.svelte';
+	import Footer from '$lib/components/Footer.svelte';
+	import type { LayoutData } from './$types';
 
-	let { children } = $props();
-	let isMenuOpen = $state(false);
+	let { data, children } = $props<{ data: LayoutData; children: any }>();
+
+	// Default fallback config
+	interface SiteConfig {
+		siteName?: string;
+		headerLogo?: string;
+		headerLinks?: Array<{ label: string; url: string; ariaLabel?: string }>;
+		footerDescription?: string;
+		footerLinks?: Array<{ label: string; url: string }>;
+		footerInfoTitle?: string;
+		footerInfoLinks?: Array<{ label: string; url: string }>;
+		footerCopyright?: string;
+	}
+
+	const defaultConfig: SiteConfig = {
+		siteName: 'Histoire de Famille',
+		headerLogo: 'Histoire de Famille',
+		headerLinks: [
+			{ label: 'Accueil', url: '/', ariaLabel: 'Retour à la page d\'accueil' },
+			{ label: 'Histoires', url: '/histoires', ariaLabel: 'Voir toutes les histoires' },
+			{ label: 'Questions', url: '/chat', ariaLabel: 'Poser une question à notre assistant' }
+		],
+		footerDescription: 'Découvrez les histoires et les secrets de notre famille à travers 50 livres d\'histoire familiale du XIXe siècle.',
+		footerLinks: [
+			{ label: 'Accueil', url: '/' },
+			{ label: 'Histoires', url: '/histoires' },
+			{ label: 'Questions', url: '/chat' }
+		],
+		footerInfoTitle: 'Informations',
+		footerInfoLinks: [
+			{ label: 'Conditions d\'utilisation', url: '#' },
+			{ label: 'Confidentialité', url: '#' },
+			{ label: 'Contact', url: '#' }
+		],
+		footerCopyright: '© 2024 Histoire de Famille. Tous droits réservés.'
+	};
+
+	// Merge server-loaded config with defaults to ensure all fields are present
+	const config: SiteConfig = {
+		...defaultConfig,
+		...(data.siteConfig || {})
+	};
 </script>
 
 <div class="flex min-h-screen flex-col">
-	<!-- Navigation -->
-	<nav class="sticky top-0 z-50 bg-white shadow-sm border-b border-primary-100">
-		<div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-			<!-- Logo/Title -->
-			<a href="/" class="flex items-center gap-2">
-				<span class="hidden text-lg font-medium text-primary-800 sm:inline">Histoire de Famille</span>
-			</a>
-
-			<!-- Desktop Navigation -->
-			<div class="hidden items-center gap-8 md:flex">
-				<a href="/" class="text-primary-800 transition-colors hover:text-accent">Accueil</a>
-				<a href="/histoires" class="text-primary-800 transition-colors hover:text-accent">Histoires</a>
-				<a href="/chat" class="text-primary-800 transition-colors hover:text-accent">Questions</a>
-			</div>
-
-			<!-- Mobile Menu Button -->
-			<button
-				class="md:hidden"
-				onclick={() => (isMenuOpen = !isMenuOpen)}
-				aria-label="Toggle menu"
-			>
-				<svg class="h-6 w-6 text-primary-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="2"
-						d={isMenuOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'}
-					/>
-				</svg>
-			</button>
-		</div>
-
-		<!-- Mobile Navigation -->
-		{#if isMenuOpen}
-			<div class="border-t border-primary-100 bg-primary-50 px-4 py-4 md:hidden">
-				<div class="flex flex-col gap-4">
-					<a
-						href="/"
-						class="text-primary-800 transition-colors hover:text-accent"
-						onclick={() => (isMenuOpen = false)}
-					>
-						Accueil
-					</a>
-					<a
-						href="/histoires"
-						class="text-primary-800 transition-colors hover:text-accent"
-						onclick={() => (isMenuOpen = false)}
-					>
-						Histoires
-					</a>
-					<a
-						href="/chat"
-						class="text-primary-800 transition-colors hover:text-accent"
-						onclick={() => (isMenuOpen = false)}
-					>
-						Questions
-					</a>
-				</div>
-			</div>
-		{/if}
-	</nav>
+	<!-- Header -->
+	<Header
+		logo={config.headerLogo ?? defaultConfig.headerLogo}
+		links={config.headerLinks ?? defaultConfig.headerLinks}
+	/>
 
 	<!-- Main Content -->
 	<main class="flex-1">
@@ -74,38 +61,14 @@
 	</main>
 
 	<!-- Footer -->
-	<footer class="bg-primary-800 text-white">
-		<div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-			<div class="grid grid-cols-1 gap-8 md:grid-cols-3">
-				<div>
-					<h3 class="mb-4 font-serif text-lg font-medium">Histoire de Famille</h3>
-					<p class="text-sm text-cream/70">
-						Découvrez les histoires et les secrets de notre famille à travers 50 livres d'histoire
-						familiale du XIXe siècle.
-					</p>
-				</div>
-				<div>
-					<h4 class="mb-4 font-serif font-medium">Navigation</h4>
-					<ul class="space-y-2 text-sm">
-						<li><a href="/" class="text-white/70 hover:text-accent">Accueil</a></li>
-						<li><a href="/histoires" class="text-white/70 hover:text-accent">Histoires</a></li>
-						<li><a href="/chat" class="text-white/70 hover:text-accent">Questions</a></li>
-					</ul>
-				</div>
-				<div>
-					<h4 class="mb-4 font-serif font-semibold">Informations</h4>
-					<ul class="space-y-2 text-sm">
-						<li><a href="#" class="text-white/70 hover:text-accent">Conditions d'utilisation</a></li>
-						<li><a href="#" class="text-white/70 hover:text-accent">Confidentialité</a></li>
-						<li><a href="#" class="text-white/70 hover:text-accent">Contact</a></li>
-					</ul>
-				</div>
-			</div>
-			<div class="border-t border-primary-700 pt-8 text-center text-sm text-white/50">
-				<p>&copy; 2024 Histoire de Famille. Tous droits réservés.</p>
-			</div>
-		</div>
-	</footer>
+	<Footer
+		siteName={config.siteName ?? defaultConfig.siteName}
+		description={config.footerDescription ?? defaultConfig.footerDescription}
+		navigationLinks={config.footerLinks ?? defaultConfig.footerLinks}
+		infoTitle={config.footerInfoTitle ?? defaultConfig.footerInfoTitle}
+		infoLinks={config.footerInfoLinks ?? defaultConfig.footerInfoLinks}
+		copyright={config.footerCopyright ?? defaultConfig.footerCopyright}
+	/>
 </div>
 
 <style>

@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-
 	interface ChatMessage {
 		id: string;
 		type: 'user' | 'assistant';
@@ -8,7 +6,7 @@
 		timestamp: Date;
 	}
 
-	let messages: ChatMessage[] = [
+	let messages = $state<ChatMessage[]>([
 		{
 			id: '1',
 			type: 'assistant',
@@ -16,11 +14,11 @@
 				'Bonjour ! Je suis votre assistant IA spécialisé dans l\'histoire de votre famille. N\'hésitez pas à me poser des questions sur nos ancêtres, nos traditions, et les événements importants qui ont marqué notre histoire. Je suis ici pour vous aider à explorer notre héritage familial.',
 			timestamp: new Date()
 		}
-	];
+	]);
 
-	let messageInput = '';
-	let isLoading = false;
-	let chatContainer: HTMLDivElement;
+	let messageInput = $state('');
+	let isLoading = $state(false);
+	let chatContainer = $state<HTMLDivElement>();
 
 	function handleSendMessage() {
 		if (!messageInput.trim()) return;
@@ -59,7 +57,7 @@
 		}, 1000);
 	}
 
-	onMount(() => {
+	$effect(() => {
 		if (chatContainer) {
 			chatContainer.scrollTop = chatContainer.scrollHeight;
 		}

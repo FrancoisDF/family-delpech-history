@@ -10,7 +10,7 @@
 		isActive?: boolean;
 	}
 
-	let { id = '', title = '', description = '', audioUrl = '', year = 1800, isActive = false } = $props<Props>();
+	let { id = '', title = '', description = '', audioUrl = '', year = 1800, isActive = false } = $props();
 
 	let isCompleted: boolean = $state(false);
 

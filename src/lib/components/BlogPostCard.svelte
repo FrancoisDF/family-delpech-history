@@ -1,16 +1,20 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 
-	export let id: string = '';
-	export let title: string = 'Article Sans Titre';
-	export let excerpt: string = '';
-	export let date: string = '';
-	export let readTime: string = '';
-	export let featuredImage: string = '';
-	export let category: string = '';
+	let {
+		id = '',
+		handle = '',
+		title = 'Article Sans Titre',
+		excerpt = '',
+		date = '',
+		readTime = '',
+		featuredImage = '',
+		category = ''
+	} = $props();
 
 	function handleCardClick() {
-		goto(`/histoires/${id}`);
+		const slug = handle || id;
+		goto(`/histoires/${slug}`);
 	}
 </script>
 

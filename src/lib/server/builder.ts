@@ -10,7 +10,7 @@ export interface BuilderContent {
 	[key: string]: unknown;
 }
 
-export async function fetchBuilderContent(
+export async function fetchBuilderContentServer(
 	model: string,
 	options?: {
 		limit?: number;
@@ -45,15 +45,15 @@ export async function fetchBuilderContent(
 		const data = await response.json();
 		return data.results || [];
 	} catch (error) {
-		console.warn(
-			`Could not fetch Builder.io content for model "${model}". Using fallback data. Error:`,
+		console.error(
+			`Could not fetch Builder.io content for model "${model}". Error:`,
 			error instanceof Error ? error.message : error
 		);
 		return [];
 	}
 }
 
-export async function fetchBuilderContentById(
+export async function fetchBuilderContentByIdServer(
 	model: string,
 	id: string
 ): Promise<BuilderContent | null> {
@@ -72,11 +72,47 @@ export async function fetchBuilderContentById(
 			);
 		}
 
-		const data = await response.json();
-		return data.data || null;
+		const responseData = await response.json();
+		// Return the full content object with id, name, data, etc.
+		return (responseData.data || null) as BuilderContent;
 	} catch (error) {
-		console.warn(
+		console.error(
 			`Could not fetch Builder.io content for ${model}/${id}. Error:`,
+			error instanceof Error ? error.message : error
+		);
+		return null;
+	}
+}
+
+export async function fetchBuilderContentByHandleServer(
+	model: string,
+	handle: string
+): Promise<BuilderContent | null> {
+	try {
+		const params = new URLSearchParams({
+			apiKey: BUILDER_API_KEY,
+			limit: '1',
+			query: JSON.stringify({
+				'data.handle': handle
+			})
+		});
+
+		const url = `${BUILDER_API_URL}/${model}?${params.toString()}`;
+		const response = await fetch(url);
+
+		if (!response.ok) {
+			console.error(`Builder.io API Error (${response.status}) for ${model} handle:${handle}`);
+			throw new Error(
+				`Builder.io API error: ${response.status} ${response.statusText}`
+			);
+		}
+
+		const data = await response.json();
+		const results = data.results || [];
+		return results.length > 0 ? results[0] : null;
+	} catch (error) {
+		console.error(
+			`Could not fetch Builder.io content for ${model} with handle "${handle}". Error:`,
 			error instanceof Error ? error.message : error
 		);
 		return null;

@@ -1,0 +1,46 @@
+import type { ComponentInfo } from '@builder.io/sdk-svelte';
+import HeroBlock from './HeroBlock.svelte';
+
+export const heroBlockInfo: ComponentInfo = {
+	component: HeroBlock,
+	name: 'HeroBlock',
+	tag: 'Page Sections',
+	inputs: [
+		{
+			name: 'title',
+			type: 'string',
+			defaultValue: 'Histoire de Famille'
+		},
+		{
+			name: 'description',
+			type: 'string',
+			defaultValue: 'Default description'
+		},
+		{
+			name: 'primaryButtonText',
+			type: 'string',
+			defaultValue: 'Primary Button'
+		},
+		{
+			name: 'primaryButtonLink',
+			type: 'string',
+			defaultValue: '/'
+		},
+		{
+			name: 'secondaryButtonText',
+			type: 'string',
+			defaultValue: 'Secondary Button'
+		},
+		{
+			name: 'secondaryButtonLink',
+			type: 'string',
+			defaultValue: '/'
+		},
+		{
+			name: 'backgroundImage',
+			type: 'file',
+			allowedFileTypes: ['jpeg', 'jpg', 'png', 'svg', 'webp'],
+			defaultValue: ''
+		}
+	]
+};
