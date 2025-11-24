@@ -41,7 +41,6 @@ import { ctaBlockInfo } from './CTABlock.info';
 import { featuresBlockInfo } from './FeaturesBlock.info';
 import { timelineBlockInfo } from './TimelineBlock.info';
 import { textSectionBlockInfo } from './TextSectionBlock.info';
-import { imageTextBlockInfo } from './ImageTextBlock.info';
 import { quoteBlockInfo } from './QuoteBlock.info';
 import { statsBlockInfo } from './StatsBlock.info';
 import { imageGalleryBlockInfo } from './ImageGalleryBlock.info';
@@ -63,7 +62,6 @@ export const builderComponents: ComponentInfo[] = [
 	articleSectionBlockInfo,
 	quoteBlockInfo,
 	calloutBlockInfo,
-	imageTextBlockInfo,
 	videoEmbedBlockInfo,
 	dividerBlockInfo,
 	accordionBlockInfo,
@@ -93,7 +91,6 @@ export {
 	featuresBlockInfo,
 	timelineBlockInfo,
 	textSectionBlockInfo,
-	imageTextBlockInfo,
 	quoteBlockInfo,
 	statsBlockInfo,
 	imageGalleryBlockInfo,
@@ -116,7 +113,6 @@ Builder.register('insertMenu', {
 		{ name: articleSectionBlockInfo.tag, item: articleSectionBlockInfo.name },
 		{ name: quoteBlockInfo.tag, item: quoteBlockInfo.name },
 		{ name: calloutBlockInfo.tag, item: calloutBlockInfo.name },
-		{ name: imageTextBlockInfo.tag, item: imageTextBlockInfo.name },
 		{ name: videoEmbedBlockInfo.tag, item: videoEmbedBlockInfo.name },
 		{ name: dividerBlockInfo.tag, item: dividerBlockInfo.name },
 		{ name: accordionBlockInfo.tag, item: accordionBlockInfo.name },

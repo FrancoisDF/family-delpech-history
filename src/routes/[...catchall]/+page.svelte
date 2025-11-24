@@ -5,6 +5,7 @@
 	import PageNotFound from '$lib/components/PageNotFound.svelte';
 
 	import type { PageData } from './$types';
+	import CTABlock from '$lib/components/builders/CTABlock.svelte';
 
 	let { data }: { data: PageData } = $props();
 	const pageTitle = data?.pageContent?.data?.title || 'Histoire de Famille';
@@ -28,4 +29,13 @@
 		apiKey={PUBLIC_BUILDER_API_KEY}
 		customComponents={builderComponents}
 	/>
+
+	<!-- {#if data.siteConfig }
+		<CTABlock
+			title={data.siteConfig.ctaBlockTitle as string}
+			description={data.siteConfig.ctaBlockDescription as string}
+			buttonLink={data.siteConfig.ctaBlockButtonLink as string}
+			buttonText={data.siteConfig.ctaBlockButtonText as string}
+		/>
+	{/if} -->
 {/if}

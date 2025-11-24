@@ -6,6 +6,7 @@
 	import ArticleCarouselBlock from '$lib/components/builders/ArticleCarouselBlock.svelte';
 	import ArticleHeaderBlock from '$lib/components/builders/ArticleHeaderBlock.svelte';
 	import PageNotFound from '$lib/components/PageNotFound.svelte';
+	import CTABlock from '$lib/components/builders/CTABlock.svelte';
 
 	let { data } = $props<{ data: PageData }>();
 
@@ -47,6 +48,14 @@
 			title="Articles Connexes"
 			articles={data.relatedArticles}
 			itemsPerSlide={3}
+		/>
+	{/if}
+	{#if data.siteConfig }
+		<CTABlock
+			title={data.siteConfig.ctaBlockTitle as string}
+			description={data.siteConfig.ctaBlockDescription as string}
+			buttonLink={data.siteConfig.ctaBlockButtonLink as string}
+			buttonText={data.siteConfig.ctaBlockButtonText as string}
 		/>
 	{/if}
 {:else}
