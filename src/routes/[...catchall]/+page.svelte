@@ -8,10 +8,10 @@
 	import CTABlock from '$lib/components/builders/CTABlock.svelte';
 
 	let { data }: { data: PageData } = $props();
-	const pageTitle = data?.pageContent?.data?.title || 'Histoire de Famille';
+	const pageTitle = data?.pageContent?.data?.title || '';
 	const pageDescription =
-		data?.pageContent?.data?.description ||
-		'Découvrez les histoires et les secrets de notre famille à travers 50 livres d\'histoire familiale du XIXe siècle.';
+		data?.pageContent?.data?.description || ''
+
 </script>
 
 <svelte:head>
@@ -30,12 +30,12 @@
 		customComponents={builderComponents}
 	/>
 
-	<!-- {#if data.siteConfig }
+	{#if data.siteConfig }
 		<CTABlock
 			title={data.siteConfig.ctaBlockTitle as string}
 			description={data.siteConfig.ctaBlockDescription as string}
 			buttonLink={data.siteConfig.ctaBlockButtonLink as string}
 			buttonText={data.siteConfig.ctaBlockButtonText as string}
 		/>
-	{/if} -->
+	{/if}
 {/if}

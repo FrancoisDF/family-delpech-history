@@ -13,6 +13,10 @@
 		backgroundImage = ''
 	} = $props();
 
+		// minimal binding target for bind:this in markup (keeps file compiling when
+		// the more sophisticated scroll effect is disabled in this file)
+		let heroEl: HTMLElement | undefined;
+
 	// // reactive state used for the background transform
 	// let bgTranslate = $state(0); // px
 	// let bgScale = $state(1); // unitless
@@ -138,7 +142,7 @@
 		<div class="absolute inset-0 overflow-hidden" aria-hidden="true">
 			<div
 				class="absolute inset-0 bg-cover bg-center"
-				style={`background-image: url('${backgroundImage}'); transform-origin: center center; will-change: transform; transform: scale(1.05); pointer-events: none;`}
+				style={`background-image: url('${backgroundImage}'); transform-origin: center center; will-change: transform, filter; transform: scale(1.05); filter: grayscale(100%); pointer-events: none;`}
 			></div>
 		</div>
 	{/if}

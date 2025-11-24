@@ -16,16 +16,18 @@ export const load: PageServerLoad = async (event) => {
 		});
 
 		// Helper: inspect the landing page content for a TimelineBlock component
-
 		const blocks = pageContent?.data?.blocks ?? [];
 
 		const hasTimeline =
 			Array.isArray(blocks) && blocks.some((b: any) => b?.component?.name === 'TimelineBlock');
+		const hasBlogGrid =
+			Array.isArray(blocks) && blocks.some((b: any) => b?.component?.name === 'BlogGridBlock');
 
 		// Only fetch `stories` when the page actually includes a TimelineBlock
-		const storySectionsRaw = hasTimeline
-			? await fetchBuilderContentServer('stories', { limit: 100 })
-			: [];
+		const [storySectionsRaw, blogArticles] = await Promise.all([
+			hasTimeline ? fetchBuilderContentServer('stories', { limit: 100 }) : Promise.resolve([]),
+			hasBlogGrid ? fetchBuilderContentServer('blog-articles', { limit: 100 }) : Promise.resolve([])
+		]);
 
 		const storySections = storySectionsRaw
 			.map((section: any) => ({
@@ -39,13 +41,27 @@ export const load: PageServerLoad = async (event) => {
 
 		return {
 			pageContent,
-			storySections
+			storySections,
+			blogArticles: blogArticles.map((post: any) => ({
+				id: post.id,
+				title: post.data?.title || '',
+				excerpt: post.data?.excerpt || '',
+				date: post.data?.date || '',
+				readTime: post.data?.readTime || '',
+				featuredImage: post.data?.featuredImage,
+				category: post.data?.category,
+				slug: post.name,
+				handle: post.data?.handle || post.name,
+				content: post.data?.content,
+				author: post.data?.author
+			}))
 		};
 	} catch (error) {
 		console.error('Error loading page data:', error);
 		return {
 			pageContent: null,
-			storySections: []
+			storySections: [],
+			blogArticles: []
 		};
 	}
 };
