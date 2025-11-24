@@ -21,9 +21,9 @@
 	<div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
 		<!-- Logo/Title -->
 		<a href="/" class="flex items-center gap-2">
-			<span class="hidden text-lg font-medium text-primary-800 sm:inline">{headerLogo}</span>
+			<span class="text-lg font-medium text-primary-800 sm:inline">{headerLogo}</span>
 		</a>
-
+		
 		<!-- Desktop Navigation -->
 		<div class="hidden items-center gap-8 md:flex">
 			{#each headerLinks as link (link.url)}

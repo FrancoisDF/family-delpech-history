@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { resolve } from '$app/paths';
+	import { browser } from '$app/environment';
 
 	let {
 		title = 'Histoire de Famille',
@@ -12,66 +13,120 @@
 		backgroundImage = ''
 	} = $props();
 
-	// reactive state used for the background transform
-	let bgTranslate = $state(0); // px
-	let bgScale = $state(1); // unitless
+	// // reactive state used for the background transform
+	// let bgTranslate = $state(0); // px
+	// let bgScale = $state(1); // unitless
 
-	// reference to the root section so we can calculate intersection/scroll
-	let heroEl = $state<HTMLElement>();
+	// // reference to the root section so we can calculate intersection/scroll
+	// let heroEl: HTMLElement | undefined = $state();
 
-	// RAF id for cleanup
-	let rafId: number | null = null;
+	// // RAF id for cleanup
+	// let rafId: number | null = null;
 
-	// respect prefers-reduced-motion users
-	let prefersReducedMotion = false;
+	// // respect prefers-reduced-motion users
+	// let prefersReducedMotion = false;
 
-	function clamp(v: number, a = 0, b = 1) {
-		return Math.max(a, Math.min(b, v));
-	}
+	// function clamp(v: number, a = 0, b = 1) {
+	// 	return Math.max(a, Math.min(b, v));
+	// }
 
-	function update() {
-		if (!heroEl || prefersReducedMotion) return;
+	// // Return sensible effect strength values depending on viewport width so the
+	// // effect is softer on phones and stronger on larger screens.
+	// function getEffectStrength() {
+	// 	const w = (typeof window !== 'undefined' && (window.innerWidth || document.documentElement.clientWidth)) || 1024;
 
-		const rect = heroEl.getBoundingClientRect();
-		const vh = window.innerHeight || document.documentElement.clientHeight;
+	// 	if (w < 640) {
+	// 		// mobile — subtle
+	// 		return { maxTranslate: 60, maxScaleDelta: 0.25 };
+	// 	}
+	// 	if (w < 1024) {
+	// 		// tablet / small desktop — medium
+	// 		return { maxTranslate: 100, maxScaleDelta: 0.45 };
+	// 	}
 
-		// progress 0 -> 1 as the hero moves into view (when top at bottom -> top at top)
-		// clamp to [0, 1]
-		const progress = clamp(1 - rect.top / vh, 0, 1);
+	// 	// large desktops — stronger effect
+	// 	return { maxTranslate: 140, maxScaleDelta: 0.6 };
+	// }
 
-		// tweak these to control effect strength
-		const maxTranslate = 40; // px to move up
-		const maxScaleDelta = 0.06; // scale up to 1.06
+	// function update() {
+	// 	if (!heroEl || !browser || prefersReducedMotion) return;
 
-		bgTranslate = -Math.round(progress * maxTranslate);
-		bgScale = 1 + progress * maxScaleDelta;
-	}
+	// 	const rect = heroEl.getBoundingClientRect();
+	// 	const vh = window.innerHeight || document.documentElement.clientHeight;
 
-	function onScroll() {
-		// throttle via RAF
-		if (rafId != null) return;
-		rafId = requestAnimationFrame(() => {
-			update();
-			rafId = null;
-		});
-	}
+	// 	// progress 0 -> 1 as the hero moves into view (when top at bottom -> top at top)
+	// 	// clamp to [0, 1]
+	// 	const progress = 1 - (rect.top - 61) / vh ;
 
-	onMount(() => {
-		prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	// 	// effect strength values are computed by `getEffectStrength()` defined
+	// 	// at module scope so other handlers (resize) can also read the same
+	// 	// recommended values.
+	// 	const { maxTranslate, maxScaleDelta } = getEffectStrength();
 
-		// initial update
-		update();
+	// 	// allow fractional transform for smoother motion and clamp to the max
+	// 	bgTranslate = progress * maxTranslate;
+	// 	bgScale = 0.8 + progress * maxScaleDelta;
 
-		// listen on scroll and resize for responsiveness
-		window.addEventListener('scroll', onScroll, { passive: true });
-		window.addEventListener('resize', onScroll);
+	// 	console.log(rect, vh);
+	// 	console.log(bgTranslate, bgScale, progress);
+	// }
 
-		return () => {
-			window.removeEventListener('scroll', onScroll);
-			window.removeEventListener('resize', onScroll);
-			if (rafId != null) cancelAnimationFrame(rafId);
-		};
-	});
+	// function onScroll() {
+	// 	// throttle via RAF
+	// 	if (rafId != null) return;
+	// 	rafId = requestAnimationFrame(() => {
+	// 		update();
+	// 		rafId = null;
+	// 	});
+	// }
+
+	// onMount(() => {
+	// 	if (!browser) return;
+
+	// 	prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+	// 	// When the hero is already visible in the viewport on mount, do a single
+	// 	// update so the background position is correct immediately. We still
+	// 	// rely on the scroll handler for continuous updates (keeping the effect
+	// 	// driven by user scroll), and respect prefers-reduced-motion.
+	// 	try {
+	// 		// if the hero is anywhere in the viewport, set the initial state once
+	// 		const rect = heroEl?.getBoundingClientRect();
+	// 		if (rect && rect.top < window.innerHeight && rect.bottom > 0 && !prefersReducedMotion) {
+	// 			update();
+	// 		}
+	// 	} catch (e) {
+	// 		// defensive — if anything goes wrong, silently skip the initial update
+	// 	}
+
+	// 	// listen on scroll and resize for responsiveness
+	// 	window.addEventListener('scroll', onScroll, { passive: true });
+	// 	// on resize we should ensure the effect strength is recalculated for
+	// 	// the new width. We update the transforms as well so the visuals stay
+	// 	// correct when the user resizes the window.
+	// 	function onResize() {
+	// 		// recompute effect strength on resize
+	// 		try {
+	// 			const { maxTranslate: newMaxT, maxScaleDelta: newMaxS } = getEffectStrength();
+	// 			// reassign these outer constants by updating a small local mapping
+	// 			// (we keep using the local names inside update() via closure in this file)
+	// 			// To reflect the change for subsequent update() calls, we update
+	// 			// values by redefining the function getEffectStrength; a simple
+	// 			// workaround is to update bgTranslate/bgScale immediately.
+	// 			update();
+	// 		} catch (e) {
+	// 			/* noop */
+	// 		}
+	// 	}
+
+	// 	window.addEventListener('resize', onResize);
+
+	// 	return () => {
+	// 		window.removeEventListener('scroll', onScroll);
+	// 		window.removeEventListener('resize', onResize);
+	// 		if (rafId != null) cancelAnimationFrame(rafId);
+	// 	};
+	// });
 </script>
 
 <section
@@ -82,8 +137,8 @@
 		<!-- Background layer: transforms on scroll for a parallax-esque, scale-up effect -->
 		<div class="absolute inset-0 overflow-hidden" aria-hidden="true">
 			<div
-				class="absolute inset-0 bg-cover bg-center will-change-transform"
-				style={`background-image: url('${backgroundImage}'); transform: translateY(${bgTranslate}px) scale(${bgScale});`}
+				class="absolute inset-0 bg-cover bg-center"
+				style={`background-image: url('${backgroundImage}'); transform-origin: center center; will-change: transform; transform: scale(1.05); pointer-events: none;`}
 			></div>
 		</div>
 	{/if}

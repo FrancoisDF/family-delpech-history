@@ -22,17 +22,17 @@
 	$effect(() => {
 		lastListenedId = getLastListenedId();
 		activeSectionId = lastListenedId;
-		updateProgress();
+		// updateProgress();
 
 		// Scroll to last listened section if exists
-		if (lastListenedId && timelineContainer) {
-			setTimeout(() => {
-				const activeElement = document.getElementById(`section-${lastListenedId}`);
-				if (activeElement) {
-					activeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-				}
-			}, 100);
-		}
+		// if (lastListenedId && timelineContainer) {
+		// 	setTimeout(() => {
+		// 		const activeElement = document.getElementById(`section-${lastListenedId}`);
+		// 		if (activeElement) {
+		// 			activeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+		// 		}
+		// 	}, 100);
+		// }
 
 		// Listen for progress updates to sync the progress bar
 		const handleProgressUpdated = () => {
