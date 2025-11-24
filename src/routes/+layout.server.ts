@@ -2,7 +2,7 @@ import { fetchBuilderContentServer } from '$lib/server/builder';
 import type { LayoutServerLoad } from './$types';
 
 // Ensure all routes use trailing slashes (e.g. `/about/`)
-export const trailingSlash = 'always';
+// export const trailingSlash = 'always';
 
 export const load: LayoutServerLoad = async () => {
 	try {
