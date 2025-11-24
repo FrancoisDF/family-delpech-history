@@ -1,6 +1,6 @@
 {
   "devCommand": "npm run dev",
-  "serverUrl": "http://localhost:5173",
+  "serverUrl": "http://localhost:5174",
   "commitMode": "commits",
   "isLocal": true,
   "allowedCommands": [

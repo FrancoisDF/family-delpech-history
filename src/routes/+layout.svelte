@@ -2,9 +2,14 @@
 	import '../app.css';
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
+	import { page } from '$app/state';
+	import { fade } from 'svelte/transition';
 	import type { LayoutData } from './$types';
 
 	let { data, children } = $props<{ data: LayoutData; children: any }>();
+
+	// Track the current page path to trigger transitions
+	let currentPath = $derived(page.url.pathname);
 
 	// Default fallback config
 	interface SiteConfig {
@@ -57,9 +62,11 @@
 	/>
 
 	<!-- Main Content -->
-	<main class="flex-1">
-		{@render children()}
-	</main>
+	{#key currentPath}
+		<main class="flex-1" transition:fade={{ duration: 300 }}>
+			{@render children()}
+		</main>
+	{/key}
 
 	<!-- Footer -->
 	<Footer
