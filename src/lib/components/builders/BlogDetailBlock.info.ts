@@ -1,7 +1,7 @@
-import type { ComponentInfo } from '@builder.io/sdk-svelte';
+import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import BlogDetailBlock from './BlogDetailBlock.svelte';
 
-export const blogDetailBlockInfo: ComponentInfo = {
+export const blogDetailBlockInfo: RegisteredComponent = {
 	component: BlogDetailBlock,
 	name: 'BlogDetailBlock',
 	tag: 'Article Pages',

@@ -1,7 +1,7 @@
-import type { ComponentInfo } from '@builder.io/sdk-svelte';
+import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import HeroBlock from './HeroBlock.svelte';
 
-export const heroBlockInfo: ComponentInfo = {
+export const heroBlockInfo: RegisteredComponent = {
 	component: HeroBlock,
 	name: 'HeroBlock',
 	tag: 'Hero & Headers',

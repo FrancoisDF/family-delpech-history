@@ -30,7 +30,7 @@
  *    - BlogDetailBlock
  */
 
-import type { ComponentInfo } from '@builder.io/sdk-svelte';
+import type { RegisteredComponent, RegisteredComponent } from '@builder.io/sdk-svelte';
 import { heroBlockInfo } from './HeroBlock.info';
 import { blogGridBlockInfo } from './BlogGridBlock.info';
 import { articleCarouselBlockInfo } from './ArticleCarouselBlock.info';
@@ -52,9 +52,11 @@ import { accordionBlockInfo } from './AccordionBlock.info';
 import { imageBlockInfo } from './ImageBlock.info';
 import { richTextBlockInfo } from './RichTextBlock.info';
 import { articleSectionBlockInfo } from './ArticleSectionBlock.info';
+import { storySectionCardInfo } from './StorySectionCard.info';
+import { pdfCarouselBlockInfo } from './PDFCarouselBlock.info';
 import { Builder } from '@builder.io/sdk';
 
-export const builderComponents: ComponentInfo[] = [
+export const builderComponents: RegisteredComponent[] = [
 	// Article Content Components
 	textSectionBlockInfo,
 	imageBlockInfo,
@@ -66,6 +68,8 @@ export const builderComponents: ComponentInfo[] = [
 	dividerBlockInfo,
 	accordionBlockInfo,
 	articleHeaderBlockInfo,
+	storySectionCardInfo,
+	articleContentBlockInfo,
 
 	// Page Section Components
 	heroBlockInfo,
@@ -77,7 +81,8 @@ export const builderComponents: ComponentInfo[] = [
 	statsBlockInfo,
 	imageGalleryBlockInfo,
 	twoColumnTextBlockInfo,
-	blogDetailBlockInfo
+	blogDetailBlockInfo,
+	pdfCarouselBlockInfo
 ];
 
 export {
@@ -101,7 +106,9 @@ export {
 	accordionBlockInfo,
 	imageBlockInfo,
 	richTextBlockInfo,
-	articleSectionBlockInfo
+	articleSectionBlockInfo,
+	storySectionCardInfo,
+	pdfCarouselBlockInfo
 };
 
 Builder.register('insertMenu', {
@@ -116,7 +123,9 @@ Builder.register('insertMenu', {
 		{ name: videoEmbedBlockInfo.tag, item: videoEmbedBlockInfo.name },
 		{ name: dividerBlockInfo.tag, item: dividerBlockInfo.name },
 		{ name: accordionBlockInfo.tag, item: accordionBlockInfo.name },
-		{ name: articleContentBlockInfo.tag, item: articleContentBlockInfo.name }
+		{ name: articleContentBlockInfo.tag, item: articleContentBlockInfo.name },
+		{ name: storySectionCardInfo.tag, item: storySectionCardInfo.name },
+		{ name: pdfCarouselBlockInfo.tag, item: pdfCarouselBlockInfo.name }
 	]
 });
 Builder.register('insertMenu', {
@@ -131,6 +140,29 @@ Builder.register('insertMenu', {
 		{ name: statsBlockInfo.tag, item: statsBlockInfo.name },
 		{ name: imageGalleryBlockInfo.tag, item: imageGalleryBlockInfo.name },
 		{ name: twoColumnTextBlockInfo.tag, item: twoColumnTextBlockInfo.name },
-		{ name: blogDetailBlockInfo.tag, item: blogDetailBlockInfo.name }
+		{ name: blogDetailBlockInfo.tag, item: blogDetailBlockInfo.name },
 	]
 });
+
+// // Register each component with Builder's SDK so components are available
+// // inside the Builder editor (and when rendering content).
+// // NOTE: registerComponent is the Svelte helper that wires the Svelte
+// // component implementation to the Builder RegisteredComponent metadata.
+// builderComponents.forEach((RegisteredComponent) => {
+// 	// RegisteredComponent objects in this repository include a `component` field
+// 	// pointing to the Svelte component implementation — but the
+// 	// SDK's RegisteredComponent typings may not include it. Use a safe any-cast
+// 	// so registrations work at runtime without breaking type checks.
+// 	const comp = (RegisteredComponent as any).component;
+// 	if (comp) {
+// 		try {
+// 			// Use Builder.registerComponent (runtime API) to register the
+// 			// Svelte component implementation along with its metadata.
+// 			// Cast to any to avoid TS issues with the SDK typings.
+// 			(Builder as any).registerComponent(comp, RegisteredComponent as any);
+// 		} catch (err) {
+// 			// eslint-disable-next-line no-console
+// 			console.warn('Builder registration failed for', (RegisteredComponent as any).name, err);
+// 		}
+// 	}
+// });

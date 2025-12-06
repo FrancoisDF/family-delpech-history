@@ -29,7 +29,6 @@
 	role="button"
 	tabindex="0"
 >
-	GNNNNNNNNNNN NNQNQDQD
 	<!-- Featured Image -->
 	<div class="relative h-56 overflow-hidden bg-gradient-to-br from-primary-100 to-primary-200">
 		{#if featuredImage}

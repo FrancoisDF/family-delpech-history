@@ -1,7 +1,7 @@
-import type { ComponentInfo } from '@builder.io/sdk-svelte';
+import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import ArticleHeaderBlock from './ArticleHeaderBlock.svelte';
 
-export const articleHeaderBlockInfo: ComponentInfo = {
+export const articleHeaderBlockInfo: RegisteredComponent = {
 	component: ArticleHeaderBlock,
 	name: 'ArticleHeaderBlock',
 	tag: 'Headers & Titles',

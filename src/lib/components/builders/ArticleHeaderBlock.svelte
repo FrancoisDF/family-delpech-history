@@ -6,8 +6,23 @@
 		readTime = '',
 		author = '',
 		category = '',
-		featuredImage = ''
+		featuredImage = '',
+		pdfFile = '',
+		onOpenPDFModal
 	} = $props();
+
+	function handleDownload() {
+		const link = document.createElement('a');
+		link.href = pdfFile;
+		link.download = `${title}.pdf`;
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+	}
+
+	$effect(() => {
+		console.log('ArticleHeaderBlock pdfFile:', pdfFile);
+	});
 </script>
 
 <div class="bg-gradient-warm">
@@ -26,17 +41,17 @@
 		</a>
 	</div>
 
-	<!-- Featured Image -->
-	{#if featuredImage}
-		<div class="mx-auto max-w-4xl overflow-hidden rounded-xl">
-			<img src={featuredImage} alt={title} class="h-96 w-full object-cover" />
-		</div>
-	{/if}
-
+	
 	<!-- Article Header -->
 	<div class="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
 		<div class="rounded-xl bg-white p-8 shadow-lg md:p-12">
-			<h1 class="mb-4 font-serif text-4xl font-bold text-primary-900 md:text-5xl">{title}</h1>
+			<!-- Featured Image -->
+			{#if featuredImage}
+				<div class="mx-auto max-w-4xl overflow-hidden rounded-xl">
+					<img src={featuredImage} alt={title} class="h-96 w-full object-cover" />
+				</div>
+			{/if}
+			<h1 class="mb-4 font-serif text-4xl font-bold text-primary-900 md:text-5xl pt-6">{title}</h1>
 
 			<!-- Meta Information -->
 			<div class="flex flex-wrap items-center gap-4 border-b border-primary-200 pb-6">
@@ -64,6 +79,42 @@
 				<p class="mt-6 text-xl italic leading-relaxed text-primary-700">
 					{excerpt}
 				</p>
+			{/if}
+
+			<!-- PDF Actions -->
+			{#if pdfFile}
+				<div class="mt-8 flex gap-3">
+					<button
+						onclick={() => onOpenPDFModal?.(pdfFile, title)}
+						class="inline-flex items-center gap-2 rounded-lg bg-primary-700 px-6 py-3 font-semibold text-white transition-colors hover:bg-primary-800"
+						type="button"
+					>
+						<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+							/>
+						</svg>
+						Voir le PDF
+					</button>
+					<button
+						onclick={handleDownload}
+						class="inline-flex items-center gap-2 rounded-lg border-2 border-primary-700 px-6 py-3 font-semibold text-primary-700 transition-colors hover:bg-primary-50"
+						type="button"
+					>
+						<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+							/>
+						</svg>
+						Télécharger
+					</button>
+				</div>
 			{/if}
 		</div>
 	</div>

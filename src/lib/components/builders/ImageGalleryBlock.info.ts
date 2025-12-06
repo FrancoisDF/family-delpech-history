@@ -1,7 +1,7 @@
-import type { ComponentInfo } from '@builder.io/sdk-svelte';
+import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import ImageGalleryBlock from './ImageGalleryBlock.svelte';
 
-export const imageGalleryBlockInfo: ComponentInfo = {
+export const imageGalleryBlockInfo: RegisteredComponent = {
 	component: ImageGalleryBlock,
 	name: 'ImageGalleryBlock',
 	tag: 'Galleries & Collections',

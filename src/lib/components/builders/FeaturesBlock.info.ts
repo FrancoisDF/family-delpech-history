@@ -1,7 +1,7 @@
-import type { ComponentInfo } from '@builder.io/sdk-svelte';
+import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import FeaturesBlock from './FeaturesBlock.svelte';
 
-export const featuresBlockInfo: ComponentInfo = {
+export const featuresBlockInfo: RegisteredComponent = {
 	component: FeaturesBlock,
 	name: 'FeaturesBlock',
 	tag: 'Features & Benefits',

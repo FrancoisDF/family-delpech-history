@@ -1,7 +1,7 @@
-import type { ComponentInfo } from '@builder.io/sdk-svelte';
+import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import ArticleSectionBlock from './ArticleSectionBlock.svelte';
 
-export const articleSectionBlockInfo: ComponentInfo = {
+export const articleSectionBlockInfo: RegisteredComponent = {
 	component: ArticleSectionBlock,
 	name: 'ArticleSectionBlock',
 	tag: 'Content Sections',

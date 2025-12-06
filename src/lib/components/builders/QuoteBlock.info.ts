@@ -1,7 +1,7 @@
-import type { ComponentInfo } from '@builder.io/sdk-svelte';
+import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import QuoteBlock from './QuoteBlock.svelte';
 
-export const quoteBlockInfo: ComponentInfo = {
+export const quoteBlockInfo: RegisteredComponent = {
 	component: QuoteBlock,
 	name: 'QuoteBlock',
 	tag: 'Quotes & Highlights',

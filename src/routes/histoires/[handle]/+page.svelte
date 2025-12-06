@@ -7,10 +7,20 @@
 	import ArticleHeaderBlock from '$lib/components/builders/ArticleHeaderBlock.svelte';
 	import PageNotFound from '$lib/components/PageNotFound.svelte';
 	import CTABlock from '$lib/components/builders/CTABlock.svelte';
+	import PDFModal from '$lib/components/PDFModal.svelte';
 
 	let { data } = $props<{ data: PageData }>();
 
 	const post = data.post;
+	let isPDFModalOpen = $state(false);
+	let pdfModalUrl = $state('');
+	let pdfModalTitle = $state('');
+
+	function openPDFModal(url: string, title: string) {
+		pdfModalUrl = url;
+		pdfModalTitle = title;
+		isPDFModalOpen = true;
+	}
 
 	const pageTitle = post?.data?.title
 		? `${post.data.title} - Histoire de Famille`
@@ -19,6 +29,7 @@
 		post?.data?.excerpt ||
 		'Découvrez les histoires et les secrets de notre famille à travers 50 livres d\'histoire familiale du XIXe siècle.';
 </script>
+
 
 <svelte:head>
 	<title>{pageTitle}</title>
@@ -34,6 +45,8 @@
 		category={post.data?.category || ''}
 		featuredImage={post.data?.featuredImage || ''}
 		author={post.data?.author || ''}
+		pdfFile={post.data?.pdfFile || ''}
+		onOpenPDFModal={openPDFModal}
 	/>
 
 	<Content
@@ -58,6 +71,8 @@
 			buttonText={data.siteConfig.ctaBlockButtonText as string}
 		/>
 	{/if}
+
+	<PDFModal isOpen={isPDFModalOpen} pdfUrl={pdfModalUrl} title={pdfModalTitle} />
 {:else}
 	<PageNotFound
 		title="Histoire non trouvée"

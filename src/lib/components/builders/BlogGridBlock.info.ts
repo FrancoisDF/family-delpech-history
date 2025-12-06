@@ -1,7 +1,7 @@
-import type { ComponentInfo } from '@builder.io/sdk-svelte';
+import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import BlogGridBlock from './BlogGridBlock.svelte';
 
-export const blogGridBlockInfo: ComponentInfo = {
+export const blogGridBlockInfo: RegisteredComponent = {
 	component: BlogGridBlock,
 	name: 'BlogGridBlock',
 	tag: 'Content Grids',

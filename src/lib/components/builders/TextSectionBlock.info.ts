@@ -1,7 +1,7 @@
-import type { ComponentInfo } from '@builder.io/sdk-svelte';
+import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import TextSectionBlock from './TextSectionBlock.svelte';
 
-export const textSectionBlockInfo: ComponentInfo = {
+export const textSectionBlockInfo: RegisteredComponent = {
 	component: TextSectionBlock,
 	name: 'TextSectionBlock',
 	tag: 'Text & Paragraphs',

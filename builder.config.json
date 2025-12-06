@@ -45,5 +45,6 @@
     "sleep *",
     "netlify *"
   ],
-  "command": "pnpm dev"
+  "command": "pnpm dev",
+  "autoDetectDevServer": true
 }

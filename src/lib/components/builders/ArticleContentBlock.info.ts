@@ -1,8 +1,8 @@
-import type { ComponentInfo } from '@builder.io/sdk-svelte';
+import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import ArticleContentBlock from './ArticleContentBlock.svelte';
 
-export const articleContentBlockInfo: ComponentInfo = {
-	component: ArticleContentBlock,
+export const articleContentBlockInfo: RegisteredComponent = {
+	// component: ArticleContentBlock,
 	name: 'ArticleContentBlock',
 	tag: 'Text & Paragraphs',
 	inputs: [

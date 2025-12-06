@@ -1,7 +1,7 @@
-import type { ComponentInfo } from '@builder.io/sdk-svelte';
+import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import AccordionBlock from './AccordionBlock.svelte';
 
-export const accordionBlockInfo: ComponentInfo = {
+export const accordionBlockInfo: RegisteredComponent = {
 	component: AccordionBlock,
 	name: 'AccordionBlock',
 	tag: 'Interactive Elements',

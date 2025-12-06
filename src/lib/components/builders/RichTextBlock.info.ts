@@ -1,7 +1,7 @@
-import type { ComponentInfo } from '@builder.io/sdk-svelte';
+import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import RichTextBlock from './RichTextBlock.svelte';
 
-export const richTextBlockInfo: ComponentInfo = {
+export const richTextBlockInfo: RegisteredComponent = {
 	component: RichTextBlock,
 	name: 'RichTextBlock',
 	tag: 'Rich Text & Markdown',

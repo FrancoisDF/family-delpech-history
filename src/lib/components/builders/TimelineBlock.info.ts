@@ -1,7 +1,7 @@
-import type { ComponentInfo } from '@builder.io/sdk-svelte';
+import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import TimelineBlock from './TimelineBlock.svelte';
 
-export const timelineBlockInfo: ComponentInfo = {
+export const timelineBlockInfo: RegisteredComponent = {
 	component: TimelineBlock,
 	name: 'TimelineBlock',
 	tag: 'Timeline & History',

@@ -1,7 +1,7 @@
-import type { ComponentInfo } from '@builder.io/sdk-svelte';
+import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import StatsBlock from './StatsBlock.svelte';
 
-export const statsBlockInfo: ComponentInfo = {
+export const statsBlockInfo: RegisteredComponent = {
 	component: StatsBlock,
 	name: 'StatsBlock',
 	tag: 'Stats & Metrics',

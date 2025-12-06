@@ -1,7 +1,5 @@
+import { fetchOneEntry, fetchEntries } from '@builder.io/sdk-svelte';
 import { PUBLIC_BUILDER_API_KEY } from '$env/static/public';
-
-const BUILDER_API_KEY = PUBLIC_BUILDER_API_KEY;
-const BUILDER_API_URL = 'https://cdn.builder.io/api/v2/content';
 
 export interface BuilderContent {
 	id: string;
@@ -16,34 +14,21 @@ export async function fetchBuilderContentServer(
 		limit?: number;
 		offset?: number;
 		preview?: boolean;
+		omit?: string;
 		query?: Record<string, unknown>;
 	}
 ): Promise<BuilderContent[]> {
 	try {
-		const params = new URLSearchParams({
-			apiKey: BUILDER_API_KEY,
-			limit: String(options?.limit || 100),
-			offset: String(options?.offset || 0),
-			...(options?.preview && { preview: 'true' })
+		const results = await fetchEntries({
+			model,
+			apiKey: PUBLIC_BUILDER_API_KEY,
+			limit: options?.limit || 100,
+			offset: options?.offset || 0,
+			omit: options?.omit,
+			query: options?.query
 		});
 
-		if (options?.query) {
-			params.append('query', JSON.stringify(options.query));
-		}
-
-		const url = `${BUILDER_API_URL}/${model}?${params.toString()}`;
-		const response = await fetch(url);
-
-		if (!response.ok) {
-			const errorText = await response.text();
-			console.error(`Builder.io API Error (${response.status}):`, errorText);
-			throw new Error(
-				`Builder.io API error: ${response.status} ${response.statusText}. Ensure the model "${model}" exists in Builder.io CMS.`
-			);
-		}
-
-		const data = await response.json();
-		return data.results || [];
+		return results || [];
 	} catch (error) {
 		console.error(
 			`Could not fetch Builder.io content for model "${model}". Error:`,
@@ -58,21 +43,17 @@ export async function fetchBuilderContentByIdServer(
 	id: string
 ): Promise<BuilderContent | null> {
 	try {
-		const params = new URLSearchParams({
-			apiKey: BUILDER_API_KEY
+		const result = await fetchOneEntry({
+			model,
+			apiKey: PUBLIC_BUILDER_API_KEY,
+			options: {
+				query: {
+					id: id
+				}
+			}
 		});
 
-		const url = `${BUILDER_API_URL}/${model}/${id}?${params.toString()}`;
-		const response = await fetch(url);
-
-		if (!response.ok) {
-			console.error(`Builder.io API Error (${response.status}) for ${model}/${id}`);
-			throw new Error(`Builder.io API error: ${response.status} ${response.statusText}`);
-		}
-
-		const responseData = await response.json();
-		// Return the full content object with id, name, data, etc.
-		return (responseData.data || null) as BuilderContent;
+		return result || null;
 	} catch (error) {
 		console.error(
 			`Could not fetch Builder.io content for ${model}/${id}. Error:`,
@@ -87,25 +68,16 @@ export async function fetchBuilderContentByHandleServer(
 	handle: string
 ): Promise<BuilderContent | null> {
 	try {
-		const params = new URLSearchParams({
-			apiKey: BUILDER_API_KEY,
-			limit: '1',
-			query: JSON.stringify({
+		const results = await fetchEntries({
+			model,
+			apiKey: PUBLIC_BUILDER_API_KEY,
+			limit: 1,
+			query: {
 				'data.handle': handle
-			})
+			}
 		});
 
-		const url = `${BUILDER_API_URL}/${model}?${params.toString()}`;
-		const response = await fetch(url);
-
-		if (!response.ok) {
-			console.error(`Builder.io API Error (${response.status}) for ${model} handle:${handle}`);
-			throw new Error(`Builder.io API error: ${response.status} ${response.statusText}`);
-		}
-
-		const data = await response.json();
-		const results = data.results || [];
-		return results.length > 0 ? results[0] : null;
+		return results && results.length > 0 ? results[0] : null;
 	} catch (error) {
 		console.error(
 			`Could not fetch Builder.io content for ${model} with handle "${handle}". Error:`,

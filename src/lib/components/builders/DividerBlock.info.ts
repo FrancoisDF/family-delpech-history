@@ -1,7 +1,7 @@
-import type { ComponentInfo } from '@builder.io/sdk-svelte';
+import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import DividerBlock from './DividerBlock.svelte';
 
-export const dividerBlockInfo: ComponentInfo = {
+export const dividerBlockInfo: RegisteredComponent = {
 	component: DividerBlock,
 	name: 'DividerBlock',
 	tag: 'Layout & Spacing',

@@ -1,7 +1,7 @@
-import type { ComponentInfo } from '@builder.io/sdk-svelte';
+import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import CTABlock from './CTABlock.svelte';
 
-export const ctaBlockInfo: ComponentInfo = {
+export const ctaBlockInfo: RegisteredComponent = {
 	component: CTABlock,
 	name: 'CTABlock',
 	tag: 'Call to Action',
