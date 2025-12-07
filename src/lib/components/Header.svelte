@@ -5,7 +5,8 @@
 		ariaLabel?: string;
 	}
 
-	let { logo = 'Histoire de Famille', links = [] } = $props<{
+	let { siteName = 'Histoire de Famille', logo = '/assets/favicon.png', links = [] } = $props<{
+		siteName?: string | null;
 		logo?: string | null;
 		links?: HeaderLink[] | null;
 	}>();
@@ -21,7 +22,8 @@
 	<div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
 		<!-- Logo/Title -->
 		<a href="/" class="flex items-center gap-2">
-			<span class="text-lg font-medium text-primary-800 sm:inline">{headerLogo}</span>
+			<img src={headerLogo} alt="Logo" class="h-8 w-8" />
+			<span class="text-lg font-medium text-primary-800 sm:inline">{siteName}</span>
 		</a>
 		
 		<!-- Desktop Navigation -->

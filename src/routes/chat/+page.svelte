@@ -6,6 +6,11 @@
 		timestamp: Date;
 	}
 
+
+	import { searchFamilyData } from '$lib/ai/search';
+	import { ENABLE_LOCAL_LLM } from '$lib/ai/config';
+	import { summarizeFromChunks, isSummarizerLoading } from '$lib/ai/generation';
+
 	let messages = $state<ChatMessage[]>([
 		{
 			id: '1',
@@ -36,30 +41,78 @@
 		isLoading = true;
 
 		// Simulate API response
-		setTimeout(() => {
-			const assistantMessage: ChatMessage = {
-				id: (Date.now() + 1).toString(),
-				type: 'assistant',
-				content:
-					"Merci pour votre question ! En attente de la configuration de l'API. Cette section sera bientôt connectée à notre système IA pour répondre en temps réel à vos questions sur l'histoire familiale.",
-				timestamp: new Date()
-			};
+		(async () => {
+			try {
+				// Show initialization message if summarizer is loading for the first time
+				if (ENABLE_LOCAL_LLM && isSummarizerLoading()) {
+					const initMessage: ChatMessage = {
+						id: (Date.now() + 0.5).toString(),
+						type: 'assistant',
+						content: 'Initialisation du résumeur local... (Ceci ne se fera qu\'une seule fois)',
+						timestamp: new Date()
+					};
+					messages = [...messages, initMessage];
+				}
 
-			messages = [...messages, assistantMessage];
-			isLoading = false;
+				const results = await searchFamilyData(userMessage.content, { topK: 4 });
+				let assistantText = '';
+				if (!results || results.length === 0) {
+					assistantText = "Désolé — je ne trouve aucune information pertinente dans nos archives familiales pour répondre à cette question.";
+				} else {
+					// Build an answer strictly from retrieved passages
+					// Optionally run the feature-flagged summarizer
+					if (ENABLE_LOCAL_LLM) {
+						// summarizeFromChunks returns null if not enabled/implemented; fallback if necessary
+						const chunks = results.map((r) => r.chunk);
+						const summary = await summarizeFromChunks(chunks, userMessage.content);
+						assistantText = summary ?? 'Voici ce que j\'ai trouvé dans les archives :\n\n';
+						if (!summary) {
+							for (const r of results) {
+								assistantText += `• ${r.chunk.title} — "${r.chunk.text.slice(0, 320).replace(/\n/g, ' ')}..." (source: ${r.chunk.url})\n\n`;
+							}
+						}
+					} else {
+						assistantText = 'Voici ce que j\'ai trouvé dans les archives :\n\n';
+						for (const r of results) {
+							assistantText += `• ${r.chunk.title} — "${r.chunk.text.slice(0, 320).replace(/\n/g, ' ')}..." (source: ${r.chunk.url})\n\n`;
+						}
+					}
+				}
 
-			// Auto-scroll to bottom
-			if (chatContainer) {
-				setTimeout(() => {
-					chatContainer.scrollTop = chatContainer.scrollHeight;
-				}, 0);
+				const assistantMessage: ChatMessage = {
+					id: (Date.now() + 1).toString(),
+					type: 'assistant',
+					content: assistantText,
+					timestamp: new Date()
+				};
+
+				messages = [...messages, assistantMessage];
+			} catch (err) {
+				console.error('Search failed', err);
+				messages = [
+					...messages,
+					{
+						id: (Date.now() + 2).toString(),
+						type: 'assistant',
+						content: "Erreur interne: impossible de rechercher dans les archives familiales.",
+						timestamp: new Date()
+					}
+				];
+			} finally {
+				isLoading = false;
+				// Auto-scroll to bottom
+					if (chatContainer) {
+						setTimeout(() => {
+							chatContainer!.scrollTop = chatContainer!.scrollHeight;
+						}, 0);
+					}
 			}
-		}, 1000);
+		})();
 	}
 
 	$effect(() => {
 		if (chatContainer) {
-			chatContainer.scrollTop = chatContainer.scrollHeight;
+			chatContainer!.scrollTop = chatContainer!.scrollHeight;
 		}
 	});
 </script>
@@ -176,6 +229,7 @@
 						type="submit"
 						disabled={isLoading || !messageInput.trim()}
 						class="rounded-lg bg-primary-900 px-6 py-3 font-semibold text-cream transition-all hover:bg-primary-800 disabled:cursor-not-allowed disabled:opacity-50"
+						aria-label="Envoyer"
 					>
 						<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
 							<path

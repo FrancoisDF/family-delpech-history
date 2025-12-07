@@ -36,3 +36,13 @@ npm run build
 You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+
+## AI
+### 1. Ingest your documents (already done with samples)
+pnpm ingest:documents
+
+### 2. Precompute embeddings for better retrieval
+pnpm prepare:embeddings
+
+### 3. Start dev server and test chat
+pnpm dev

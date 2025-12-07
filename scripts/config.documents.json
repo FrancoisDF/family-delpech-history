@@ -1,0 +1,11 @@
+{
+  "sourceDir": "./documents",
+  "outputPath": "./static/family-data.json",
+  "chunkSize": 900,
+  "chunkOverlap": 250,
+  "minChunkLength": 50,
+  "maxFilesPerCategory": 0,
+  "verboseLogging": true,
+  "fileTypes": [".md", ".pdf", ".docx"],
+  "excludeDirs": ["node_modules", ".git", ".vscode"]
+}

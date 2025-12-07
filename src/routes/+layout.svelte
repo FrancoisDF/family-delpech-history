@@ -57,6 +57,7 @@
 <div class="flex min-h-screen flex-col">
 	<!-- Header -->
 	<Header
+		siteName={config.siteName ?? defaultConfig.siteName}
 		logo={config.headerLogo ?? defaultConfig.headerLogo}
 		links={config.headerLinks ?? defaultConfig.headerLinks}
 	/>
