@@ -57,10 +57,6 @@ export const blogGridBlockInfo: RegisteredComponent = {
 				{
 					name: 'slug',
 					type: 'string'
-				},
-				{
-					name: 'handle',
-					type: 'string'
 				}
 			]
 		}

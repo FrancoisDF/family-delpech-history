@@ -1,11 +1,15 @@
-import { fetchBuilderContentByHandleServer, fetchBuilderContentServer } from '$lib/server/builder';
+import { fetchBuilderContentByIdServer, fetchBuilderContentServer } from '$lib/server/builder';
+import { extractIdFromUrl } from '$lib/url-utils';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ params }) => {
 	try {
+		// Extract the ID from the URL parameter (first 6 characters)
+		const id = extractIdFromUrl(params.id);
+
 		// Fetch the main post and the list of articles concurrently
 		const [post, relatedArticles] = await Promise.all([
-			fetchBuilderContentByHandleServer('blog-articles', params.handle),
+			fetchBuilderContentByIdServer('blog-articles', id),
 			fetchBuilderContentServer('blog-articles', { limit: 6, omit: 'data.blocks' })
 		]);
 

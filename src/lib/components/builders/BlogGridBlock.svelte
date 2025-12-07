@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { generateBlogUrl } from '$lib/url-utils';
+
 	interface BlogPost {
 		id: string;
 		title: string;
@@ -8,7 +10,6 @@
 		featuredImage?: string;
 		category?: string;
 		slug?: string;
-		handle?: string;
 	}
 
 	let {
@@ -52,7 +53,7 @@
 			<div class="grid gap-8" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
 				{#each posts as post (post.id)}
 					<a
-						href={`/histoires/${post.handle || post.slug || post.id}`}
+						href={`/histoires/${generateBlogUrl(post.id, post.title)}`}
 						class="group block cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:shadow-xl"
 						aria-label={`Lire ${post.title}`}
 					>

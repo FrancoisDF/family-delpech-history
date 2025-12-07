@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { generateBlogUrl } from '$lib/url-utils';
+
 	interface Article {
 		id: string;
 		title: string;
@@ -7,7 +9,6 @@
 		readTime: string;
 		featuredImage?: string;
 		category?: string;
-		handle?: string;
 	}
 
 	let {
@@ -59,9 +60,10 @@
 		}
 	}
 
-	function handleCardClick(article: Article) {
-		const slug = article.handle || article.id;
-		window.location.href = `/histoires/${slug}`;
+	// Navigation is done via normal anchors now (SSR-friendly) — helper kept
+	// exported in case other modules need it.
+	export function getArticleHref(article: Article) {
+		return `/histoires/${generateBlogUrl(article.id, article.title)}`;
 	}
 </script>
 
@@ -82,17 +84,11 @@
 					style="scroll-behavior: smooth; scrollbar-width: none;"
 				>
 					{#each articles as article (article.id)}
-						<div
+						<a
 							data-carousel-item
-							class="group w-full flex-shrink-0 cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:shadow-xl sm:w-1/2 lg:w-1/3"
-							onclick={() => handleCardClick(article)}
-							onkeydown={(e) => {
-								if (e.key === 'Enter' || e.key === ' ') {
-									handleCardClick(article);
-								}
-							}}
-							role="button"
-							tabindex="0"
+							href={getArticleHref(article)}
+							class="group w-full flex-shrink-0 overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:shadow-xl sm:w-1/2 lg:w-1/3"
+							aria-label={`Lire l'article ${article.title}`}
 						>
 							<!-- Featured Image -->
 							<div
@@ -172,7 +168,7 @@
 									</svg>
 								</div>
 							</div>
-						</div>
+						</a>
 					{/each}
 				</div>
 

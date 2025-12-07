@@ -51,7 +51,6 @@ export const load: PageServerLoad = async (event) => {
 				featuredImage: post.data?.featuredImage,
 				category: post.data?.category,
 				slug: post.name,
-				handle: post.data?.handle || post.name,
 				content: post.data?.content,
 				author: post.data?.author
 			}))
