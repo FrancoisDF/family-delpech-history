@@ -18,7 +18,7 @@ export const load: PageServerLoad = async ({ params }) => {
 		// Fetch the main post and the list of articles concurrently
 		const [post, relatedArticlesAll] = await Promise.all([
 			fetchArticleById(id),
-			fetchArticles(100)
+			fetchArticles()
 		]);
 
 		const tags = extractTagsId(post?.data?.tags || []);

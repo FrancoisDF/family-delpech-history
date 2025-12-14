@@ -33,10 +33,10 @@ export const fetchArticleById = query(v.string(), async (id: string): Promise<Bl
 })
 
 
-export const fetchArticles = query(v.number(), async (limit: number = 100): Promise<BlogArticle[]> => {
+export const fetchArticles = query( async (): Promise<BlogArticle[]> => {
 	try {
 		const articlesRaw = await fetchBuilderContentServer('blog-articles', {
-			limit,
+			limit: 100,
 			omit: 'data.blocks, meta, folders, variations',
 		});
 		return formatArticles(articlesRaw);
@@ -46,10 +46,10 @@ export const fetchArticles = query(v.number(), async (limit: number = 100): Prom
 	}
 })
 
-export const fetchRelatedArticles = query(v.number(),async (limit: number = 100): Promise<BlogArticle[]> => {
+export const fetchRelatedArticles = query( async (): Promise<BlogArticle[]> => {
 	try {
 		const articlesRaw = await fetchBuilderContentServer('blog-articles', {
-			limit,
+			limit: 100,
 			omit: 'data.blocks, meta, folders, variations',
 		});
 		return formatArticles(articlesRaw);
