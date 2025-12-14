@@ -14,11 +14,13 @@
 	let {
 		articles = [],
 		title = 'Articles Connexes',
-		itemsPerSlide = 3
+		itemsPerSlide = 3,
+		mini = false
 	}: {
 		articles?: Article[];
 		title?: string;
 		itemsPerSlide?: number;
+		mini?: boolean;
 	} = $props();
 
 	let scrollContainer = $state<HTMLDivElement>();
@@ -67,32 +69,32 @@
 	}
 </script>
 
-<section class="bg-gradient-warm px-4 py-16 sm:px-6 lg:px-8">
-	<div class="mx-auto max-w-6xl">
-		{#if title}
+<section class={mini ? 'px-0 py-0' : 'bg-gradient-warm px-4 py-16 sm:px-6 lg:px-8'}>
+	<div class={mini ? '' : 'mx-auto max-w-6xl'}>
+		{#if title && !mini}
 			<h2 class="mb-12 text-center font-serif text-3xl font-bold text-primary-900 md:text-4xl">
 				{title}
 			</h2>
 		{/if}
 
 		{#if articles.length > 0}
-			<div class="relative">
+			<div class={mini ? '' : 'relative'}>
 				<!-- Scroll Container -->
 				<div
 					bind:this={scrollContainer}
-					class="flex gap-8 overflow-x-auto scroll-smooth pb-4"
+					class={mini ? 'flex gap-4 overflow-x-auto scroll-smooth pb-2' : 'flex gap-8 overflow-x-auto scroll-smooth pb-4'}
 					style="scroll-behavior: smooth; scrollbar-width: none;"
 				>
 					{#each articles as article (article.id)}
 						<a
 							data-carousel-item
 							href={getArticleHref(article)}
-							class="group w-full flex-shrink-0 overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:shadow-xl sm:w-1/2 lg:w-1/3"
+							class={mini ? 'group w-56 flex-shrink-0 overflow-hidden rounded-lg bg-white shadow-sm transition-all duration-300 hover:shadow-md' : 'group w-full flex-shrink-0 overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:shadow-xl sm:w-1/2 lg:w-1/3'}
 							aria-label={`Lire l'article ${article.title}`}
 						>
 							<!-- Featured Image -->
 							<div
-								class="relative h-56 overflow-hidden bg-gradient-to-br from-primary-100 to-primary-200"
+								class={mini ? 'relative h-32 overflow-hidden bg-gradient-to-br from-primary-100 to-primary-200' : 'relative h-56 overflow-hidden bg-gradient-to-br from-primary-100 to-primary-200'}
 							>
 								{#if article.featuredImage}
 									<img
@@ -120,60 +122,64 @@
 							</div>
 
 							<!-- Content -->
-							<div class="flex flex-col p-6">
-								<!-- Meta Information -->
-								<div class="mb-3 flex flex-wrap items-center gap-2">
-									{#if article.category}
-										<span
-											class="inline-block rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent"
-										>
-											{article.category}
-										</span>
-									{/if}
-									{#if article.date}
-										<span class="text-xs font-medium text-primary-600">{article.date}</span>
-									{/if}
-									{#if article.readTime}
-										<span class="text-xs text-primary-500">•</span>
-										<span class="text-xs text-primary-600">{article.readTime}</span>
-									{/if}
-								</div>
+							<div class={mini ? 'flex flex-col p-3' : 'flex flex-col p-6'}>
+								{#if !mini}
+									<!-- Meta Information (Full Version Only) -->
+									<div class="mb-3 flex flex-wrap items-center gap-2">
+										{#if article.category}
+											<span
+												class="inline-block rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent"
+											>
+												{article.category}
+											</span>
+										{/if}
+										{#if article.date}
+											<span class="text-xs font-medium text-primary-600">{article.date}</span>
+										{/if}
+										{#if article.readTime}
+											<span class="text-xs text-primary-500">•</span>
+											<span class="text-xs text-primary-600">{article.readTime}</span>
+										{/if}
+									</div>
+								{/if}
 
 								<!-- Title -->
 								<h3
-									class="mb-3 line-clamp-2 font-serif text-lg font-medium text-primary-800 transition-colors duration-300 group-hover:text-accent"
+									class={mini ? 'line-clamp-2 font-serif text-sm font-medium text-primary-800 transition-colors duration-300 group-hover:text-accent' : 'mb-3 line-clamp-2 font-serif text-lg font-medium text-primary-800 transition-colors duration-300 group-hover:text-accent'}
 								>
 									{article.title}
 								</h3>
 
-								<!-- Excerpt -->
-								{#if article.excerpt}
-									<p class="mb-4 line-clamp-2 flex-1 text-sm leading-relaxed text-primary-700">
-										{article.excerpt}
-									</p>
-								{/if}
+								{#if !mini}
+									<!-- Excerpt (Full Version Only) -->
+									{#if article.excerpt}
+										<p class="mb-4 line-clamp-2 flex-1 text-sm leading-relaxed text-primary-700">
+											{article.excerpt}
+										</p>
+									{/if}
 
-								<!-- Read More Link -->
-								<div
-									class="inline-flex items-center gap-2 font-semibold text-accent transition-all duration-300 group-hover:gap-3"
-								>
-									<span>Lire plus</span>
-									<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											stroke-width="2"
-											d="M9 5l7 7-7 7"
-										/>
-									</svg>
-								</div>
+									<!-- Read More Link (Full Version Only) -->
+									<div
+										class="inline-flex items-center gap-2 font-semibold text-accent transition-all duration-300 group-hover:gap-3"
+									>
+										<span>Lire plus</span>
+										<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M9 5l7 7-7 7"
+											/>
+										</svg>
+									</div>
+								{/if}
 							</div>
 						</a>
 					{/each}
 				</div>
 
-				<!-- Navigation Buttons -->
-				{#if canScrollLeft || canScrollRight}
+				<!-- Navigation Buttons (Full Version Only) -->
+				{#if !mini && (canScrollLeft || canScrollRight)}
 					<div class="absolute -left-4 top-1/3 z-10 -translate-y-1/2 md:-left-8">
 						<button
 							onclick={() => scroll('left')}

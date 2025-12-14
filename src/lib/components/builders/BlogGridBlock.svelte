@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { generateBlogUrl } from '$lib/url-utils';
-	import { fetchArticles } from '$lib/server/article.remote';
+	import { fetchArticles } from '$lib/components/article.remote';
 
 	let {
 		title = 'Histoires de Famille',
@@ -12,7 +12,7 @@
 		columnCount?: number;
 	}>();
 
-	let posts = fetchArticles();
+	let posts = await fetchArticles();
 
 	function getGridClass() {
 		switch (columnCount) {

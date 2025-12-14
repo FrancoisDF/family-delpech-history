@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Timeline from '$lib/components/Timeline.svelte';
-	import { fetchSections } from '../../server/section.remote';
-	import { fetchRelatedArticles } from '../../server/article.remote';
+	import { fetchSections } from '../section.remote';
+	import { fetchRelatedArticles } from '../article.remote';
 
 	let {
 		title = 'Un Voyage à Travers le Temps',

@@ -2,9 +2,9 @@ import { fetchOneEntry, fetchEntries } from '@builder.io/sdk-svelte';
 import { PUBLIC_BUILDER_API_KEY } from '$env/static/public';
 
 export interface BuilderContent {
-	id: string;
-	name: string;
-	data: Record<string, unknown>;
+	id?: string;
+	name?: string;
+	data?: Record<string, unknown>;
 	[key: string]: unknown;
 }
 

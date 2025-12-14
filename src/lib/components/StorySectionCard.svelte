@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { isSectionCompleted, markSectionCompleted, unmarkSectionCompleted } from '$lib/progress';
-	import BlogPostCard from './BlogPostCard.svelte';
+	import ArticleCarousel from './ArticleCarousel.svelte';
 
 	interface BlogPost {
 		id: string;
@@ -37,7 +37,6 @@
 	} = $props();
 
 	let isCompleted: boolean = $state(false);
-	let isExpanded: boolean = $state(false);
 
 	function handleAudioEnded() {
 		markSectionCompleted(id);
@@ -54,18 +53,13 @@
 		}
 	}
 
-	function toggleExpand() {
-		isExpanded = !isExpanded;
-	}
-
 	function getFilteredPosts() {
 		if (tags.length === 0 || availablePosts.length === 0) {
 			return [];
 		}
-		const normalizedTags = tags.map((tag) => tag.toLowerCase().trim());
+		const normalizedTags = extractTags(tags);
 		return availablePosts.filter((post) => {
-			if (!post.category) return false;
-			const postCategory = post.category.toLowerCase().trim();
+			const postCategory = extractTags(post.tags || []);
 			return normalizedTags.some((tag) => postCategory === tag || postCategory.includes(tag));
 		});
 	}
@@ -73,6 +67,11 @@
 	$effect(() => {
 		isCompleted = isSectionCompleted(id);
 	});
+
+
+	function extractTags(tags: any[]) {
+		return tags.map((tag) => tag.value?.data?.name.toLowerCase().trim() ?? null);
+	}
 </script>
 
 <div
@@ -160,7 +159,7 @@
 		<!-- Learn More Section -->
 		{#if tags.length > 0 && availablePosts.length > 0}
 			<div class="mt-8 border-t border-primary-200 pt-8">
-				<button
+				<!-- <button
 					onclick={toggleExpand}
 					class="mb-6 inline-flex items-center gap-3 rounded-lg bg-accent px-6 py-3 font-semibold text-white transition-all hover:shadow-lg"
 					type="button"
@@ -181,41 +180,29 @@
 							d="M19 14l-7 7m0 0l-7-7m7 7V3"
 						/>
 					</svg>
-				</button>
+				</button> -->
 
-				{#if isExpanded}
+				<!-- {#if isExpanded} -->
 					<div class="space-y-6">
 						<div class="mb-4">
 							<h4 class="text-lg font-semibold text-primary-800">Articles Connexes</h4>
 							<p class="text-sm text-primary-600">
-								Articles associés aux thèmes : {tags.join(', ')}
+								<!-- Articles associés aux thèmes : {tags.join(', ')} -->
 							</p>
 						</div>
 
 						{#if getFilteredPosts().length > 0}
-							<div
-								class="grid gap-6 sm:grid-cols-1 md:grid-cols-2"
-							>
-								{#each getFilteredPosts() as post (post.id)}
-									<BlogPostCard
-										id={post.id}
-										handle={post.handle || post.slug || ''}
-										title={post.title}
-										excerpt={post.excerpt || ''}
-										date={post.date || ''}
-										readTime={post.readTime || ''}
-										featuredImage={post.featuredImage || ''}
-										category={post.category || ''}
-									/>
-								{/each}
-							</div>
+							<ArticleCarousel
+								articles={getFilteredPosts()}
+								mini={true}
+							/>
 						{:else}
 							<div class="rounded-lg border-2 border-dashed border-primary-200 bg-primary-50 p-6 text-center">
 								<p class="text-primary-700">Aucun article disponible pour ces thèmes.</p>
 							</div>
 						{/if}
 					</div>
-				{/if}
+				<!-- {/if} -->
 			</div>
 		{/if}
 	</div>

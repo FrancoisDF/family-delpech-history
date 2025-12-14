@@ -1,17 +1,32 @@
+import { fetchArticleById, fetchArticles } from '$lib/components/article.remote';
 import { extractIdFromUrl } from '$lib/url-utils';
 import type { PageServerLoad } from './$types';
-import { fetchArticleById, fetchRelatedArticles } from '../article.remote';
+
+
+function extractTagsId(tags: any[]) {
+	return tags.map((item) => { 
+		return item.tag.id;
+	});
+}
+
 
 export const load: PageServerLoad = async ({ params }) => {
 	try {
 		// Extract the ID from the URL parameter (first 6 characters)
-		const id = extractIdFromUrl(params.id);
+		const id: string = extractIdFromUrl(params.id);
 
 		// Fetch the main post and the list of articles concurrently
-		const [post, relatedArticles] = await Promise.all([
+		const [post, relatedArticlesAll] = await Promise.all([
 			fetchArticleById(id),
-			fetchRelatedArticles(6)
+			fetchArticles(100)
 		]);
+
+		const tags = extractTagsId(post?.data?.tags || []);
+		const relatedArticles = relatedArticlesAll.filter((article) => {
+				if (article.id === post?.id) return false;
+				const articleTags = extractTagsId(article.tags || []);
+				return tags.some((tag) => articleTags.includes(tag));
+			})
 
 		return {
 			post,

@@ -2,7 +2,8 @@
 	import { browser } from '$app/environment';
 	import { getLastListenedId } from '$lib/progress';
 	import StorySectionCard from './StorySectionCard.svelte';
-	import { fetchSections } from '../server/section.remote';
+	import { fetchSections } from './section.remote';
+	import { fetchRelatedArticles } from './article.remote';
 
 	interface BlogPost {
 		id: string;
@@ -24,7 +25,9 @@
 		tags?: string[];
 	}
 
-	let sections = fetchSections();
+	let sections = await fetchSections();
+
+	let articles = await fetchRelatedArticles();
 
 	let timelineContainer = $state<HTMLElement>();
 	let lastListenedId = $state<string | null>(null);
