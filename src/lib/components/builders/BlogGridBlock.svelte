@@ -1,28 +1,18 @@
 <script lang="ts">
 	import { generateBlogUrl } from '$lib/url-utils';
-
-	interface BlogPost {
-		id: string;
-		title: string;
-		excerpt: string;
-		date: string;
-		readTime: string;
-		featuredImage?: string;
-		category?: string;
-		slug?: string;
-	}
+	import { fetchArticles } from '$lib/server/article.remote';
 
 	let {
 		title = 'Histoires de Famille',
 		description = '',
-		columnCount = 3,
-		posts = []
+		columnCount = 3
 	} = $props<{
 		title?: string;
 		description?: string;
 		columnCount?: number;
-		posts?: BlogPost[];
 	}>();
+
+	let posts = fetchArticles();
 
 	function getGridClass() {
 		switch (columnCount) {

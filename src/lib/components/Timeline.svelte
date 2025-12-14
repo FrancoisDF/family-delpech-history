@@ -2,6 +2,18 @@
 	import { browser } from '$app/environment';
 	import { getLastListenedId } from '$lib/progress';
 	import StorySectionCard from './StorySectionCard.svelte';
+	import { fetchSections } from '../server/section.remote';
+
+	interface BlogPost {
+		id: string;
+		title: string;
+		excerpt?: string;
+		date?: string;
+		readTime?: string;
+		featuredImage?: string;
+		category?: string;
+		slug?: string;
+	}
 
 	interface Section {
 		id: string;
@@ -9,9 +21,10 @@
 		description: string;
 		audioUrl: string;
 		year: number;
+		tags?: string[];
 	}
 
-	let { sections = [] }: { sections?: Section[] } = $props();
+	let sections = fetchSections();
 
 	let timelineContainer = $state<HTMLElement>();
 	let lastListenedId = $state<string | null>(null);
@@ -166,6 +179,8 @@
 							description={section.description}
 							audioUrl={section.audioUrl}
 							year={section.year}
+							tags={section.tags || []}
+							availablePosts={articles}
 							isActive={activeSectionId === section.id}
 						/>
 					</div>

@@ -21,44 +21,6 @@ export const blogGridBlockInfo: RegisteredComponent = {
 			type: 'number',
 			defaultValue: 3,
 			enum: [2, 3, 4]
-		},
-		{
-			name: 'posts',
-			type: 'list',
-			subFields: [
-				{
-					name: 'id',
-					type: 'string'
-				},
-				{
-					name: 'title',
-					type: 'string'
-				},
-				{
-					name: 'excerpt',
-					type: 'string'
-				},
-				{
-					name: 'date',
-					type: 'string'
-				},
-				{
-					name: 'readTime',
-					type: 'string'
-				},
-				{
-					name: 'category',
-					type: 'string'
-				},
-				{
-					name: 'featuredImage',
-					type: 'file'
-				},
-				{
-					name: 'slug',
-					type: 'string'
-				}
-			]
 		}
 	]
 };

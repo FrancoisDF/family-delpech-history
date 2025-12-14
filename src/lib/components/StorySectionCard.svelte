@@ -1,5 +1,18 @@
 <script lang="ts">
 	import { isSectionCompleted, markSectionCompleted, unmarkSectionCompleted } from '$lib/progress';
+	import BlogPostCard from './BlogPostCard.svelte';
+
+	interface BlogPost {
+		id: string;
+		title: string;
+		excerpt?: string;
+		date?: string;
+		readTime?: string;
+		featuredImage?: string;
+		category?: string;
+		slug?: string;
+		handle?: string;
+	}
 
 	interface Props {
 		id?: string;
@@ -8,6 +21,8 @@
 		audioUrl?: string;
 		year?: number;
 		isActive?: boolean;
+		tags?: string[];
+		availablePosts?: BlogPost[];
 	}
 
 	let {
@@ -16,10 +31,13 @@
 		description = '',
 		audioUrl = '',
 		year = 1800,
-		isActive = false
+		isActive = false,
+		tags = [],
+		availablePosts = []
 	} = $props();
 
 	let isCompleted: boolean = $state(false);
+	let isExpanded: boolean = $state(false);
 
 	function handleAudioEnded() {
 		markSectionCompleted(id);
@@ -34,6 +52,22 @@
 			markSectionCompleted(id);
 			isCompleted = true;
 		}
+	}
+
+	function toggleExpand() {
+		isExpanded = !isExpanded;
+	}
+
+	function getFilteredPosts() {
+		if (tags.length === 0 || availablePosts.length === 0) {
+			return [];
+		}
+		const normalizedTags = tags.map((tag) => tag.toLowerCase().trim());
+		return availablePosts.filter((post) => {
+			if (!post.category) return false;
+			const postCategory = post.category.toLowerCase().trim();
+			return normalizedTags.some((tag) => postCategory === tag || postCategory.includes(tag));
+		});
 	}
 
 	$effect(() => {
@@ -120,6 +154,68 @@
 					<source src={audioUrl} type="audio/mpeg" />
 					Votre navigateur ne supporte pas l'élément audio.
 				</audio>
+			</div>
+		{/if}
+
+		<!-- Learn More Section -->
+		{#if tags.length > 0 && availablePosts.length > 0}
+			<div class="mt-8 border-t border-primary-200 pt-8">
+				<button
+					onclick={toggleExpand}
+					class="mb-6 inline-flex items-center gap-3 rounded-lg bg-accent px-6 py-3 font-semibold text-white transition-all hover:shadow-lg"
+					type="button"
+					aria-expanded={isExpanded}
+					aria-label="Toggle related blog posts"
+				>
+					<span>En savoir plus</span>
+					<svg
+						class={`h-5 w-5 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
+						fill="none"
+						stroke="currentColor"
+						viewBox="0 0 24 24"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M19 14l-7 7m0 0l-7-7m7 7V3"
+						/>
+					</svg>
+				</button>
+
+				{#if isExpanded}
+					<div class="space-y-6">
+						<div class="mb-4">
+							<h4 class="text-lg font-semibold text-primary-800">Articles Connexes</h4>
+							<p class="text-sm text-primary-600">
+								Articles associés aux thèmes : {tags.join(', ')}
+							</p>
+						</div>
+
+						{#if getFilteredPosts().length > 0}
+							<div
+								class="grid gap-6 sm:grid-cols-1 md:grid-cols-2"
+							>
+								{#each getFilteredPosts() as post (post.id)}
+									<BlogPostCard
+										id={post.id}
+										handle={post.handle || post.slug || ''}
+										title={post.title}
+										excerpt={post.excerpt || ''}
+										date={post.date || ''}
+										readTime={post.readTime || ''}
+										featuredImage={post.featuredImage || ''}
+										category={post.category || ''}
+									/>
+								{/each}
+							</div>
+						{:else}
+							<div class="rounded-lg border-2 border-dashed border-primary-200 bg-primary-50 p-6 text-center">
+								<p class="text-primary-700">Aucun article disponible pour ces thèmes.</p>
+							</div>
+						{/if}
+					</div>
+				{/if}
 			</div>
 		{/if}
 	</div>

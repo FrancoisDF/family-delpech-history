@@ -1,6 +1,6 @@
-import { fetchBuilderContentByIdServer, fetchBuilderContentServer } from '$lib/server/builder';
 import { extractIdFromUrl } from '$lib/url-utils';
 import type { PageServerLoad } from './$types';
+import { fetchArticleById, fetchRelatedArticles } from '../article.remote';
 
 export const load: PageServerLoad = async ({ params }) => {
 	try {
@@ -9,12 +9,12 @@ export const load: PageServerLoad = async ({ params }) => {
 
 		// Fetch the main post and the list of articles concurrently
 		const [post, relatedArticles] = await Promise.all([
-			fetchBuilderContentByIdServer('blog-articles', id),
-			fetchBuilderContentServer('blog-articles', { limit: 6, omit: 'data.blocks' })
+			fetchArticleById(id),
+			fetchRelatedArticles(6)
 		]);
 
 		return {
-			post: post ?? null,
+			post,
 			relatedArticles
 		};
 	} catch (error) {

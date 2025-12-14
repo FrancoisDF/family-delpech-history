@@ -16,29 +16,6 @@ export const timelineBlockInfo: RegisteredComponent = {
 			type: 'string',
 			defaultValue:
 				'Écoutez et suivez votre progression à travers les différentes périodes de notre histoire'
-		},
-		{
-			name: 'sections',
-			type: 'list',
-			defaultValue: [],
-			subFields: [
-				{
-					name: 'year',
-					type: 'string'
-				},
-				{
-					name: 'title',
-					type: 'string'
-				},
-				{
-					name: 'description',
-					type: 'string'
-				},
-				{
-					name: 'content',
-					type: 'richText'
-				}
-			]
 		}
 	]
 };
