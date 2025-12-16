@@ -1,14 +1,16 @@
 <script lang="ts">
 	import { getRelatedArticles, getPerson } from '$lib/genealogy';
+	import ArticleCarousel from '$lib/components/ArticleCarousel.svelte';
 	import type { Person } from '$lib/models/person';
 
 	interface Props {
 		person: Person;
 		onClose?: () => void;
 		onPersonClick?: (person: Person) => void;
+		hideCloseButton?: boolean;
 	}
 
-	let { person, onClose, onPersonClick }: Props = $props();
+	let { person, onClose, onPersonClick, hideCloseButton = false }: Props = $props();
 
 	let relatedArticles: any[] = $state([]);
 	let loading: boolean = $state(false);
@@ -49,18 +51,20 @@
 
 <div class="flex h-full flex-col rounded-lg border border-primary-200 bg-white shadow-lg">
 	<!-- Header -->
-	<div class="relative border-b border-primary-100  px-6 py-6">
-		<button
-			onclick={onClose}
-			class="absolute right-4 top-4 rounded-full p-2 text-primary-600 hover:bg-primary-100 active:bg-primary-200"
-			aria-label="Fermer"
-		>
-			<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-			</svg>
-		</button>
+	<div class="relative border-b border-primary-100 px-6 py-6">
+		{#if !hideCloseButton}
+			<button
+				onclick={onClose}
+				class="absolute right-4 top-4 rounded-full p-2 text-primary-600 hover:bg-primary-100 active:bg-primary-200"
+				aria-label="Fermer"
+			>
+				<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+				</svg>
+			</button>
+		{/if}
 
-		<h2 class="pr-8 font-serif text-2xl font-semibold text-primary-900">{person.displayName}</h2>
+		<h2 class="font-serif text-2xl font-semibold text-primary-900">{person.displayName}</h2>
 		<p class="mt-2 text-sm text-primary-700">{person.gender === 'female' ? 'Femme' : 'Homme'}</p>
 	</div>
 
@@ -172,34 +176,25 @@
 			{/if}
 		</div>
 
-		<!-- Related Articles -->
+		<!-- Related Articles Carousel -->
 		{#if relatedArticles.length > 0}
-			<div>
-				<h3 class="mb-3 font-semibold text-primary-900">Articles connexes</h3>
-				{#if loading}
-					<div class="text-center text-sm text-primary-600">Chargement...</div>
-				{:else}
-					<div class="space-y-2">
-						{#each relatedArticles.slice(0, 3) as article}
-							<a
-								href={article.url}
-								class="block rounded-lg border border-primary-200 p-3 text-left transition-all hover:border-accent hover:bg-accent/5"
-							>
-								<h4 class="text-sm font-semibold text-primary-900 line-clamp-2">{article.title}</h4>
-								<p class="mt-1 text-xs text-primary-600 line-clamp-2">{article.excerpt}</p>
-								{#if article.year}
-									<p class="mt-2 text-xs font-medium text-primary-700">{article.year}</p>
-								{/if}
-							</a>
-						{/each}
-						{#if relatedArticles.length > 3}
-							<p class="text-xs text-primary-600">
-								<span class="font-semibold">{relatedArticles.length - 3}</span> article(s) supplémentaire(s) disponible(s)
-							</p>
-						{/if}
-					</div>
-				{/if}
+			<div class="mt-6 -mx-6 -mb-6">
+				<ArticleCarousel
+					articles={relatedArticles.map((article) => ({
+						id: article.id,
+						title: article.title,
+						excerpt: article.excerpt,
+						date: article.year || '',
+						readTime: `${article.author ? `Par ${article.author}` : ''}`,
+						category: article.category,
+						featuredImage: article.featuredImage
+					}))}
+					title="Articles connexes"
+					mini={true}
+				/>
 			</div>
+		{:else if loading}
+			<div class="text-center text-sm text-primary-600">Chargement des articles...</div>
 		{/if}
 	</div>
 </div>

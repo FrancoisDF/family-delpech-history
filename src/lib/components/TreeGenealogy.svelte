@@ -16,6 +16,7 @@
 	let personDataMap: Map<string, PersonWithRelations> = $state(new Map());
 	let loading: boolean = $state(true);
 	let rootPersonData: PersonWithRelations | null = $state(null);
+	let scrollContainer: HTMLDivElement | null = $state(null);
 
 	// Load root person and cache data
 	$effect(async () => {
@@ -63,6 +64,20 @@
 	function handlePersonSelect(person: Person) {
 		selectPerson(person);
 	}
+
+	// Scroll to 50% of width when content is loaded
+	$effect(() => {
+		if (!loading && scrollContainer && rootPersonData) {
+			// Use setTimeout to ensure DOM has fully rendered
+			setTimeout(() => {
+				if (scrollContainer) {
+					const scrollWidth = scrollContainer.scrollWidth;
+					const clientWidth = scrollContainer.clientWidth;
+					scrollContainer.scrollLeft = (scrollWidth - clientWidth) / 2;
+				}
+			}, 0);
+		}
+	});
 </script>
 
 {#if loading}
@@ -75,8 +90,8 @@
 		</div>
 	</div>
 {:else if rootPersonData}
-	<div class="overflow-x-auto rounded-lg  p-8">
-		<div class="min-w-max">
+	<div bind:this={scrollContainer} class="overflow-x-auto rounded-lg p-8">
+		<div class="min-w-max mx-auto">
 			<div class="flex flex-col items-center gap-8">
 				<!-- Ancestors Section -->
 				{#if rootPersonData.parentObjects && rootPersonData.parentObjects.length > 0}

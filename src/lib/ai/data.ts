@@ -16,10 +16,11 @@ export interface FamilyChunk {
 
 let _cached: FamilyChunk[] | null = null;
 
-export async function loadFamilyData(): Promise<FamilyChunk[]> {
+export async function loadFamilyData(fetchFn?: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>): Promise<FamilyChunk[]> {
   if (_cached) return _cached;
   try {
-    const res = await fetch('/family-data.json');
+    const fetchToUse = fetchFn || fetch;
+    const res = await fetchToUse('/family-data.json');
     if (!res.ok) throw new Error('Failed to load family-data.json');
     const data = (await res.json()) as FamilyChunk[];
     _cached = data;

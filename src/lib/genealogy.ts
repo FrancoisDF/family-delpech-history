@@ -4,10 +4,11 @@ import { loadFamilyData } from './ai/data';
 let _peopleCached: Person[] | null = null;
 let _peopleMapCached: Map<string, Person> | null = null;
 
-export async function loadPeopleData(): Promise<Person[]> {
+export async function loadPeopleData(fetchFn?: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>): Promise<Person[]> {
 	if (_peopleCached) return _peopleCached;
 	try {
-		const res = await fetch('/people.json');
+		const fetchToUse = fetchFn || fetch;
+		const res = await fetchToUse('/people.json');
 		if (!res.ok) throw new Error('Failed to load people.json');
 		const data = (await res.json()) as Person[];
 		_peopleCached = data;

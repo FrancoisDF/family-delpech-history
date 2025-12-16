@@ -2,11 +2,11 @@ import { loadPeopleData } from '$lib/genealogy';
 import { loadFamilyData } from '$lib/ai/data';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async (event) => {
 	try {
 		const [people, familyData] = await Promise.all([
-			loadPeopleData(),
-			loadFamilyData()
+			loadPeopleData(event.fetch),
+			loadFamilyData(event.fetch)
 		]);
 
 		return {
