@@ -14,8 +14,8 @@ export const articleContentBlockInfo: RegisteredComponent = {
 		{
 			name: 'backgroundColor',
 			type: 'string',
-			defaultValue: 'bg-gradient-warm',
-			enum: ['bg-gradient-warm', 'bg-white', 'bg-primary-50', 'bg-gradient-dark']
+			defaultValue: '',
+			enum: ['', 'bg-white', 'bg-primary-50', 'bg-gradient-dark']
 		}
 	]
 };

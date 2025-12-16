@@ -64,7 +64,7 @@
 
 	<!-- Main Content -->
 	{#key currentPath}
-		<main class="flex-1" transition:fade={{ duration: 300 }}>
+		<main class="flex-1 bg-gradient-warm" transition:fade={{ duration: 300 }}>
 			{@render children()}
 		</main>
 	{/key}

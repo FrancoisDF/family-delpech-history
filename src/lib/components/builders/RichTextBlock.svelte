@@ -1,7 +1,7 @@
 <script lang="ts">
 	let {
 		content = '',
-		backgroundColor = 'bg-gradient-warm',
+		backgroundColor = '',
 		textSize = 'text-base',
 		maxWidth = 'max-w-4xl',
 		connectTop = false,

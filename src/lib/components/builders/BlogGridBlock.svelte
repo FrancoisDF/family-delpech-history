@@ -26,7 +26,7 @@
 	}
 </script>
 
-<section class="bg-gradient-warm px-4 py-16 sm:px-6 lg:px-8">
+<section class=" px-4 py-16 sm:px-6 lg:px-8">
 	<div class="mx-auto max-w-6xl">
 		{#if title}
 			<h2 class="mb-4 text-center font-serif text-4xl font-bold text-primary-900">

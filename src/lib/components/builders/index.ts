@@ -54,6 +54,7 @@ import { richTextBlockInfo } from './RichTextBlock.info';
 import { articleSectionBlockInfo } from './ArticleSectionBlock.info';
 import { storySectionCardInfo } from './StorySectionCard.info';
 import { pdfCarouselBlockInfo } from './PDFCarouselBlock.info';
+import { genealogyBlockInfo } from './GenealogyBlock.info';
 import { Builder } from '@builder.io/sdk';
 
 export const builderComponents: RegisteredComponent[] = [
@@ -82,7 +83,8 @@ export const builderComponents: RegisteredComponent[] = [
 	imageGalleryBlockInfo,
 	twoColumnTextBlockInfo,
 	blogDetailBlockInfo,
-	pdfCarouselBlockInfo
+	pdfCarouselBlockInfo,
+	genealogyBlockInfo
 ];
 
 export {
@@ -108,7 +110,8 @@ export {
 	richTextBlockInfo,
 	articleSectionBlockInfo,
 	storySectionCardInfo,
-	pdfCarouselBlockInfo
+	pdfCarouselBlockInfo,
+	genealogyBlockInfo
 };
 
 Builder.register('insertMenu', {
@@ -141,6 +144,7 @@ Builder.register('insertMenu', {
 		{ name: imageGalleryBlockInfo.tag, item: imageGalleryBlockInfo.name },
 		{ name: twoColumnTextBlockInfo.tag, item: twoColumnTextBlockInfo.name },
 		{ name: blogDetailBlockInfo.tag, item: blogDetailBlockInfo.name },
+		{ name: genealogyBlockInfo.tag, item: genealogyBlockInfo.name },
 	]
 });
 

@@ -24,7 +24,7 @@
 	const shadowClasses = $derived(connectTop || connectBottom ? '' : 'shadow-md');
 </script>
 
-<section class="bg-gradient-warm px-4 {spacingTop} {spacingBottom} sm:px-6 lg:px-8">
+<section class=" px-4 {spacingTop} {spacingBottom} sm:px-6 lg:px-8">
 	<div class="mx-auto max-w-6xl">
 		{#if title}
 			<h2 class="mb-8 text-center font-serif text-3xl font-bold text-primary-900">

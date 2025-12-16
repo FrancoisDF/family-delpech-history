@@ -14,7 +14,7 @@
 	};
 </script>
 
-<section class="bg-gradient-warm px-4 {spacingClasses[spacing]} sm:px-6 lg:px-8">
+<section class=" px-4 {spacingClasses[spacing]} sm:px-6 lg:px-8">
 	<div class="mx-auto max-w-4xl">
 		{#if style === 'solid'}
 			<hr class="{thicknessClasses[thickness]} border-primary-300" />

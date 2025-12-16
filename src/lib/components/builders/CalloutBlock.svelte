@@ -47,7 +47,7 @@
 </script>
 
 <section
-	class={['bg-gradient-warm', 'px-4', spacingTop, spacingBottom, 'sm:px-6', 'lg:px-8']
+	class={['', 'px-4', spacingTop, spacingBottom, 'sm:px-6', 'lg:px-8']
 		.filter(Boolean)
 		.join(' ')}
 >

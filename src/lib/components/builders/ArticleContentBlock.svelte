@@ -1,5 +1,5 @@
 <script lang="ts">
-	let { content = '', backgroundColor = 'bg-gradient-warm' } = $props();
+	let { content = '', backgroundColor = '' } = $props();
 </script>
 
 <section class={backgroundColor}>

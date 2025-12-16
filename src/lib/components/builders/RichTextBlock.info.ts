@@ -15,8 +15,8 @@ export const richTextBlockInfo: RegisteredComponent = {
 		{
 			name: 'backgroundColor',
 			type: 'string',
-			enum: ['bg-gradient-warm', 'bg-white', 'bg-primary-50'],
-			defaultValue: 'bg-gradient-warm'
+			enum: ['', 'bg-white', 'bg-primary-50'],
+			defaultValue: ''
 		},
 		{
 			name: 'textSize',

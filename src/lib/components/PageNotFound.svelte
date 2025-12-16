@@ -9,7 +9,7 @@
 	}: { title?: string; message?: string; ctaText?: string; ctaHref?: string } = $props();
 </script>
 
-<section class="flex min-h-screen items-center justify-center bg-gradient-warm px-4 py-16">
+<section class="flex min-h-screen items-center justify-center  px-4 py-16">
 	<div class="mx-auto max-w-3xl text-center">
 		<h1 class="mb-4 font-serif text-4xl font-bold text-primary-900">{title}</h1>
 		<p class="mb-6 text-lg text-primary-800">{message}</p>

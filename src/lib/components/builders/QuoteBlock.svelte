@@ -25,7 +25,7 @@
 	const shadowClasses = $derived(connectTop || connectBottom ? '' : 'shadow-md');
 </script>
 
-<section class="bg-gradient-warm px-4 {spacingTop} {spacingBottom} sm:px-6 lg:px-8">
+<section class=" px-4 {spacingTop} {spacingBottom} sm:px-6 lg:px-8">
 	<div class="mx-auto max-w-4xl">
 		{#if style === 'centered'}
 			<blockquote class="{roundedClasses} {shadowClasses} bg-white p-8 text-center md:p-12">

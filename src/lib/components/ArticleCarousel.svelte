@@ -69,7 +69,7 @@
 	}
 </script>
 
-<section class={mini ? 'px-0 py-0' : 'bg-gradient-warm px-4 py-16 sm:px-6 lg:px-8'}>
+<section class={mini ? 'px-0 py-0' : ' px-4 py-16 sm:px-6 lg:px-8'}>
 	<div class={mini ? '' : 'mx-auto max-w-6xl'}>
 		{#if title && !mini}
 			<h2 class="mb-12 text-center font-serif text-3xl font-bold text-primary-900 md:text-4xl">
