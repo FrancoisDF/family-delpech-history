@@ -1,0 +1,264 @@
+{
+  "metadata": {
+    "generatedAt": "2025-12-17T22:01:34.447Z",
+    "totalNodes": 17,
+    "totalPeople": 15,
+    "totalCouples": 2,
+    "totalEdges": 15,
+    "generationLevels": 4,
+    "rootNodes": [
+      "antoine-grognier",
+      "henri-delpech",
+      "marguerite-blanc",
+      "pierre-delpech"
+    ],
+    "canvasBounds": {
+      "minX": 50,
+      "maxX": 1850,
+      "minY": 50,
+      "maxY": 500,
+      "width": 2000,
+      "height": 650
+    }
+  },
+  "nodes": [
+    {
+      "id": "antoine-grognier",
+      "type": "person",
+      "label": "antoine-grognier",
+      "position": {
+        "x": 50,
+        "y": 50
+      }
+    },
+    {
+      "id": "antoine-grognier-junior",
+      "type": "person",
+      "label": "antoine-grognier-junior",
+      "position": {
+        "x": 1250,
+        "y": 350
+      }
+    },
+    {
+      "id": "claude-grognier",
+      "type": "person",
+      "label": "claude-grognier",
+      "position": {
+        "x": 850,
+        "y": 350
+      }
+    },
+    {
+      "id": "elizabeth-grognier",
+      "type": "person",
+      "label": "elizabeth-grognier",
+      "position": {
+        "x": 650,
+        "y": 350
+      }
+    },
+    {
+      "id": "felicite-grognier",
+      "type": "person",
+      "label": "felicite-grognier",
+      "position": {
+        "x": 1450,
+        "y": 350
+      }
+    },
+    {
+      "id": "henri-delpech",
+      "type": "person",
+      "label": "henri-delpech",
+      "position": {
+        "x": 250,
+        "y": 50
+      }
+    },
+    {
+      "id": "jean-baptist-grognier",
+      "type": "person",
+      "label": "jean-baptist-grognier",
+      "position": {
+        "x": 250,
+        "y": 350
+      }
+    },
+    {
+      "id": "joseph-delpech-junior",
+      "type": "person",
+      "label": "joseph-delpech-junior",
+      "position": {
+        "x": 50,
+        "y": 500
+      }
+    },
+    {
+      "id": "joseph-delpech-senior",
+      "type": "person",
+      "label": "joseph-delpech-senior",
+      "position": {
+        "x": 1850,
+        "y": 350
+      }
+    },
+    {
+      "id": "marguerite-blanc",
+      "type": "person",
+      "label": "marguerite-blanc",
+      "position": {
+        "x": 450,
+        "y": 50
+      }
+    },
+    {
+      "id": "marie-antoinette-delpech",
+      "type": "person",
+      "label": "marie-antoinette-delpech",
+      "position": {
+        "x": 1650,
+        "y": 350
+      }
+    },
+    {
+      "id": "marie-louise-grognier",
+      "type": "person",
+      "label": "marie-louise-grognier",
+      "position": {
+        "x": 50,
+        "y": 350
+      }
+    },
+    {
+      "id": "pierre-delpech",
+      "type": "person",
+      "label": "pierre-delpech",
+      "position": {
+        "x": 650,
+        "y": 50
+      }
+    },
+    {
+      "id": "pierre-grognier-junior",
+      "type": "person",
+      "label": "pierre-grognier-junior",
+      "position": {
+        "x": 450,
+        "y": 350
+      }
+    },
+    {
+      "id": "rose-grognier",
+      "type": "person",
+      "label": "rose-grognier",
+      "position": {
+        "x": 1050,
+        "y": 350
+      }
+    },
+    {
+      "id": "couple-antoine-grognier_marie-antoinette-delpech",
+      "type": "couple",
+      "label": "antoine-grognier & marie-antoinette-delpech",
+      "spouses": [
+        "antoine-grognier",
+        "marie-antoinette-delpech"
+      ],
+      "position": {
+        "x": 50,
+        "y": 200
+      }
+    },
+    {
+      "id": "couple-marguerite-blanc_pierre-delpech",
+      "type": "couple",
+      "label": "marguerite-blanc & pierre-delpech",
+      "spouses": [
+        "marguerite-blanc",
+        "pierre-delpech"
+      ],
+      "position": {
+        "x": 250,
+        "y": 200
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "antoine-grognier",
+      "target": "couple-antoine-grognier_marie-antoinette-delpech",
+      "type": "spouse-to-couple"
+    },
+    {
+      "source": "marie-antoinette-delpech",
+      "target": "couple-antoine-grognier_marie-antoinette-delpech",
+      "type": "spouse-to-couple"
+    },
+    {
+      "source": "marguerite-blanc",
+      "target": "couple-marguerite-blanc_pierre-delpech",
+      "type": "spouse-to-couple"
+    },
+    {
+      "source": "pierre-delpech",
+      "target": "couple-marguerite-blanc_pierre-delpech",
+      "type": "spouse-to-couple"
+    },
+    {
+      "source": "joseph-delpech-senior",
+      "target": "joseph-delpech-junior",
+      "type": "parent-to-child"
+    },
+    {
+      "source": "couple-antoine-grognier_marie-antoinette-delpech",
+      "target": "marie-louise-grognier",
+      "type": "couple-to-child"
+    },
+    {
+      "source": "couple-antoine-grognier_marie-antoinette-delpech",
+      "target": "jean-baptist-grognier",
+      "type": "couple-to-child"
+    },
+    {
+      "source": "couple-antoine-grognier_marie-antoinette-delpech",
+      "target": "pierre-grognier-junior",
+      "type": "couple-to-child"
+    },
+    {
+      "source": "couple-antoine-grognier_marie-antoinette-delpech",
+      "target": "elizabeth-grognier",
+      "type": "couple-to-child"
+    },
+    {
+      "source": "couple-antoine-grognier_marie-antoinette-delpech",
+      "target": "claude-grognier",
+      "type": "couple-to-child"
+    },
+    {
+      "source": "couple-antoine-grognier_marie-antoinette-delpech",
+      "target": "rose-grognier",
+      "type": "couple-to-child"
+    },
+    {
+      "source": "couple-antoine-grognier_marie-antoinette-delpech",
+      "target": "antoine-grognier-junior",
+      "type": "couple-to-child"
+    },
+    {
+      "source": "couple-antoine-grognier_marie-antoinette-delpech",
+      "target": "felicite-grognier",
+      "type": "couple-to-child"
+    },
+    {
+      "source": "couple-marguerite-blanc_pierre-delpech",
+      "target": "marie-antoinette-delpech",
+      "type": "couple-to-child"
+    },
+    {
+      "source": "couple-marguerite-blanc_pierre-delpech",
+      "target": "joseph-delpech-senior",
+      "type": "couple-to-child"
+    }
+  ]
+}
