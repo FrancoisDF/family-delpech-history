@@ -1,33 +1,46 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import GenealogyBlock from '$lib/components/builders/GenealogyBlock.svelte';
-	import { searchPeopleByName } from '$lib/genealogy';
+	import { searchPeopleByName, setPeopleData, filterPeopleByTag, filterPeopleByProfession, searchPeopleByNameInBuilder } from '$lib/genealogy';
 	import type { Person } from '$lib/models/person';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 
 	let searchQuery: string = $state('');
-	let selectedRootPersonId: string = $state('marie-antoinette-delpech');
+	let selectedRootPersonId: string = $state(data.availableRootPeople?.[0]?.id || 'marie-antoinette-delpech');
 	let searchResults: Person[] = $state([]);
 	let showSearchResults: boolean = $state(false);
+	let professionFilter: string = $state('');
+	let selectedTag: string = $state('');
+	let filteredPeople: Person[] = $state([]);
 
-	const availableRootPeople = [
-		{ id: 'pierre-delpech', name: 'Pierre Delpech' },
-		{ id: 'marguerite-blanc', name: 'Marguerite Blanc' },
-		{ id: 'marie-antoinette-delpech', name: 'Marie-Antoinette Delpech' },
-		{ id: 'antoine-grognier', name: 'Antoine Grognier' },
-		{ id: 'joseph-delpech-senior', name: 'Joseph Delpech' },
-		{ id: 'marie-louise-grognier', name: 'Marie-Louise Grognier' },
-		{ id: 'jean-baptist-grognier', name: 'Jean-Baptiste Grognier' },
-		{ id: 'pierre-grognier-junior', name: 'Pierre Grognier' },
-		{ id: 'elizabeth-grognier', name: 'Elizabeth Grognier' },
-		{ id: 'claude-grognier', name: 'Claude Grognier' },
-		{ id: 'rose-grognier', name: 'Rose Grognier' },
-		{ id: 'antoine-grognier-junior', name: 'Antoine Grognier (Fils)' },
-		{ id: 'felicite-grognier', name: 'Félicité Grognier' },
-		{ id: 'joseph-delpech-junior', name: 'Joseph Delpech (Fils)' },
-		{ id: 'henri-delpech', name: 'Henri Delpech' }
-	];
+	let availableRootPeople = $derived(data.availableRootPeople || []);
+	let availableTags = $derived.by(() => {
+		const tagSet = new Set<string>();
+		data.people.forEach((person: Person) => {
+			(person.tags || []).forEach((tag) => tagSet.add(tag));
+		});
+		return Array.from(tagSet).sort();
+	});
+
+	onMount(() => {
+		setPeopleData(data.people);
+	});
+
+	$effect(() => {
+		let filtered = [...data.people];
+
+		if (selectedTag) {
+			filtered = filterPeopleByTag(filtered, selectedTag);
+		}
+
+		if (professionFilter) {
+			filtered = filterPeopleByProfession(filtered, professionFilter);
+		}
+
+		filteredPeople = filtered;
+	});
 	
 	async function handleSearch(query: string) {
 		if (query.trim().length === 0) {
@@ -36,7 +49,7 @@
 			return;
 		}
 
-		searchResults = await searchPeopleByName(query);
+		searchResults = searchPeopleByNameInBuilder(query, data.people);
 		showSearchResults = true;
 	}
 
@@ -57,6 +70,11 @@
 			searchResults = [];
 		}
 	}
+
+	function handleSetRootPerson(person: Person) {
+		console.log('Setting root person to:', person);
+		selectedRootPersonId = person.id;
+	}
 </script>
 
 <svelte:head>
@@ -76,7 +94,7 @@
 	<!-- Controls -->
 	<div class="border-b border-primary-200 bg-white">
 		<div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-			<div class="grid gap-6 lg:grid-cols-2">
+			<div class="grid gap-6 lg:grid-cols-3">
 				<!-- Search -->
 				<div>
 					<label for="search" class="block text-sm font-semibold text-primary-900">
@@ -133,6 +151,37 @@
 						{/each}
 					</select>
 				</div>
+
+				<!-- Tag Filter -->
+				<div>
+					<label for="tag-filter" class="block text-sm font-semibold text-primary-900">
+						Filtrer par tag
+					</label>
+					<select
+						id="tag-filter"
+						bind:value={selectedTag}
+						class="mt-2 w-full rounded-lg border border-primary-300 bg-white px-4 py-2 text-primary-900 transition-colors focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
+					>
+						<option value="">Tous les tags</option>
+						{#each availableTags as tag}
+							<option value={tag}>{tag}</option>
+						{/each}
+					</select>
+				</div>
+			</div>
+
+			<!-- Profession Filter -->
+			<div class="mt-4">
+				<label for="profession-filter" class="block text-sm font-semibold text-primary-900">
+					Rechercher par profession ou bio
+				</label>
+				<input
+					id="profession-filter"
+					type="text"
+					placeholder="ex: menuisier, tisserand..."
+					bind:value={professionFilter}
+					class="mt-2 w-full rounded-lg border border-primary-300 bg-white px-4 py-2 text-primary-900 placeholder-primary-500 transition-colors focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
+				/>
 			</div>
 		</div>
 	</div>
@@ -144,6 +193,9 @@
 			title="Arbre Généalogique"
 			description="Cliquez sur un nom pour explorer les relations familiales et découvrir les articles associés"
 			showTitle={true}
+			personTagMap={data.personTagMap}
+			articles={data.articles}
+			onSetRootPerson={handleSetRootPerson}
 		/>
 	</div>
 

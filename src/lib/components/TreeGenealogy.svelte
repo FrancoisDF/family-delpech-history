@@ -6,10 +6,11 @@
 	interface Props {
 		rootPersonId: string;
 		onPersonSelected?: (person: Person) => void;
+		onSetRootPerson?: (person: Person) => void;
 		depth?: number;
 	}
 
-	let { rootPersonId, onPersonSelected, depth = 2 }: Props = $props();
+	let { rootPersonId, onPersonSelected, onSetRootPerson, depth = 2 }: Props = $props();
 
 	let selectedPersonId: string | null = $state(rootPersonId);
 	let expandedNodes: Set<string> = $state(new Set([rootPersonId]));
@@ -65,6 +66,13 @@
 		selectPerson(person);
 	}
 
+	function handleSetRootPerson(person: Person, e: Event) {
+		e.stopPropagation();
+		if (onSetRootPerson) {
+			onSetRootPerson(person);
+		}
+	}
+
 	// Scroll to 50% of width when content is loaded
 	$effect(() => {
 		if (!loading && scrollContainer && rootPersonData) {
@@ -99,16 +107,30 @@
 						<h3 class="text-sm font-semibold uppercase tracking-widest text-primary-600">Ancêtres</h3>
 						<div class="flex flex-wrap justify-center gap-6">
 							{#each rootPersonData.parentObjects as parent}
-								<button
-									class="genealogy-node ancestor-node {selectedPersonId === parent.id ? 'selected' : ''}"
-									onclick={() => handlePersonSelect(parent)}
-								>
-									<div class="font-semibold text-primary-900">{parent.givenName}</div>
-									<div class="text-xs text-primary-600">{parent.familyName}</div>
-									<div class="mt-2 text-xs font-medium text-primary-700">
-										{formatDateRange(parent.birthDate, parent.deathDate)}
-									</div>
-								</button>
+								<div class="relative">
+									<button
+										class="genealogy-node ancestor-node {selectedPersonId === parent.id ? 'selected' : ''}"
+										onclick={() => handlePersonSelect(parent)}
+									>
+										<div class="font-semibold text-primary-900">{parent.givenName}</div>
+										<div class="text-xs text-primary-600">{parent.familyName}</div>
+										<div class="mt-2 text-xs font-medium text-primary-700">
+											{formatDateRange(parent.birthDate, parent.deathDate)}
+										</div>
+									</button>
+									{#if onSetRootPerson}
+										<button
+											onclick={(e) => handleSetRootPerson(parent, e)}
+											class="absolute -top-2 -right-2 rounded-full bg-accent p-1.5 text-white shadow-md transition-transform hover:scale-110 active:scale-95"
+											aria-label="Définir comme personne racine"
+											title="Afficher cet arbre généalogique en partant de cette personne"
+										>
+											<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+											</svg>
+										</button>
+									{/if}
+								</div>
 							{/each}
 						</div>
 						<div class="h-6 w-px bg-gradient-to-b from-primary-300 to-transparent"></div>
@@ -116,16 +138,30 @@
 				{/if}
 
 				<!-- Root Person (centered) -->
-				<button
-					class="genealogy-node root-node {selectedPersonId === rootPersonData.id ? 'selected' : ''}"
-					onclick={() => handlePersonSelect(rootPersonData!)}
-				>
-					<div class="font-bold text-primary-900">{rootPersonData.givenName}</div>
-					<div class="text-sm font-semibold text-primary-700">{rootPersonData.familyName}</div>
-					<div class="mt-2 text-xs font-medium text-primary-700">
-						{formatDateRange(rootPersonData.birthDate, rootPersonData.deathDate)}
-					</div>
-				</button>
+				<div class="relative">
+					<button
+						class="genealogy-node root-node {selectedPersonId === rootPersonData.id ? 'selected' : ''}"
+						onclick={() => handlePersonSelect(rootPersonData!)}
+					>
+						<div class="font-bold text-primary-900">{rootPersonData.givenName}</div>
+						<div class="text-sm font-semibold text-primary-700">{rootPersonData.familyName}</div>
+						<div class="mt-2 text-xs font-medium text-primary-700">
+							{formatDateRange(rootPersonData.birthDate, rootPersonData.deathDate)}
+						</div>
+					</button>
+					{#if onSetRootPerson}
+						<button
+							onclick={(e) => handleSetRootPerson(rootPersonData!, e)}
+							class="absolute -top-2 -right-2 rounded-full bg-accent p-1.5 text-white shadow-md transition-transform hover:scale-110 active:scale-95"
+							aria-label="Définir comme personne racine"
+							title="Afficher cet arbre généalogique en partant de cette personne"
+						>
+							<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+							</svg>
+						</button>
+					{/if}
+				</div>
 
 				<!-- Spouses -->
 				{#if rootPersonData.spouseObjects && rootPersonData.spouseObjects.length > 0}
@@ -133,16 +169,30 @@
 						<div class="text-xs font-semibold uppercase tracking-widest text-sage">Époux(se)</div>
 						<div class="flex flex-wrap justify-center gap-4">
 							{#each rootPersonData.spouseObjects as spouse}
-								<button
-									class="genealogy-node spouse-node {selectedPersonId === spouse.id ? 'selected' : ''}"
-									onclick={() => handlePersonSelect(spouse)}
-								>
-									<div class="font-semibold text-primary-900">{spouse.givenName}</div>
-									<div class="text-xs text-primary-600">{spouse.familyName}</div>
-									<div class="mt-2 text-xs font-medium text-primary-700">
-										{formatDateRange(spouse.birthDate, spouse.deathDate)}
-									</div>
-								</button>
+								<div class="relative">
+									<button
+										class="genealogy-node spouse-node {selectedPersonId === spouse.id ? 'selected' : ''}"
+										onclick={() => handlePersonSelect(spouse)}
+									>
+										<div class="font-semibold text-primary-900">{spouse.givenName}</div>
+										<div class="text-xs text-primary-600">{spouse.familyName}</div>
+										<div class="mt-2 text-xs font-medium text-primary-700">
+											{formatDateRange(spouse.birthDate, spouse.deathDate)}
+										</div>
+									</button>
+									{#if onSetRootPerson}
+										<button
+											onclick={(e) => handleSetRootPerson(spouse, e)}
+											class="absolute -top-2 -right-2 rounded-full bg-accent p-1.5 text-white shadow-md transition-transform hover:scale-110 active:scale-95"
+											aria-label="Définir comme personne racine"
+											title="Afficher cet arbre généalogique en partant de cette personne"
+										>
+											<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+											</svg>
+										</button>
+									{/if}
+								</div>
 							{/each}
 						</div>
 					</div>
@@ -159,16 +209,30 @@
 								{#each rootPersonData.children as childId}
 									{#await getPerson(childId) then child}
 										{#if child}
-											<button
-												class="genealogy-node child-node {selectedPersonId === child.id ? 'selected' : ''}"
-												onclick={() => handlePersonSelect(child)}
-											>
-												<div class="font-semibold text-primary-900">{child.givenName}</div>
-												<div class="text-xs text-primary-600">{child.familyName}</div>
-												<div class="mt-2 text-xs font-medium text-primary-700">
-													{formatDateRange(child.birthDate, child.deathDate)}
-												</div>
-											</button>
+											<div class="relative">
+												<button
+													class="genealogy-node child-node {selectedPersonId === child.id ? 'selected' : ''}"
+													onclick={() => handlePersonSelect(child)}
+												>
+													<div class="font-semibold text-primary-900">{child.givenName}</div>
+													<div class="text-xs text-primary-600">{child.familyName}</div>
+													<div class="mt-2 text-xs font-medium text-primary-700">
+														{formatDateRange(child.birthDate, child.deathDate)}
+													</div>
+												</button>
+												{#if onSetRootPerson}
+													<button
+														onclick={(e) => handleSetRootPerson(child, e)}
+														class="absolute -top-2 -right-2 rounded-full bg-accent p-1.5 text-white shadow-md transition-transform hover:scale-110 active:scale-95"
+														aria-label="Définir comme personne racine"
+														title="Afficher cet arbre généalogique en partant de cette personne"
+													>
+														<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+															<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+														</svg>
+													</button>
+												{/if}
+											</div>
 										{/if}
 									{/await}
 								{/each}

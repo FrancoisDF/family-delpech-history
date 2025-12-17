@@ -9,10 +9,6 @@ export interface Person {
 	deathPlace?: string;
 	bio?: string;
 	gender?: 'male' | 'female' | 'other';
-	parents: string[];
-	spouses: string[];
-	children: string[];
-	siblings: string[];
 	sources: string[];
 	photoUrl?: string;
 	tags?: string[];

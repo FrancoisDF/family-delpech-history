@@ -1,36 +1,155 @@
 import type { Person, PersonWithRelations } from './models/person';
 import { loadFamilyData } from './ai/data';
+import type { BuilderContent } from './server/builder';
 
 let _peopleCached: Person[] | null = null;
 let _peopleMapCached: Map<string, Person> | null = null;
 
-export async function loadPeopleData(fetchFn?: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>): Promise<Person[]> {
-	if (_peopleCached) return _peopleCached;
-	try {
-		const fetchToUse = fetchFn || fetch;
-		const res = await fetchToUse('/people.json');
-		if (!res.ok) throw new Error('Failed to load people.json');
-		const data = (await res.json()) as Person[];
-		_peopleCached = data;
-		// Rebuild map cache
-		_peopleMapCached = null;
-		return data;
-	} catch (err) {
-		console.warn('Unable to load people data:', err);
-		return [];
-	}
+export function setPeopleData(people: Person[]): void {
+	_peopleCached = people;
+	_peopleMapCached = null;
 }
 
 async function getPeopleMap(): Promise<Map<string, Person>> {
 	if (_peopleMapCached) return _peopleMapCached;
-	const people = await loadPeopleData();
-	_peopleMapCached = new Map(people.map((p) => [p.id, p]));
+	if (!_peopleCached) {
+		console.warn('People data not initialized. Call setPeopleData() first.');
+		return new Map();
+	}
+	_peopleMapCached = new Map(_peopleCached.map((p) => [p.id, p]));
 	return _peopleMapCached;
 }
 
 export function clearPeopleDataCache() {
 	_peopleCached = null;
 	_peopleMapCached = null;
+}
+
+export async function loadPeopleData(): Promise<Person[]> {
+	if (!_peopleCached) {
+		console.warn('People data not initialized. Call setPeopleData() first.');
+		return [];
+	}
+	return _peopleCached;
+}
+
+export function getGenerationLevel(personId: string, basePersonId: string): number | null {
+	if (!_peopleCached) return null;
+
+	const peopleMap = new Map(_peopleCached.map((p) => [p.id, p]));
+
+	function calculateDistance(from: string, to: string, visited = new Set<string>()): number | null {
+		if (visited.has(from)) return null;
+		visited.add(from);
+
+		if (from === to) return 0;
+
+		const fromPerson = peopleMap.get(from);
+		if (!fromPerson) return null;
+
+		// Check children (next generation)
+		for (const childId of fromPerson.children) {
+			const dist = calculateDistance(childId, to, new Set(visited));
+			if (dist !== null) return dist + 1;
+		}
+
+		// Check parents (previous generation)
+		for (const parentId of fromPerson.parents) {
+			const dist = calculateDistance(parentId, to, new Set(visited));
+			if (dist !== null) return dist - 1;
+		}
+
+		return null;
+	}
+
+	return calculateDistance(personId, basePersonId);
+}
+
+export function filterPeopleByTag(people: Person[], tag: string): Person[] {
+	const lowerTag = tag.toLowerCase();
+	return people.filter((person) =>
+		(person.tags || []).some((t) => t.toLowerCase().includes(lowerTag))
+	);
+}
+
+export function filterPeopleByProfession(people: Person[], keyword: string): Person[] {
+	const lowerKeyword = keyword.toLowerCase();
+	return people.filter((person) => {
+		const bioText = (person.bio || '').toLowerCase();
+		const searchText = `${person.givenName} ${person.familyName} ${bioText}`.toLowerCase();
+		return searchText.includes(lowerKeyword);
+	});
+}
+
+export function searchPeopleByNameInBuilder(query: string, people: Person[]): Person[] {
+	const lowerQuery = query.toLowerCase();
+
+	return people.filter((person) => {
+		const searchText = `${person.displayName} ${person.givenName} ${person.familyName}`.toLowerCase();
+		return searchText.includes(lowerQuery);
+	});
+}
+
+export function buildPersonFromBuilderContent(
+	content: BuilderContent,
+	contentIdToPersonIdMap?: Map<string, string>
+): Person | null {
+	if (!content.data) return null;
+	const data = content.data as Record<string, unknown>;
+
+	const personId = data.personId as string;
+	if (!personId) return null;
+
+	// Extract spouse and children IDs from references
+	const spouses: string[] = [];
+	const children: string[] = [];
+
+	if (Array.isArray(data.spouses)) {
+		for (const spouse of data.spouses) {
+			if (typeof spouse === 'object' && spouse !== null) {
+				const spouseRefId = (spouse as any).id;
+				if (spouseRefId && contentIdToPersonIdMap) {
+					const spousePersonId = contentIdToPersonIdMap.get(spouseRefId);
+					if (spousePersonId) {
+						spouses.push(spousePersonId);
+					}
+				}
+			}
+		}
+	}
+
+	if (Array.isArray(data.children)) {
+		for (const child of data.children) {
+			if (typeof child === 'object' && child !== null) {
+				const childRefId = (child as any).id;
+				if (childRefId && contentIdToPersonIdMap) {
+					const childPersonId = contentIdToPersonIdMap.get(childRefId);
+					if (childPersonId) {
+						children.push(childPersonId);
+					}
+				}
+			}
+		}
+	}
+
+	return {
+		id: personId,
+		givenName: (data.givenName as string) || '',
+		familyName: (data.familyName as string) || '',
+		displayName: (data.displayName as string) || '',
+		birthDate: (data.birthDate as string) || undefined,
+		deathDate: (data.deathDate as string) || undefined,
+		birthPlace: (data.birthPlace as string) || undefined,
+		deathPlace: (data.deathPlace as string) || undefined,
+		bio: (data.bio as string) || undefined,
+		gender: (data.gender as 'male' | 'female' | 'other') || undefined,
+		parents: [], // Builder.io model doesn't have parents field yet
+		spouses,
+		children,
+		siblings: [], // Builder.io model doesn't have siblings field yet
+		sources: [],
+		tags: (data.tags as string[]) || []
+	};
 }
 
 export async function getPerson(id: string): Promise<Person | null> {
@@ -136,12 +255,7 @@ export async function getRelatedArticles(personId: string): Promise<any[]> {
 
 export async function searchPeopleByName(query: string): Promise<Person[]> {
 	const people = await loadPeopleData();
-	const lowerQuery = query.toLowerCase();
-
-	return people.filter((person) => {
-		const searchText = `${person.displayName} ${person.givenName} ${person.familyName}`.toLowerCase();
-		return searchText.includes(lowerQuery);
-	});
+	return searchPeopleByNameInBuilder(query, people);
 }
 
 export async function getPeopleByGeneration(startingPersonId: string, generationOffset: number): Promise<Person[]> {

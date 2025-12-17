@@ -30,7 +30,7 @@
  *    - BlogDetailBlock
  */
 
-import type { RegisteredComponent, RegisteredComponent } from '@builder.io/sdk-svelte';
+import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import { heroBlockInfo } from './HeroBlock.info';
 import { blogGridBlockInfo } from './BlogGridBlock.info';
 import { articleCarouselBlockInfo } from './ArticleCarouselBlock.info';

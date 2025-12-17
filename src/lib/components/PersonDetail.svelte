@@ -7,17 +7,52 @@
 		person: Person;
 		onClose?: () => void;
 		onPersonClick?: (person: Person) => void;
+		onSetRootPerson?: (person: Person) => void;
 		hideCloseButton?: boolean;
+		personTagMap?: Record<string, any>;
+		articles?: any[];
 	}
 
-	let { person, onClose, onPersonClick, hideCloseButton = false }: Props = $props();
+	let { person, onClose, onPersonClick, onSetRootPerson, hideCloseButton = false, personTagMap = {}, articles = [] }: Props = $props();
 
 	let relatedArticles: any[] = $state([]);
 	let loading: boolean = $state(false);
 
+	function getArticlesByPersonTag(personId: string): any[] {
+		const tagInfo = personTagMap[personId];
+		if (!tagInfo || !articles.length) {
+			return [];
+		}
+
+		const tagId = tagInfo.tagId;
+		return articles.filter((article) => {
+			const articleTags = article.data?.tags || article.tags || [];
+			return articleTags.some((tagItem: any) => {
+				const articleTagId = tagItem.tag?.id || tagItem?.id;
+				return articleTagId === tagId;
+			});
+		}).map((article) => ({
+			id: article.id,
+			title: article.data?.title || article.title,
+			excerpt: article.data?.excerpt || article.excerpt,
+			date: article.data?.date || article.date,
+			readTime: article.data?.readTime || article.readTime,
+			category: article.data?.category || article.category,
+			author: article.data?.author || article.author,
+			featuredImage: article.data?.featuredImage || article.featuredImage
+		}));
+	}
+
 	$effect(async () => {
 		loading = true;
-		relatedArticles = await getRelatedArticles(person.id);
+		// First try to get articles using the person-tag mapping
+		const tagArticles = getArticlesByPersonTag(person.id);
+		if (tagArticles.length > 0) {
+			relatedArticles = tagArticles;
+		} else {
+			// Fallback to the original method for backward compatibility
+			relatedArticles = await getRelatedArticles(person.id);
+		}
 		loading = false;
 	});
 
@@ -52,20 +87,38 @@
 <div class="flex h-full flex-col rounded-lg border border-primary-200 bg-white shadow-lg">
 	<!-- Header -->
 	<div class="relative border-b border-primary-100 px-6 py-6">
-		{#if !hideCloseButton}
-			<button
-				onclick={onClose}
-				class="absolute right-4 top-4 rounded-full p-2 text-primary-600 hover:bg-primary-100 active:bg-primary-200"
-				aria-label="Fermer"
-			>
-				<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-				</svg>
-			</button>
-		{/if}
+		<div class="flex items-start justify-between gap-4">
+			<div class="flex-1">
+				<div class="flex items-center gap-3">
+					<h2 class="font-serif text-2xl font-semibold text-primary-900">{person.displayName}</h2>
+					{#if onSetRootPerson}
+						<button
+							onclick={() => onSetRootPerson(person)}
+							class="rounded-full p-2 text-primary-600 transition-colors hover:bg-accent/10 hover:text-accent active:bg-accent/20"
+							aria-label="Définir comme personne racine"
+							title="Afficher cet arbre généalogique en partant de cette personne"
+						>
+							<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+							</svg>
+						</button>
+					{/if}
+				</div>
+				<p class="mt-2 text-sm text-primary-700">{person.gender === 'female' ? 'Femme' : 'Homme'}</p>
+			</div>
 
-		<h2 class="font-serif text-2xl font-semibold text-primary-900">{person.displayName}</h2>
-		<p class="mt-2 text-sm text-primary-700">{person.gender === 'female' ? 'Femme' : 'Homme'}</p>
+			{#if !hideCloseButton}
+				<button
+					onclick={onClose}
+					class="rounded-full p-2 text-primary-600 hover:bg-primary-100 active:bg-primary-200"
+					aria-label="Fermer"
+				>
+					<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+					</svg>
+				</button>
+			{/if}
+		</div>
 	</div>
 
 	<!-- Content -->
@@ -95,8 +148,22 @@
 			</div>
 		{/if}
 
+		<!-- Tags -->
+		{#if person.tags && person.tags.length > 0}
+			<div class="mb-6">
+				<h3 class="mb-2 font-semibold text-primary-900">Catégories</h3>
+				<div class="flex flex-wrap gap-2">
+					{#each person.tags as tag}
+						<span class="inline-block rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent">
+							{tag}
+						</span>
+					{/each}
+				</div>
+			</div>
+		{/if}
+
 		<!-- Family Relationships -->
-		<div class="mb-6 space-y-4">
+		<!--<div class="mb-6 space-y-4">
 			{#if person.parents.length > 0}
 				<div>
 					<h3 class="mb-2 font-semibold text-primary-900">Parents</h3>
@@ -174,7 +241,7 @@
 					</div>
 				</div>
 			{/if}
-		</div>
+		</div>-->
 
 		<!-- Related Articles Carousel -->
 		{#if relatedArticles.length > 0}

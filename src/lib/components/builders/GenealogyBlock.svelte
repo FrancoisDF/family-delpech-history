@@ -10,6 +10,9 @@
 		description?: string;
 		showTitle?: boolean;
 		backgroundColor?: string;
+		personTagMap?: Record<string, any>;
+		articles?: any[];
+		onSetRootPerson?: (person: Person) => void;
 	}
 
 	let {
@@ -17,25 +20,63 @@
 		title = 'Arbre Généalogique',
 		description = 'Explorez l\'arbre généalogique de la famille Delpech',
 		showTitle = true,
-		backgroundColor
+		backgroundColor,
+		personTagMap = {},
+		articles = [],
+		onSetRootPerson
 	}: Props = $props();
 
 	let selectedPerson: Person | null = $state(null);
+	let selectedPersonHistory: Person[] = $state([]);
+	let historyIndex: number = $state(-1);
+	let canGoBack = $derived(historyIndex > 0);
 
 	function handlePersonSelected(person: Person) {
-		selectedPerson = person;
-	}
+		console.log('Person selected from tree:', person);
+		console.log('Person selectedPerson:', selectedPerson);
+		// If person is already selected, don't add to history
+		if (selectedPerson?.id === person.id) {
+			return;
+		}
 
+		// Remove any future history if we're not at the end
+		if (historyIndex < selectedPersonHistory.length - 1) {
+			selectedPersonHistory = selectedPersonHistory.slice(0, historyIndex + 1);
+		}
+
+		// Add new selected person to history
+		selectedPersonHistory = [...selectedPersonHistory, person];
+		historyIndex = selectedPersonHistory.length - 1;
+		selectedPerson = person;
+
+		console.log('History:', selectedPersonHistory);
+		console.log('History Index:', historyIndex);
+}
 	function handleDetailClose() {
 		selectedPerson = null;
 	}
 
+	function handleGoBackPerson() {
+		if (historyIndex > 0) {
+			historyIndex--;
+			selectedPerson = selectedPersonHistory[historyIndex] || null;
+		}
+	}
+
 	async function handlePersonClick(person: Person) {
-		selectedPerson = person;
+		// Add to history same as tree selection
+		handlePersonSelected(person);
 		// Scroll tree to top if on mobile
 		const treeContainer = document.querySelector('[data-genealogy-tree]');
 		if (treeContainer) {
 			treeContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+		}
+	}
+
+		console.log('Selected Person: qefqefqef');
+	function handleSetRootPerson(person: Person) {
+		if (onSetRootPerson) {
+			onSetRootPerson(person);
 		}
 	}
 </script>
@@ -57,10 +98,22 @@
 		<div class="hidden grid-cols-3 gap-8 lg:grid">
 			<!-- Tree Section (left, spans 2 columns) -->
 			<div class="lg:col-span-2">
-				<div data-genealogy-tree class="mx-auto rounded-lg border border-primary-200 bg-white p-4">
+				<div data-genealogy-tree class="relative mx-auto rounded-lg border border-primary-200 bg-white p-4">
+					<button
+						onclick={handleGoBackPerson}
+						disabled={!canGoBack}
+						class="absolute left-4 top-4 z-10 rounded-full p-2 transition-colors {canGoBack ? 'bg-primary-100 text-primary-600 hover:bg-primary-200 active:bg-primary-300 cursor-pointer' : 'bg-primary-50 text-primary-300 cursor-not-allowed'}"
+						aria-label="Retour"
+						title={canGoBack ? "Retour à la personne précédente" : "Pas d'historique"}
+					>
+						<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+						</svg>
+					</button>
 					<TreeGenealogy
 						{rootPersonId}
 						onPersonSelected={handlePersonSelected}
+						{onSetRootPerson}
 					/>
 				</div>
 			</div>
@@ -73,6 +126,9 @@
 							person={selectedPerson}
 							onClose={handleDetailClose}
 							onPersonClick={handlePersonClick}
+							onSetRootPerson={handleSetRootPerson}
+							{personTagMap}
+							{articles}
 						/>
 					</div>
 				{:else}
@@ -101,10 +157,22 @@
 
 		<!-- Mobile Layout -->
 		<div class="lg:hidden">
-			<div data-genealogy-tree class="rounded-lg border border-primary-200 bg-white p-4">
+			<div data-genealogy-tree class="relative rounded-lg border border-primary-200 bg-white p-4">
+				<button
+					onclick={handleGoBackPerson}
+					disabled={!canGoBack}
+					class="absolute left-4 top-4 z-10 rounded-full p-2 transition-colors {canGoBack ? 'bg-primary-100 text-primary-600 hover:bg-primary-200 active:bg-primary-300 cursor-pointer' : 'bg-primary-50 text-primary-300 cursor-not-allowed'}"
+					aria-label="Retour"
+					title={canGoBack ? "Retour à la personne précédente" : "Pas d'historique"}
+				>
+					<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+					</svg>
+				</button>
 				<TreeGenealogy
 					{rootPersonId}
 					onPersonSelected={handlePersonSelected}
+					{onSetRootPerson}
 				/>
 			</div>
 		</div>
@@ -135,6 +203,7 @@
 							person={selectedPerson}
 							onClose={handleDetailClose}
 							onPersonClick={handlePersonClick}
+							onSetRootPerson={handleSetRootPerson}
 							hideCloseButton={true}
 						/>
 					</div>
