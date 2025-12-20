@@ -46,3 +46,9 @@ export function generateBlogUrl(id: string, title: string): string {
 	// Keep the id as the first token (extractIdFromUrl relies on first 6 chars)
 	return slug ? `${id}-${slug}` : id;
 }
+
+export function extractTagsId(tags: any[]) {
+	return tags.map((item) => {
+		return item.tag.id;
+	});
+}

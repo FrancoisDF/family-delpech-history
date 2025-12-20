@@ -41,12 +41,14 @@ export async function fetchBuilderContentServer(
 
 export async function fetchBuilderContentByIdServer(
 	model: string,
-	id: string
+	id: string,
+	includeUnpublished: boolean = false
 ): Promise<BuilderContent | null> {
 	try {
 		const result = await fetchOneEntry({
 			model,
 			apiKey: PUBLIC_BUILDER_API_KEY,
+			includeUnpublished,
 			options: {
 				query: {
 					id: id

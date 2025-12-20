@@ -11,7 +11,7 @@
 
 	let { data } = $props<{ data: PageData }>();
 
-	const post = $state(data.post);
+	let post = $state(data.post);
 	let isPDFModalOpen = $state(false);
 	let pdfModalUrl = $state('');
 	let pdfModalTitle = $state('');
@@ -55,10 +55,10 @@
 		customComponents={builderComponents}
 	/>
 
-	{#if data.relatedArticles && data.relatedArticles.length > 0}
+	{#if post?.data?.tags && post.data?.tags.length > 0}
 		<ArticleCarouselBlock
 			title="Articles Connexes"
-			articles={data.relatedArticles}
+			tags={post.data?.tags || []}
 			itemsPerSlide={3}
 		/>
 	{/if}

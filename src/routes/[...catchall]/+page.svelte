@@ -25,7 +25,6 @@
 	<Content
 		model="page"
 		content={data.pageContent}
-		data={{ sections: data.storySections, articles: data.blogArticles }}
 		apiKey={PUBLIC_BUILDER_API_KEY}
 		customComponents={builderComponents}
 	/>

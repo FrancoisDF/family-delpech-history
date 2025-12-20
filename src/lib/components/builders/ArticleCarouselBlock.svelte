@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { extractTagsId } from '$lib/url-utils';
+	import { fetchArticlesByTags } from '../article.remote';
 	import ArticleCarousel from '../ArticleCarousel.svelte';
 
 	interface Article {
@@ -13,13 +15,18 @@
 
 	let {
 		title = 'Articles Connexes',
-		articles = [],
-		itemsPerSlide = 3
+		tags = [],
+		itemsPerSlide = 3,
 	}: {
 		title?: string;
-		articles?: Article[];
+		tags?: any[];
 		itemsPerSlide?: number;
 	} = $props();
+
+	const tagsID = extractTagsId(tags || []);
+
+	const relatedArticlesAll = await fetchArticlesByTags(tagsID);
+
 </script>
 
-<ArticleCarousel {title} {articles} {itemsPerSlide} />
+<ArticleCarousel {title} articles={relatedArticlesAll} {itemsPerSlide} />

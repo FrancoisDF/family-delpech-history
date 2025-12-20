@@ -46,6 +46,26 @@ export const fetchArticles = query( async (): Promise<BlogArticle[]> => {
 	}
 })
 
+export const fetchArticlesByTags = query(v.array(v.string()), async (tagIds: string[]): Promise<BlogArticle[]> => {
+	try {
+		if (!tagIds || tagIds.length === 0) {
+			return [];
+		}
+
+		const articlesRaw = await fetchBuilderContentServer('blog-articles', {
+			limit: 100,
+			omit: 'data.blocks, meta, folders, variations',
+			query: {
+				'data.tags.tag.id': { $in: tagIds }
+			}
+		});
+		return formatArticles(articlesRaw);
+	} catch (error) {
+		console.error('Error fetching articles by tags:', error);
+		return [];
+	}
+})
+
 export const fetchRelatedArticles = query( async (): Promise<BlogArticle[]> => {
 	try {
 		const articlesRaw = await fetchBuilderContentServer('blog-articles', {
