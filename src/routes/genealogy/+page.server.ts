@@ -1,4 +1,4 @@
-import { fetchBuilderPeopleWithRelationsServer, fetchBuilderContentServer, fetchFamilyDataFromBuilderServer } from '$lib/server/builder';
+import { fetchBuilderPeopleWithRelationsServer, fetchBuilderContentServer } from '$lib/server/builder';
 import { loadFamilyData } from '$lib/ai/data';
 import type { PageServerLoad } from './$types';
 import type { Person } from '$lib/models/person';
