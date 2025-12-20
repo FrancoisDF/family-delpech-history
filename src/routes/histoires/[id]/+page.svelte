@@ -11,7 +11,7 @@
 
 	let { data } = $props<{ data: PageData }>();
 
-	const post = data.post;
+	const post = $state(data.post);
 	let isPDFModalOpen = $state(false);
 	let pdfModalUrl = $state('');
 	let pdfModalTitle = $state('');

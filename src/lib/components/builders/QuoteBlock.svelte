@@ -35,7 +35,7 @@
 					/>
 				</svg>
 				<p class="mb-6 font-serif text-xl italic leading-relaxed text-primary-900 md:text-2xl">
-					{quote}
+					{@html quote}
 				</p>
 				{#if author}
 					<footer class="mt-4">
@@ -49,7 +49,7 @@
 		{:else}
 			<div class="border-l-4 border-accent bg-white p-6 shadow-md md:p-8">
 				<p class="mb-4 font-serif text-lg italic leading-relaxed text-primary-900 md:text-xl">
-					"{quote}"
+					{@html quote}
 				</p>
 				{#if author}
 					<footer class="text-right">

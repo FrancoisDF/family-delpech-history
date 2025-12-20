@@ -19,10 +19,6 @@
 		link.click();
 		document.body.removeChild(link);
 	}
-
-	$effect(() => {
-		console.log('ArticleHeaderBlock pdfFile:', pdfFile);
-	});
 </script>
 
 <div class="">

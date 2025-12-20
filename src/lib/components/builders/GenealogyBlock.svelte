@@ -73,7 +73,6 @@
 		}
 	}
 
-		console.log('Selected Person: qefqefqef');
 	function handleSetRootPerson(person: Person) {
 		if (onSetRootPerson) {
 			onSetRootPerson(person);
