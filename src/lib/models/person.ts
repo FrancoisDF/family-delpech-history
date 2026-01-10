@@ -12,6 +12,10 @@ export interface Person {
 	sources: string[];
 	photoUrl?: string;
 	tags?: string[];
+	parents?: string[];
+	spouses?: string[];
+	children?: string[];
+	siblings?: string[];
 }
 
 export interface PersonWithRelations extends Person {

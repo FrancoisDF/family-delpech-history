@@ -8,6 +8,9 @@ node_modules
 /.svelte-kit
 /build
 
+# Generated at build time
+/static/genealogy-data.json
+
 # OS
 .DS_Store
 Thumbs.db

@@ -42,48 +42,49 @@
 				<h2 class="mb-2 font-semibold text-red-900">Unable to Load Genealogy Graph</h2>
 				<p class="text-red-800">{data.error}</p>
 				<p class="mt-4 text-sm text-red-700">
-					To generate the graph, run: <code class="rounded bg-red-100 px-2 py-1">npm run parse:mermaid-graph</code>
+					To generate the graph, run: <code class="rounded bg-red-100 px-2 py-1">npm run build:gedcom</code>
 				</p>
 			</div>
 		{:else if data.graph}
 			<!-- Interactive tree -->
-			<div class="grid gap-8 lg:grid-cols-4">
-				<!-- Tree view (spans 3 columns on desktop) -->
-				<div class="lg:col-span-3">
-					<GenealogyGraphView
-						graph={data.graph}
-						onNodeSelected={handleNodeSelected}
-						width={900}
-						height={750}
-					/>
-				</div>
+			<div class="mb-8">
+				<GenealogyGraphView
+					graph={data.graph}
+					onNodeSelected={handleNodeSelected}
+					width={1200}
+					height={800}
+				/>
+			</div>
 
-				<!-- Details panel (spans 1 column on desktop) -->
-				<div class="space-y-4">
+			<!-- Details panel -->
+			<div class="grid gap-8 lg:grid-cols-3">
+				<div class="lg:col-span-2">
 					<!-- Statistics -->
 					<div class="rounded-lg border border-primary-200 bg-white p-6 shadow">
-						<h3 class="mb-4 font-serif text-lg font-bold text-primary-900">Statistiques</h3>
-						<div class="space-y-2 text-sm text-primary-700">
-							<div>
-								<span class="font-semibold">Personnes:</span>
-								{data.graph.metadata.totalPeople}
+						<h3 class="mb-4 font-serif text-lg font-bold text-primary-900">Informations de l'Arbre</h3>
+						<div class="grid gap-4 sm:grid-cols-2">
+							<div class="rounded bg-primary-50 p-4">
+								<div class="text-sm font-semibold text-primary-600">Personnes</div>
+								<div class="mt-1 text-2xl font-bold text-primary-900">{data.graph.metadata.totalPeople}</div>
 							</div>
-							<div>
-								<span class="font-semibold">Couples:</span>
-								{data.graph.metadata.totalCouples}
+							<div class="rounded bg-primary-50 p-4">
+								<div class="text-sm font-semibold text-primary-600">Couples</div>
+								<div class="mt-1 text-2xl font-bold text-primary-900">{data.graph.metadata.totalCouples}</div>
 							</div>
-							<div>
-								<span class="font-semibold">Liens:</span>
-								{data.graph.metadata.totalEdges}
+							<div class="rounded bg-primary-50 p-4">
+								<div class="text-sm font-semibold text-primary-600">Générations</div>
+								<div class="mt-1 text-2xl font-bold text-primary-900">{data.graph.metadata.generationLevels}</div>
 							</div>
-							<div>
-								<span class="font-semibold">Générations:</span>
-								{data.graph.metadata.generationLevels}
+							<div class="rounded bg-primary-50 p-4">
+								<div class="text-sm font-semibold text-primary-600">Liens</div>
+								<div class="mt-1 text-2xl font-bold text-primary-900">{data.graph.metadata.totalEdges}</div>
 							</div>
 						</div>
 					</div>
+				</div>
 
-					<!-- Selected person details -->
+				<!-- Selected person details -->
+				<div>
 					{#if selectedPerson}
 						<div class="rounded-lg border border-primary-200 bg-white p-6 shadow">
 							<div class="mb-4 flex items-center justify-between">
@@ -94,7 +95,7 @@
 									onclick={handleCloseDetail}
 									class="rounded bg-primary-100 px-2 py-1 text-xs font-semibold text-primary-900 hover:bg-primary-200"
 								>
-									Fermer
+									✕
 								</button>
 							</div>
 
@@ -156,15 +157,27 @@
 							</p>
 						</div>
 					{/if}
+				</div>
+			</div>
 
-					<!-- Instructions -->
-					<div class="rounded-lg border border-primary-200 bg-white p-6 shadow">
-						<h3 class="mb-3 font-serif text-sm font-bold text-primary-900">Contrôles</h3>
-						<ul class="space-y-2 text-xs text-primary-700">
-							<li><strong>Zoom:</strong> Molette souris ou boutons +/-</li>
-							<li><strong>Déplacer:</strong> Clic + Glisser</li>
-							<li><strong>Sélectionner:</strong> Clic sur une personne</li>
-							<li><strong>Réinitialiser:</strong> Bouton "Reset"</li>
+			<!-- Instructions -->
+			<div class="mt-8 rounded-lg border border-primary-200 bg-white p-6 shadow">
+				<h3 class="mb-4 font-serif text-lg font-bold text-primary-900">Contrôles et Navigation</h3>
+				<div class="grid gap-4 sm:grid-cols-2">
+					<div>
+						<h4 class="mb-2 font-semibold text-primary-800">Zoom</h4>
+						<ul class="space-y-1 text-sm text-primary-700">
+							<li>• Bouton <strong>+</strong>: Agrandir</li>
+							<li>• Bouton <strong>−</strong>: Réduire</li>
+							<li>• Bouton <strong>Reset</strong>: Réinitialiser le zoom</li>
+						</ul>
+					</div>
+					<div>
+						<h4 class="mb-2 font-semibold text-primary-800">Sélection</h4>
+						<ul class="space-y-1 text-sm text-primary-700">
+							<li>• Clic sur une personne: Afficher les détails</li>
+							<li>• Clic sur le fond: Déselectionner</li>
+							<li>• Bouton ⬇: Télécharger l'arbre en image</li>
 						</ul>
 					</div>
 				</div>

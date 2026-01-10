@@ -1,21 +1,23 @@
 import { fetchBuilderPeopleWithRelationsServer, fetchBuilderContentServer } from '$lib/server/builder';
 import { loadFamilyData } from '$lib/ai/data';
+import { getGEDCOMPeople } from '$lib/gedcom';
 import type { PageServerLoad } from './$types';
 import type { Person } from '$lib/models/person';
 
 export const load: PageServerLoad = async (event) => {
 	try {
-		const [people, articles] = await Promise.all([
-			fetchBuilderPeopleWithRelationsServer(),
-			fetchBuilderContentServer('blog-articles', {
-				limit: 100,
-				omit: 'data.blocks, meta, folders, variations'
-			})
-		]);
+		// Load GEDCOM data (generated at build time)
+		const people = await getGEDCOMPeople();
 
 		if (people.length === 0) {
-			throw new Error('No people data retrieved from Builder.io');
+			throw new Error('No genealogy data found. Please ensure GEDCOM file is processed at build time.');
 		}
+
+		// Fetch articles (always from Builder.io)
+		const articles = await fetchBuilderContentServer('blog-articles', {
+			limit: 100,
+			omit: 'data.blocks, meta, folders, variations'
+		});
 
 		const personTagMap: Record<string, any> = {};
 		const availableRootPeople: Array<{ id: string; name: string }> = [];
