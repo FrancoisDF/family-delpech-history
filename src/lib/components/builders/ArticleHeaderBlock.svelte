@@ -7,6 +7,7 @@
 		author = '',
 		category = '',
 		featuredImage = '',
+		featuredImageDisplayMode = 'cover',
 		pdfFile = '',
 		onOpenPDFModal
 	} = $props();
@@ -44,7 +45,13 @@
 			<!-- Featured Image -->
 			{#if featuredImage}
 				<div class="mx-auto max-w-4xl overflow-hidden rounded-xl">
-					<img src={featuredImage} alt={title} class="h-96 w-full object-cover" />
+					<img
+						src={featuredImage}
+						alt={title}
+						class="h-96 w-full {featuredImageDisplayMode === 'contain'
+							? 'object-contain'
+							: 'object-cover'}"
+					/>
 				</div>
 			{/if}
 			<h1 class="mb-4 font-serif text-4xl font-bold text-primary-900 md:text-5xl pt-6">{title}</h1>

@@ -4,27 +4,53 @@ import AccordionBlock from './AccordionBlock.svelte';
 export const accordionBlockInfo: RegisteredComponent = {
 	component: AccordionBlock,
 	name: 'AccordionBlock',
-	tag: 'Interactive Elements',
+	tag: 'Accordion block',
 	inputs: [
 		{
 			name: 'title',
 			type: 'string',
-			defaultValue: 'Questions Fréquentes'
+			defaultValue: 'Documents'
 		},
 		{
-			name: 'items',
+			name: 'sections',
 			type: 'list',
 			defaultValue: [],
 			subFields: [
 				{
-					name: 'question',
+					name: 'name',
 					type: 'string',
-					defaultValue: 'Question?'
+					defaultValue: 'Document Section'
 				},
 				{
-					name: 'answer',
-					type: 'richText',
-					defaultValue: 'Réponse détaillée...'
+					name: 'documents',
+					type: 'list',
+					defaultValue: [],
+					subFields: [
+						{
+							name: 'name',
+							type: 'string',
+							defaultValue: 'Document Name'
+						},
+						{
+							name: 'description',
+							type: 'longText',
+							defaultValue: '',
+							helperText: 'Brief description or summary of the document'
+						},
+						{
+							name: 'file',
+							type: 'file',
+							allowedFileTypes: ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt'],
+							defaultValue: ''
+						},
+						{
+							name: 'actionType',
+							type: 'string',
+							enum: ['view', 'download'],
+							defaultValue: 'view',
+							helperText: 'View: Opens in modal, Download: Direct download'
+						}
+					]
 				}
 			]
 		},

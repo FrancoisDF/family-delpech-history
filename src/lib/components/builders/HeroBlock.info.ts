@@ -41,6 +41,13 @@ export const heroBlockInfo: RegisteredComponent = {
 			type: 'file',
 			allowedFileTypes: ['jpeg', 'jpg', 'png', 'svg', 'webp'],
 			defaultValue: ''
+		},
+		{
+			name: 'backgroundImageDisplayMode',
+			type: 'string',
+			enum: ['cover', 'contain'],
+			defaultValue: 'cover',
+			helperText: 'Cover: fills the space (may crop), Contain: shows full image'
 		}
 	]
 };

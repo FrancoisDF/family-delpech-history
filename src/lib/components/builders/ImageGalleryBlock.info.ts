@@ -30,6 +30,19 @@ export const imageGalleryBlockInfo: RegisteredComponent = {
 					name: 'caption',
 					type: 'string',
 					defaultValue: ''
+				},
+				{
+					name: 'description',
+					type: 'richText',
+					defaultValue: '',
+					helperText: 'Description shown on card flip - supports rich text'
+				},
+				{
+					name: 'imageDisplayMode',
+					type: 'string',
+					enum: ['cover', 'contain'],
+					defaultValue: 'cover',
+					helperText: 'Cover: fills the space (may crop), Contain: shows full image'
 				}
 			]
 		},

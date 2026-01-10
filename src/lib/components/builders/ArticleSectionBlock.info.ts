@@ -34,6 +34,13 @@ export const articleSectionBlockInfo: RegisteredComponent = {
 			defaultValue: 'none'
 		},
 		{
+			name: 'imageDisplayMode',
+			type: 'string',
+			enum: ['cover', 'contain'],
+			defaultValue: 'cover',
+			helperText: 'Cover: fills the space (may crop), Contain: shows full image'
+		},
+		{
 			name: 'backgroundColor',
 			type: 'string',
 			enum: ['bg-white', 'bg-primary-50', 'bg-cream'],

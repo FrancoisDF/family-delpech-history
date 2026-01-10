@@ -17,10 +17,12 @@
 		title = 'Articles Connexes',
 		tags = [],
 		itemsPerSlide = 3,
+		imageDisplayMode = 'cover'
 	}: {
 		title?: string;
 		tags?: any[];
 		itemsPerSlide?: number;
+		imageDisplayMode?: string;
 	} = $props();
 
 	const tagsID = extractTagsId(tags || []);
@@ -29,4 +31,4 @@
 
 </script>
 
-<ArticleCarousel {title} articles={relatedArticlesAll} {itemsPerSlide} />
+<ArticleCarousel {title} articles={relatedArticlesAll} {itemsPerSlide} {imageDisplayMode} />

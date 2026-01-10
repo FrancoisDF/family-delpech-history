@@ -21,6 +21,13 @@ export const blogGridBlockInfo: RegisteredComponent = {
 			type: 'number',
 			defaultValue: 3,
 			enum: [2, 3, 4]
+		},
+		{
+			name: 'imageDisplayMode',
+			type: 'string',
+			enum: ['cover', 'contain'],
+			defaultValue: 'cover',
+			helperText: 'Cover: fills the space (may crop), Contain: shows full image'
 		}
 	]
 };

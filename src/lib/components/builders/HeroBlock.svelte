@@ -10,7 +10,8 @@
 		primaryButtonLink = '/',
 		secondaryButtonText = 'Secondary Button',
 		secondaryButtonLink = '/',
-		backgroundImage = ''
+		backgroundImage = '',
+		backgroundImageDisplayMode = 'cover'
 	} = $props();
 
 		// minimal binding target for bind:this in markup (keeps file compiling when
@@ -141,8 +142,8 @@
 		<!-- Background layer: transforms on scroll for a parallax-esque, scale-up effect -->
 		<div class="absolute inset-0 overflow-hidden" aria-hidden="true">
 			<div
-				class="absolute inset-0 bg-cover bg-center"
-				style={`background-image: url('${backgroundImage}'); transform-origin: center center; will-change: transform, filter; transform: scale(1.05); filter: grayscale(100%); pointer-events: none;`}
+				class="absolute inset-0 bg-center"
+				style={`background-image: url('${backgroundImage}'); background-size: ${backgroundImageDisplayMode === 'contain' ? 'contain' : 'cover'}; transform-origin: center center; will-change: transform, filter; transform: scale(1.05); filter: grayscale(100%); pointer-events: none;`}
 			></div>
 		</div>
 	{/if}

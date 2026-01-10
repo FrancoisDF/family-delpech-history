@@ -1,4 +1,6 @@
 <script lang="ts">
+	import FlipCard from '../FlipCard.svelte';
+
 	let {
 		title = '',
 		images = [],
@@ -7,7 +9,13 @@
 		connectBottom = false
 	}: {
 		title?: string;
-		images?: Array<{ url: string; alt: string; caption: string }>;
+		images?: Array<{
+			url: string;
+			alt: string;
+			caption: string;
+			description?: string;
+			imageDisplayMode?: string;
+		}>;
 		columns?: number;
 		connectTop?: boolean;
 		connectBottom?: boolean;
@@ -27,18 +35,13 @@
 
 		<div class="grid gap-6 md:grid-cols-{columns}">
 			{#each images as image, index (index)}
-				<figure
-					class="overflow-hidden rounded-xl bg-white shadow-md transition-transform duration-300 hover:scale-105"
-				>
-					{#if image.url}
-						<img src={image.url} alt={image.alt} class="h-64 w-full object-cover" />
-					{/if}
-					{#if image.caption}
-						<figcaption class="p-4 text-center text-sm text-primary-700">
-							{image.caption}
-						</figcaption>
-					{/if}
-				</figure>
+				<FlipCard
+					url={image.url}
+					alt={image.alt}
+					caption={image.caption}
+					description={image.description || ''}
+					imageDisplayMode={image.imageDisplayMode}
+				/>
 			{/each}
 		</div>
 	</div>

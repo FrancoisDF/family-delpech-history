@@ -67,10 +67,10 @@ export const builderComponents: RegisteredComponent[] = [
 	calloutBlockInfo,
 	videoEmbedBlockInfo,
 	dividerBlockInfo,
-	accordionBlockInfo,
 	articleHeaderBlockInfo,
 	storySectionCardInfo,
 	articleContentBlockInfo,
+	accordionBlockInfo,
 
 	// Page Section Components
 	heroBlockInfo,

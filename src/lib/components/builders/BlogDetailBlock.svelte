@@ -7,7 +7,8 @@
 		readTime = '',
 		author = '',
 		category = '',
-		featuredImage = ''
+		featuredImage = '',
+		featuredImageDisplayMode = 'cover'
 	} = $props<{
 		title?: string;
 		excerpt?: string;
@@ -17,6 +18,7 @@
 		author?: string;
 		category?: string;
 		featuredImage?: string;
+		featuredImageDisplayMode?: string;
 	}>();
 </script>
 
@@ -38,7 +40,13 @@
 		<!-- Main Content -->
 		<div class="rounded-xl bg-white p-8 shadow-lg md:p-12">
 			{#if featuredImage}
-				<img src={featuredImage} alt={title} class="mb-8 h-96 w-full rounded-lg object-cover" />
+				<img
+					src={featuredImage}
+					alt={title}
+					class="mb-8 h-96 w-full rounded-lg {featuredImageDisplayMode === 'contain'
+						? 'object-contain'
+						: 'object-cover'}"
+				/>
 			{/if}
 
 			<!-- Header -->

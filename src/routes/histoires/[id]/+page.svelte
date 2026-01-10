@@ -43,6 +43,7 @@
 		readTime={post.data?.readTime || ''}
 		category={post.data?.category || ''}
 		featuredImage={post.data?.featuredImage || ''}
+		featuredImageDisplayMode={post.data?.featuredImageDisplayMode || 'cover'}
 		author={post.data?.author || ''}
 		pdfFile={post.data?.pdfFile || ''}
 		onOpenPDFModal={openPDFModal}

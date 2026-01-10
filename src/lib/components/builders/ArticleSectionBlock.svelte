@@ -5,6 +5,7 @@
 		image = '',
 		imageAlt = '',
 		imagePosition = 'none',
+		imageDisplayMode = 'cover',
 		backgroundColor = 'bg-white',
 		connectTop = false,
 		connectBottom = false
@@ -38,7 +39,13 @@
 
 			{#if imagePosition === 'top' && image}
 				<figure class="mb-6">
-					<img src={image} alt={imageAlt} class="h-auto w-full rounded-lg object-cover" />
+					<img
+						src={image}
+						alt={imageAlt}
+						class="h-auto w-full rounded-lg {imageDisplayMode === 'contain'
+							? 'object-contain'
+							: 'object-cover'}"
+					/>
 					{#if imageAlt}
 						<figcaption class="mt-2 text-center text-sm italic text-primary-700">
 							{imageAlt}
@@ -50,7 +57,13 @@
 			{#if imagePosition === 'left' && image}
 				<div class="mb-6 flex flex-col gap-6 md:flex-row">
 					<figure class="md:w-1/2">
-						<img src={image} alt={imageAlt} class="h-auto w-full rounded-lg object-cover" />
+						<img
+							src={image}
+							alt={imageAlt}
+							class="h-auto w-full rounded-lg {imageDisplayMode === 'contain'
+								? 'object-contain'
+								: 'object-cover'}"
+						/>
 						{#if imageAlt}
 							<figcaption class="mt-2 text-sm italic text-primary-700">
 								{imageAlt}
@@ -66,7 +79,13 @@
 			{:else if imagePosition === 'right' && image}
 				<div class="mb-6 flex flex-col gap-6 md:flex-row-reverse">
 					<figure class="md:w-1/2">
-						<img src={image} alt={imageAlt} class="h-auto w-full rounded-lg object-cover" />
+						<img
+							src={image}
+							alt={imageAlt}
+							class="h-auto w-full rounded-lg {imageDisplayMode === 'contain'
+								? 'object-contain'
+								: 'object-cover'}"
+						/>
 						{#if imageAlt}
 							<figcaption class="mt-2 text-sm italic text-primary-700">
 								{imageAlt}
@@ -89,7 +108,13 @@
 
 			{#if imagePosition === 'bottom' && image}
 				<figure class="mt-6">
-					<img src={image} alt={imageAlt} class="h-auto w-full rounded-lg object-cover" />
+					<img
+						src={image}
+						alt={imageAlt}
+						class="h-auto w-full rounded-lg {imageDisplayMode === 'contain'
+							? 'object-contain'
+							: 'object-cover'}"
+					/>
 					{#if imageAlt}
 						<figcaption class="mt-2 text-center text-sm italic text-primary-700">
 							{imageAlt}

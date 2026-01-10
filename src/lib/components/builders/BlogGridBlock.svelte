@@ -5,11 +5,13 @@
 	let {
 		title = 'Histoires de Famille',
 		description = '',
-		columnCount = 3
+		columnCount = 3,
+		imageDisplayMode = 'cover'
 	} = $props<{
 		title?: string;
 		description?: string;
 		columnCount?: number;
+		imageDisplayMode?: string;
 	}>();
 
 	let posts = await fetchArticles();
@@ -55,7 +57,9 @@
 								<img
 									src={post.featuredImage}
 									alt={post.title}
-									class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+									class="h-full w-full {imageDisplayMode === 'contain'
+										? 'object-contain'
+										: 'object-cover'} transition-transform duration-500 group-hover:scale-110"
 								/>
 							{:else}
 								<div class="flex h-full items-center justify-center">

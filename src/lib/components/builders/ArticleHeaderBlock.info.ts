@@ -38,6 +38,13 @@ export const articleHeaderBlockInfo: RegisteredComponent = {
 			defaultValue: ''
 		},
 		{
+			name: 'featuredImageDisplayMode',
+			type: 'string',
+			enum: ['cover', 'contain'],
+			defaultValue: 'cover',
+			helperText: 'Cover: fills the space (may crop), Contain: shows full image'
+		},
+		{
 			name: 'author',
 			type: 'string',
 			defaultValue: ''

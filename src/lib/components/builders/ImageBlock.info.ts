@@ -35,6 +35,13 @@ export const imageBlockInfo: RegisteredComponent = {
 			defaultValue: 'center'
 		},
 		{
+			name: 'imageDisplayMode',
+			type: 'string',
+			enum: ['cover', 'contain'],
+			defaultValue: 'cover',
+			helperText: 'Cover: fills the space (may crop), Contain: shows full image'
+		},
+		{
 			name: 'roundedCorners',
 			type: 'boolean',
 			defaultValue: true

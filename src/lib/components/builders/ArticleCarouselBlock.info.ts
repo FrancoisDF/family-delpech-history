@@ -53,6 +53,13 @@ export const articleCarouselBlockInfo: RegisteredComponent = {
 			name: 'itemsPerSlide',
 			type: 'number',
 			defaultValue: 3
+		},
+		{
+			name: 'imageDisplayMode',
+			type: 'string',
+			enum: ['cover', 'contain'],
+			defaultValue: 'cover',
+			helperText: 'Cover: fills the space (may crop), Contain: shows full image'
 		}
 	]
 };

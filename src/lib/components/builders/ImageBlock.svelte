@@ -5,6 +5,7 @@
 		caption = '',
 		imageSize = 'full',
 		alignment = 'center',
+		imageDisplayMode = 'cover',
 		roundedCorners = true,
 		connectTop = false,
 		connectBottom = false
@@ -34,7 +35,9 @@
 				<img
 					src={imageUrl}
 					alt={imageAlt}
-					class="h-auto w-full object-cover {roundedCorners ? 'rounded-xl' : ''} shadow-md"
+					class="h-auto w-full {imageDisplayMode === 'contain'
+						? 'object-contain'
+						: 'object-cover'} {roundedCorners ? 'rounded-xl' : ''} shadow-md"
 				/>
 			{:else}
 				<div
