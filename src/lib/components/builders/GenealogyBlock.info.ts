@@ -61,6 +61,80 @@ export const genealogyBlockInfo: RegisteredComponent = {
 			defaultValue: '',
 			required: false,
 			helperText: 'Background color (e.g., #fafaf8 or transparent)'
+		},
+		{
+			name: 'people',
+			type: 'list',
+			defaultValue: [],
+			required: false,
+			helperText: 'Add people to display in the genealogy tree. If empty, uses the root person from GEDCOM data.',
+			subFields: [
+				{
+					name: 'id',
+					type: 'string',
+					defaultValue: '',
+					helperText: 'Unique identifier for this person'
+				},
+				{
+					name: 'name',
+					type: 'string',
+					defaultValue: '',
+					helperText: 'Full name of the person'
+				},
+				{
+					name: 'image',
+					type: 'file',
+					allowedFileTypes: ['jpeg', 'jpg', 'png', 'webp'],
+					defaultValue: '',
+					helperText: 'Portrait image of the person'
+				},
+				{
+					name: 'birthDate',
+					type: 'string',
+					defaultValue: '',
+					helperText: 'Birth date (YYYY-MM-DD format)'
+				},
+				{
+					name: 'deathDate',
+					type: 'string',
+					defaultValue: '',
+					helperText: 'Death date (YYYY-MM-DD format, leave empty if still living)'
+				},
+				{
+					name: 'description',
+					type: 'longText',
+					defaultValue: '',
+					helperText: 'Brief biography or description of the person'
+				}
+			]
+		},
+		{
+			name: 'relationships',
+			type: 'list',
+			defaultValue: [],
+			required: false,
+			helperText: 'Define relationships between people in the tree',
+			subFields: [
+				{
+					name: 'personId',
+					type: 'string',
+					defaultValue: '',
+					helperText: 'ID of the person'
+				},
+				{
+					name: 'relationType',
+					type: 'string',
+					enum: ['spouse', 'child', 'parent', 'friend'],
+					defaultValue: 'spouse',
+					helperText: 'Type of relationship: spouse (for couples), child (children), parent (parents), friend'
+				},
+				{
+					name: 'relatedPersonId',
+					type: 'string',
+					defaultValue: '',
+					helperText: 'ID of the related person'
+				}
+			]
 		}
 	]
 };

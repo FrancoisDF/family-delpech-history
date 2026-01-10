@@ -1,8 +1,24 @@
 <script lang="ts">
 	import TreeGenealogy from '$lib/components/TreeGenealogy.svelte';
+	import ConfiguredGenealogyTree from '$lib/components/ConfiguredGenealogyTree.svelte';
 	import PersonDetail from '$lib/components/PersonDetail.svelte';
 	import { getPerson } from '$lib/genealogy';
 	import type { Person } from '$lib/models/person';
+
+	interface ConfiguredPerson {
+		id: string;
+		name: string;
+		image?: string;
+		birthDate?: string;
+		deathDate?: string;
+		description?: string;
+	}
+
+	interface PersonRelationship {
+		personId: string;
+		relationType: 'spouse' | 'child' | 'parent' | 'friend';
+		relatedPersonId: string;
+	}
 
 	interface Props {
 		rootPersonId?: string;
@@ -12,6 +28,8 @@
 		backgroundColor?: string;
 		personTagMap?: Record<string, any>;
 		articles?: any[];
+		people?: ConfiguredPerson[];
+		relationships?: PersonRelationship[];
 		onSetRootPerson?: (person: Person) => void;
 	}
 
@@ -23,8 +41,13 @@
 		backgroundColor,
 		personTagMap = {},
 		articles = [],
+		people = [],
+		relationships = [],
 		onSetRootPerson
 	}: Props = $props();
+
+	// Determine if we're using configured people or GEDCOM data
+	const useConfiguredPeople = $derived(people && people.length > 0);
 
 	let selectedPerson: Person | null = $state(null);
 	let selectedPersonHistory: Person[] = $state([]);
@@ -98,22 +121,32 @@
 			<!-- Tree Section (left, spans 2 columns) -->
 			<div class="lg:col-span-2">
 				<div data-genealogy-tree class="relative mx-auto rounded-lg border border-primary-200 bg-white p-4">
-					<button
-						onclick={handleGoBackPerson}
-						disabled={!canGoBack}
-						class="absolute left-4 top-4 z-10 rounded-full p-2 transition-colors {canGoBack ? 'bg-primary-100 text-primary-600 hover:bg-primary-200 active:bg-primary-300 cursor-pointer' : 'bg-primary-50 text-primary-300 cursor-not-allowed'}"
-						aria-label="Retour"
-						title={canGoBack ? "Retour à la personne précédente" : "Pas d'historique"}
-					>
-						<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-						</svg>
-					</button>
-					<TreeGenealogy
-						{rootPersonId}
-						onPersonSelected={handlePersonSelected}
-						{onSetRootPerson}
-					/>
+					{#if !useConfiguredPeople}
+						<button
+							onclick={handleGoBackPerson}
+							disabled={!canGoBack}
+							class="absolute left-4 top-4 z-10 rounded-full p-2 transition-colors {canGoBack ? 'bg-primary-100 text-primary-600 hover:bg-primary-200 active:bg-primary-300 cursor-pointer' : 'bg-primary-50 text-primary-300 cursor-not-allowed'}"
+							aria-label="Retour"
+							title={canGoBack ? "Retour à la personne précédente" : "Pas d'historique"}
+						>
+							<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+							</svg>
+						</button>
+					{/if}
+					{#if useConfiguredPeople}
+						<ConfiguredGenealogyTree
+							{people}
+							{relationships}
+							onPersonSelected={handlePersonSelected}
+						/>
+					{:else}
+						<TreeGenealogy
+							{rootPersonId}
+							onPersonSelected={handlePersonSelected}
+							{onSetRootPerson}
+						/>
+					{/if}
 				</div>
 			</div>
 
@@ -157,22 +190,32 @@
 		<!-- Mobile Layout -->
 		<div class="lg:hidden">
 			<div data-genealogy-tree class="relative rounded-lg border border-primary-200 bg-white p-4">
-				<button
-					onclick={handleGoBackPerson}
-					disabled={!canGoBack}
-					class="absolute left-4 top-4 z-10 rounded-full p-2 transition-colors {canGoBack ? 'bg-primary-100 text-primary-600 hover:bg-primary-200 active:bg-primary-300 cursor-pointer' : 'bg-primary-50 text-primary-300 cursor-not-allowed'}"
-					aria-label="Retour"
-					title={canGoBack ? "Retour à la personne précédente" : "Pas d'historique"}
-				>
-					<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-					</svg>
-				</button>
-				<TreeGenealogy
-					{rootPersonId}
-					onPersonSelected={handlePersonSelected}
-					{onSetRootPerson}
-				/>
+				{#if !useConfiguredPeople}
+					<button
+						onclick={handleGoBackPerson}
+						disabled={!canGoBack}
+						class="absolute left-4 top-4 z-10 rounded-full p-2 transition-colors {canGoBack ? 'bg-primary-100 text-primary-600 hover:bg-primary-200 active:bg-primary-300 cursor-pointer' : 'bg-primary-50 text-primary-300 cursor-not-allowed'}"
+						aria-label="Retour"
+						title={canGoBack ? "Retour à la personne précédente" : "Pas d'historique"}
+					>
+						<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+						</svg>
+					</button>
+				{/if}
+				{#if useConfiguredPeople}
+					<ConfiguredGenealogyTree
+						{people}
+						{relationships}
+						onPersonSelected={handlePersonSelected}
+					/>
+				{:else}
+					<TreeGenealogy
+						{rootPersonId}
+						onPersonSelected={handlePersonSelected}
+						{onSetRootPerson}
+					/>
+				{/if}
 			</div>
 		</div>
 

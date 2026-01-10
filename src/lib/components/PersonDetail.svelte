@@ -104,7 +104,9 @@
 						</button>
 					{/if}
 				</div>
-				<p class="mt-2 text-sm text-primary-700">{person.gender === 'female' ? 'Femme' : 'Homme'}</p>
+				{#if person.gender}
+					<p class="mt-2 text-sm text-primary-700">{person.gender === 'female' ? 'Femme' : 'Homme'}</p>
+				{/if}
 			</div>
 
 			{#if !hideCloseButton}
