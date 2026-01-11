@@ -1,7 +1,7 @@
 // Feature flags and AI config
 // NOTE: Temporarily disabled due to ONNX tensor data location issues with Qwen2 model
 // The raw passage fallback will be used instead to maintain functionality
-export const ENABLE_LOCAL_LLM = false; // Feature flag for optional on-device LLM summarizer
+export const ENABLE_LOCAL_LLM = true; // Feature flag for optional on-device LLM summarizer
 
 // Generator model configuration (used when ENABLE_LOCAL_LLM is true)
 // We use Qwen2 which is more robust and has a verified ONNX export
