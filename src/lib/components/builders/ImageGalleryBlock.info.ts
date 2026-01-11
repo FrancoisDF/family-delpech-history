@@ -53,6 +53,13 @@ export const imageGalleryBlockInfo: RegisteredComponent = {
 			defaultValue: 3
 		},
 		{
+			name: 'viewMode',
+			type: 'string',
+			enum: ['grid', 'carousel'],
+			defaultValue: 'grid',
+			helperText: 'Affichage en grille ou en carrousel'
+		},
+		{
 			name: 'connectTop',
 			type: 'boolean',
 			defaultValue: false,
