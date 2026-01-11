@@ -117,9 +117,12 @@
 
 					<!-- Relationships -->
 					{#if relationships && relationships.length > 0}
+						{@const spouses = getPersonRelationships(person.id, 'spouse')}
+						{@const children = getPersonRelationships(person.id, 'child')}
+						{@const parents = getPersonRelationships(person.id, 'parent')}
+						{@const friends = getPersonRelationships(person.id, 'friend')}
 						<div class="mt-4 space-y-4 pl-8">
 							<!-- Spouses/Couples -->
-							{@const spouses = getPersonRelationships(person.id, 'spouse')}
 							{#if spouses.length > 0}
 								<div>
 									<h4 class="mb-2 text-sm font-semibold text-primary-900">Couple</h4>
@@ -142,7 +145,6 @@
 							{/if}
 
 							<!-- Children -->
-							{@const children = getPersonRelationships(person.id, 'child')}
 							{#if children.length > 0}
 								<div>
 									<h4 class="mb-2 text-sm font-semibold text-primary-900">Enfants</h4>
@@ -165,7 +167,6 @@
 							{/if}
 
 							<!-- Parents -->
-							{@const parents = getPersonRelationships(person.id, 'parent')}
 							{#if parents.length > 0}
 								<div>
 									<h4 class="mb-2 text-sm font-semibold text-primary-900">Parents</h4>
@@ -188,7 +189,6 @@
 							{/if}
 
 							<!-- Friends -->
-							{@const friends = getPersonRelationships(person.id, 'friend')}
 							{#if friends.length > 0}
 								<div>
 									<h4 class="mb-2 text-sm font-semibold text-primary-900">Amis</h4>

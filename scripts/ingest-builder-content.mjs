@@ -5,48 +5,91 @@
  */
 import fs from 'fs';
 import path from 'path';
-import { fetchEntries } from '@builder.io/sdk';
+import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+
+// Load .env file from project root
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const envPath = path.resolve(__dirname, '..', '.env');
+dotenv.config({ path: envPath });
 
 const OUT = path.resolve(process.cwd(), 'static', 'family-data.json');
 
-if (!process.env.PUBLIC_BUILDER_API_KEY) {
-  console.error('Please set PUBLIC_BUILDER_API_KEY in your environment and rerun.');
+const PUBLIC_BUILDER_API_KEY = process.env.PUBLIC_BUILDER_API_KEY;
+
+if (!PUBLIC_BUILDER_API_KEY) {
+  console.error('Error: PUBLIC_BUILDER_API_KEY environment variable is not set');
   process.exit(1);
 }
 
 async function fetchModel(model, limit = 100) {
   try {
-    const results = await fetchEntries({ model, apiKey: process.env.PUBLIC_BUILDER_API_KEY, limit });
-    return results || [];
+    const url = new URL(`https://cdn.builder.io/api/v3/content/${model}`);
+    url.searchParams.set('apiKey', PUBLIC_BUILDER_API_KEY);
+    url.searchParams.set('limit', limit.toString());
+
+    const response = await fetch(url.toString());
+    if (!response.ok) {
+      throw new Error(`API returned ${response.status}: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.results || [];
   } catch (err) {
-    console.error('Error fetching model', model, err);
+    console.error('Error fetching model', model, err.message);
     return [];
   }
 }
 
 function extractTextFromEntry(entry) {
-  // Heuristic: gather strings from title, description and any nested data blocks
+  // Heuristic: gather only readable text, avoid JSON serialization
   const pieces = [];
 
   if (entry.name) pieces.push(String(entry.name));
+
   if (entry.data && typeof entry.data === 'object') {
-    // Pull common fields
     const d = entry.data;
+
+    // Extract readable text fields only
     if (d.title) pieces.push(String(d.title));
     if (d.heading) pieces.push(String(d.heading));
     if (d.subtitle) pieces.push(String(d.subtitle));
     if (d.description) pieces.push(String(d.description));
-    // Walk blocks recursively
+
+    // Extract text from blocks recursively (not JSON)
     if (Array.isArray(d.blocks)) {
-      for (const b of d.blocks) {
-        pieces.push(JSON.stringify(b));
+      for (const block of d.blocks) {
+        if (block.text) pieces.push(String(block.text));
+        if (block.children && Array.isArray(block.children)) {
+          for (const child of block.children) {
+            if (typeof child === 'string') {
+              pieces.push(child);
+            } else if (child.text) {
+              pieces.push(String(child.text));
+            }
+          }
+        }
       }
     }
-    // Fallback - stringify object
-    pieces.push(JSON.stringify(d));
+
+    // Add author and date if available (but not as prefixed labels)
+    if (d.author && typeof d.author === 'string' && !pieces.some(p => p.includes(d.author))) {
+      pieces.push(d.author);
+    }
   }
 
   return pieces.join('\n\n');
+}
+
+function getEntryUrl(entry, model) {
+  // Extract URL from various possible locations
+  if (entry.data?.slug) return entry.data.slug;
+  if (entry.data?.handle) return entry.data.handle;
+  if (entry.data?.url) return entry.data.url;
+  if (entry.data?.path) return entry.data.path;
+  // Fallback: generate URL from ID and model
+  const id = entry.id || entry.data?.id || Math.random().toString(36).slice(2, 9);
+  return `/${model}/${id}`;
 }
 
 function chunkText(text, size = 800, overlap = 200) {
@@ -75,7 +118,10 @@ async function main() {
     for (const entry of entries) {
       const id = entry.id || entry.data?.id || `${model}-${Math.random().toString(36).slice(2, 9)}`;
       const title = entry.data?.title || entry.name || `${model} ${id}`;
-      const url = entry.data?.slug || entry.data?.handle || `/`;
+      const url = getEntryUrl(entry, model);
+
+      // Ensure URL is absolute for Builder content
+      const absoluteUrl = url.startsWith('http') ? url : url.startsWith('/') ? url : `/${url}`;
 
       const text = extractTextFromEntry(entry);
 
@@ -89,10 +135,11 @@ async function main() {
           sourceId: id,
           sourceModel: model,
           title: title,
-          url: url,
+          url: absoluteUrl,
           index: i,
           text: chunks[i],
-          length: chunks[i].length
+          length: chunks[i].length,
+          isBuilderContent: true
         });
       }
     }

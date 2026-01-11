@@ -12,6 +12,7 @@ export interface FamilyChunk {
   year?: string;
   category?: string;
   tags?: string[];
+  isBuilderContent?: boolean;
 }
 
 let _cached: FamilyChunk[] | null = null;
