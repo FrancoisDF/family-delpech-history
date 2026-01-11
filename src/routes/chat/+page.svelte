@@ -289,6 +289,21 @@
 		}
 	});
 
+	// Keyboard shortcut for settings (Ctrl+Shift+S / Cmd+Shift+S)
+	$effect(() => {
+		if (browser) {
+			const handleKeydown = (event: KeyboardEvent) => {
+				if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'S') {
+					event.preventDefault();
+					showSettings = true;
+				}
+			};
+
+			document.addEventListener('keydown', handleKeydown);
+			return () => document.removeEventListener('keydown', handleKeydown);
+		}
+	});
+
 	function cleanChunkText(text: string): string {
 		// Clean up formatting and normalize spacing
 		let cleaned = text
@@ -328,13 +343,6 @@
 					</p>
 				</div>
 				<div class="ml-4 flex flex-shrink-0 gap-2">
-					<button
-						onclick={() => (showSettings = true)}
-						class="rounded-lg border border-primary-300 px-4 py-2 text-sm text-primary-700 transition-all hover:border-primary-500 hover:bg-primary-50"
-						title="Paramètres du personnage"
-					>
-						⚙️ Réglages
-					</button>
 					<button
 						onclick={clearChatHistory}
 						class="rounded-lg border border-primary-300 px-4 py-2 text-sm text-primary-700 transition-all hover:border-primary-500 hover:bg-primary-50"
