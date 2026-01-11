@@ -473,7 +473,13 @@
 							<span class="animate-pulse">●</span>
 							<span class="animate-pulse delay-100">●</span>
 							<span class="animate-pulse delay-200">●</span>
-							<span class="ml-2 text-sm font-medium">Réflexion...</span>
+							<span class="ml-2 text-sm font-medium">
+								{#if currentProgress.status === 'downloading'}
+									Chargement IA&nbsp;: {currentProgress.percentage.toFixed(0)}%
+								{:else}
+									Traitement en cours...
+								{/if}
+							</span>
 						</div>
 
 						{#if currentProgress.status === 'downloading'}
@@ -507,6 +513,9 @@
 										⚠️ {networkWarning}
 									</p>
 								{/if}
+								<p class="mt-1 text-[10px] text-primary-500 leading-tight">
+									L'IA est en cours de chargement sur votre appareil. Ce processus est nécessaire pour garantir la confidentialité et la rapidité des réponses. Merci de patienter, ce chargement n'a lieu qu'une seule fois.
+								</p>
 							</div>
 						{/if}
 					</div>

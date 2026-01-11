@@ -107,7 +107,7 @@ async function main() {
   console.log('Fetching Builder.io content — this will read your PUBLIC_BUILDER_API_KEY from the environment.');
 
   // Models used in this site for stories / blog articles
-  const models = ['stories', 'blog-articles'];
+  const models = ['blog-articles'];
 
   const out = [];
 
