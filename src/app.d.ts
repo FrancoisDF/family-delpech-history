@@ -10,4 +10,6 @@ declare global {
 	}
 }
 
+declare module 'cytoscape-dagre';
+
 export {};

@@ -2,7 +2,7 @@ import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import TimelineBlock from './TimelineBlock.svelte';
 
 export const timelineBlockInfo: RegisteredComponent = {
-	component: TimelineBlock,
+	component: TimelineBlock as any,
 	name: 'TimelineBlock',
 	tag: 'Timeline & History',
 	inputs: [

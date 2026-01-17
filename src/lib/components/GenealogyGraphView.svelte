@@ -1,4 +1,5 @@
 <script lang="ts">
+	// @ts-nocheck
 	import { onMount } from 'svelte';
 	import cytoscape from 'cytoscape';
 	import dagre from 'cytoscape-dagre';

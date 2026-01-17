@@ -41,6 +41,7 @@
 		class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
 		role="dialog"
 		aria-modal="true"
+		tabindex="-1"
 		onmousedown={handleBackdropClick}
 	>
 		<div class="relative max-h-[90vh] max-w-2xl overflow-auto rounded-xl bg-white shadow-2xl">

@@ -2,7 +2,7 @@ import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import StatsBlock from './StatsBlock.svelte';
 
 export const statsBlockInfo: RegisteredComponent = {
-	component: StatsBlock,
+	component: StatsBlock as any,
 	name: 'StatsBlock',
 	tag: 'Stats & Metrics',
 	inputs: [
@@ -36,7 +36,11 @@ export const statsBlockInfo: RegisteredComponent = {
 		{
 			name: 'columns',
 			type: 'number',
-			enum: [2, 3, 4],
+			enum: [
+				{ label: '2', value: 2 },
+				{ label: '3', value: 3 },
+				{ label: '4', value: 4 }
+			],
 			defaultValue: 3
 		}
 	]

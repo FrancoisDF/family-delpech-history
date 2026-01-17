@@ -2,7 +2,7 @@ import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import FeaturesBlock from './FeaturesBlock.svelte';
 
 export const featuresBlockInfo: RegisteredComponent = {
-	component: FeaturesBlock,
+	component: FeaturesBlock as any,
 	name: 'FeaturesBlock',
 	tag: 'Features & Benefits',
 	inputs: [

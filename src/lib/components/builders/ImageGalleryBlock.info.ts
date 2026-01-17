@@ -2,7 +2,7 @@ import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import ImageGalleryBlock from './ImageGalleryBlock.svelte';
 
 export const imageGalleryBlockInfo: RegisteredComponent = {
-	component: ImageGalleryBlock,
+	component: ImageGalleryBlock as any,
 	name: 'ImageGalleryBlock',
 	tag: 'Galleries & Collections',
 	inputs: [
@@ -49,7 +49,11 @@ export const imageGalleryBlockInfo: RegisteredComponent = {
 		{
 			name: 'columns',
 			type: 'number',
-			enum: [2, 3, 4],
+			enum: [
+				{ label: '2', value: 2 },
+				{ label: '3', value: 3 },
+				{ label: '4', value: 4 }
+			],
 			defaultValue: 3
 		},
 		{

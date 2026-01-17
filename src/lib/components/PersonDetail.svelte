@@ -43,17 +43,19 @@
 		}));
 	}
 
-	$effect(async () => {
-		loading = true;
-		// First try to get articles using the person-tag mapping
-		const tagArticles = getArticlesByPersonTag(person.id);
-		if (tagArticles.length > 0) {
-			relatedArticles = tagArticles;
-		} else {
-			// Fallback to the original method for backward compatibility
-			relatedArticles = await getRelatedArticles(person.id);
-		}
-		loading = false;
+	$effect(() => {
+		void (async () => {
+			loading = true;
+			// First try to get articles using the person-tag mapping
+			const tagArticles = getArticlesByPersonTag(person.id);
+			if (tagArticles.length > 0) {
+				relatedArticles = tagArticles;
+			} else {
+				// Fallback to the original method for backward compatibility
+				relatedArticles = await getRelatedArticles(person.id);
+			}
+			loading = false;
+		})();
 	});
 
 	function formatDate(dateStr?: string): string {

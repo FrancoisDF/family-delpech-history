@@ -352,6 +352,8 @@
 		bind:this={svgElement}
 		{width}
 		{height}
+		role="application"
+		tabindex="0"
 		class="genealogy-tree-svg cursor-grab active:cursor-grabbing"
 		viewBox={`-${width / 2} -100 ${width} ${height + 100}`}
 		onmousedown={handlePanStart}

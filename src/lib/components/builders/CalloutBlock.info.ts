@@ -2,7 +2,7 @@ import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import CalloutBlock from './CalloutBlock.svelte';
 
 export const calloutBlockInfo: RegisteredComponent = {
-	component: CalloutBlock,
+	component: CalloutBlock as any,
 	name: 'CalloutBlock',
 	tag: 'Callouts & Alerts',
 	inputs: [

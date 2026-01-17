@@ -41,6 +41,19 @@
 		isModalOpen = true;
 	};
 
+	const handleCardActivate = () => {
+		if (!description || !description.trim()) return;
+		// Open the modal on card activation (keyboard/click) to access the full description.
+		isModalOpen = true;
+	};
+
+	const handleCardKeyDown = (e: KeyboardEvent) => {
+		if (e.key === 'Enter' || e.key === ' ') {
+			e.preventDefault();
+			handleCardActivate();
+		}
+	};
+
 	const objectFitClass = $derived(
 		imageDisplayMode === 'contain' ? 'object-contain' : 'object-cover'
 	);
@@ -92,8 +105,15 @@
 	class="relative h-64 w-full overflow-hidden rounded-xl bg-white shadow-md transition-all duration-300"
 	class:shadow-xl={isHovered}
 	class:scale-105={isHovered}
+	role="button"
+	tabindex="0"
+	aria-label={caption ? `Ouvrir: ${caption}` : 'Ouvrir la carte'}
+	onclick={handleCardActivate}
+	onkeydown={handleCardKeyDown}
 	onmouseenter={handleMouseEnter}
 	onmouseleave={handleMouseLeave}
+	onfocus={handleMouseEnter}
+	onblur={handleMouseLeave}
 >
 	<div class="flip-card-inner" class:flipped={isFlipped}>
 		<!-- Front: Image -->

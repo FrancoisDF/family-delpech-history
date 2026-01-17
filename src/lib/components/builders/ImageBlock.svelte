@@ -30,7 +30,7 @@
 
 <section class=" px-4 {spacingTop} {spacingBottom} sm:px-6 lg:px-8">
 	<div class="mx-auto max-w-6xl">
-		<figure class="{sizeClasses[imageSize]} {alignmentClasses[alignment]}">
+		<figure class="{sizeClasses[imageSize as keyof typeof sizeClasses]} {alignmentClasses[alignment as keyof typeof alignmentClasses]}">
 			{#if imageUrl}
 				<img
 					src={imageUrl}

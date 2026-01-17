@@ -2,7 +2,7 @@ import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import PDFCarouselBlock from './PDFCarouselBlock.svelte';
 
 export const pdfCarouselBlockInfo: RegisteredComponent = {
-	component: PDFCarouselBlock,
+	component: PDFCarouselBlock as any,
 	name: 'PDFCarouselBlock',
 	tag: 'PDF Carousel',
 	inputs: [

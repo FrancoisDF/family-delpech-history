@@ -25,7 +25,12 @@ function formatArticles(articles: any[]): BlogArticle[] {
 
 export const fetchArticleById = query(v.string(), async (id: string): Promise<BlogArticle | null> => {
 	try {
-		return await fetchBuilderContentByIdServer('blog-articles', id);
+		const entry = await fetchBuilderContentByIdServer('blog-articles', id);
+		if (!entry) return null;
+		return {
+			id: entry.id || id,
+			...(entry.data as any)
+		} as BlogArticle;
 	} catch (error) {
 		console.error('Error fetching article by id:', error);
 		return null;

@@ -14,12 +14,12 @@
 	};
 </script>
 
-<section class=" px-4 {spacingClasses[spacing]} sm:px-6 lg:px-8">
+<section class=" px-4 {spacingClasses[spacing as keyof typeof spacingClasses]} sm:px-6 lg:px-8">
 	<div class="mx-auto max-w-4xl">
 		{#if style === 'solid'}
-			<hr class="{thicknessClasses[thickness]} border-primary-300" />
+			<hr class="{thicknessClasses[thickness as keyof typeof thicknessClasses]} border-primary-300" />
 		{:else if style === 'dashed'}
-			<hr class="{thicknessClasses[thickness]} border-dashed border-primary-300" />
+			<hr class="{thicknessClasses[thickness as keyof typeof thicknessClasses]} border-dashed border-primary-300" />
 		{:else if style === 'decorative'}
 			<div class="flex items-center justify-center">
 				<div class="flex gap-2">

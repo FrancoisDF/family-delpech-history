@@ -2,7 +2,7 @@ import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import AccordionBlock from './AccordionBlock.svelte';
 
 export const accordionBlockInfo: RegisteredComponent = {
-	component: AccordionBlock,
+	component: AccordionBlock as any,
 	name: 'AccordionBlock',
 	tag: 'Accordion block',
 	inputs: [

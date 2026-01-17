@@ -2,7 +2,7 @@ import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import VideoEmbedBlock from './VideoEmbedBlock.svelte';
 
 export const videoEmbedBlockInfo: RegisteredComponent = {
-	component: VideoEmbedBlock,
+	component: VideoEmbedBlock as any,
 	name: 'VideoEmbedBlock',
 	tag: 'Images & Media',
 	inputs: [

@@ -2,7 +2,7 @@ import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import RichTextBlock from './RichTextBlock.svelte';
 
 export const richTextBlockInfo: RegisteredComponent = {
-	component: RichTextBlock,
+	component: RichTextBlock as any,
 	name: 'RichTextBlock',
 	tag: 'Rich Text & Markdown',
 	inputs: [

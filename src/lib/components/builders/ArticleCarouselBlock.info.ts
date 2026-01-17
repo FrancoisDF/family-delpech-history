@@ -2,7 +2,7 @@ import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import ArticleCarouselBlock from './ArticleCarouselBlock.svelte';
 
 export const articleCarouselBlockInfo: RegisteredComponent = {
-	component: ArticleCarouselBlock,
+	component: ArticleCarouselBlock as any,
 	name: 'ArticleCarouselBlock',
 	tag: 'Carousels & Sliders',
 	inputs: [

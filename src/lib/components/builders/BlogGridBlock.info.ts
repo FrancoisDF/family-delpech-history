@@ -2,7 +2,7 @@ import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import BlogGridBlock from './BlogGridBlock.svelte';
 
 export const blogGridBlockInfo: RegisteredComponent = {
-	component: BlogGridBlock,
+	component: BlogGridBlock as any,
 	name: 'BlogGridBlock',
 	tag: 'Content Grids',
 	inputs: [
@@ -20,7 +20,11 @@ export const blogGridBlockInfo: RegisteredComponent = {
 			name: 'columnCount',
 			type: 'number',
 			defaultValue: 3,
-			enum: [2, 3, 4]
+			enum: [
+				{ label: '2', value: 2 },
+				{ label: '3', value: 3 },
+				{ label: '4', value: 4 }
+			]
 		},
 		{
 			name: 'imageDisplayMode',

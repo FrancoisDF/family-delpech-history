@@ -2,7 +2,7 @@ import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import StorySectionCard from './StorySectionCard.svelte';
 
 export const storySectionCardInfo: RegisteredComponent = {
-	component: StorySectionCard,
+	component: StorySectionCard as any,
 	name: 'StorySectionCard',
 	tag: 'Story Section Card',
 	inputs: [

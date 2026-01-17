@@ -37,7 +37,7 @@ export function generateGraphFromPeople(people: Person[]): GenealogyGraph {
 	// Find root people (those without parents)
 	const rootPeople: string[] = [];
 	for (const person of people) {
-		if (person.parents.length === 0) {
+		if ((person.parents ?? []).length === 0) {
 			rootPeople.push(person.id);
 			generationMap.set(person.id, 0);
 		}
@@ -59,7 +59,7 @@ export function generateGraphFromPeople(people: Person[]): GenealogyGraph {
 		maxGeneration = Math.max(maxGeneration, currentGen);
 
 		// Add children to queue with next generation
-		for (const childId of person.children) {
+		for (const childId of person.children ?? []) {
 			if (!generationMap.has(childId)) {
 				generationMap.set(childId, currentGen + 1);
 				queue.push(childId);
@@ -91,8 +91,9 @@ export function generateGraphFromPeople(people: Person[]): GenealogyGraph {
 	const spouseMap = new Map<string, string[]>();
 
 	for (const person of people) {
-		if (person.spouses.length > 0) {
-			for (const spouseId of person.spouses) {
+		const spouses = person.spouses ?? [];
+		if (spouses.length > 0) {
+			for (const spouseId of spouses) {
 				const sorted = [person.id, spouseId].sort();
 				const coupleId = `couple-${sorted.join('_')}`;
 
@@ -132,16 +133,18 @@ export function generateGraphFromPeople(people: Person[]): GenealogyGraph {
 
 	// Create edges for parent-child relationships
 	for (const person of people) {
-		if (person.children.length > 0) {
+		const children = person.children ?? [];
+		if (children.length > 0) {
 			// Find couple node for this person
 			let coupleId: string | null = null;
 
-			if (person.spouses.length > 0) {
-				const sorted = [person.id, person.spouses[0]].sort();
+			const spouses = person.spouses ?? [];
+			if (spouses.length > 0) {
+				const sorted = [person.id, spouses[0]].sort();
 				coupleId = `couple-${sorted.join('_')}`;
 			}
 
-			for (const childId of person.children) {
+			for (const childId of children) {
 				if (coupleId) {
 					edges.push({
 						source: coupleId,

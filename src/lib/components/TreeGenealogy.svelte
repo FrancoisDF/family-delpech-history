@@ -20,14 +20,29 @@
 	let scrollContainer: HTMLDivElement | null = $state(null);
 
 	// Load root person and cache data
-	$effect(async () => {
-		loading = true;
-		const data = await getPersonWithRelations(rootPersonId);
-		if (data) {
-			personDataMap.set(data.id, data);
-			rootPersonData = data;
-		}
-		loading = false;
+	$effect(() => {
+		let cancelled = false;
+
+		(async () => {
+			loading = true;
+			const data = await getPersonWithRelations(rootPersonId);
+			if (cancelled) return;
+
+			if (data) {
+				personDataMap.set(data.id, data);
+				rootPersonData = data;
+			}
+			loading = false;
+		})().catch((err) => {
+			if (!cancelled) {
+				console.warn('Failed to load root person relations:', err);
+				loading = false;
+			}
+		});
+
+		return () => {
+			cancelled = true;
+		};
 	});
 
 	function toggleNode(personId: string) {
@@ -199,14 +214,14 @@
 				{/if}
 
 				<!-- Children Section -->
-				{#if rootPersonData.children.length > 0}
+				{#if (rootPersonData.children ?? []).length > 0}
 					<div class="flex flex-col items-center gap-6">
 						<div class="h-6 w-px bg-gradient-to-b from-primary-300 to-transparent"></div>
-						<h3 class="text-sm font-semibold uppercase tracking-widest text-primary-600">Enfants ({rootPersonData.children.length})</h3>
+						<h3 class="text-sm font-semibold uppercase tracking-widest text-primary-600">Enfants ({(rootPersonData.children ?? []).length})</h3>
 
-						{#if expandedNodes.has(rootPersonData.id)}
+						{#if expandedNodes.has(rootPersonData!.id)}
 							<div class="flex flex-wrap justify-center gap-6">
-								{#each rootPersonData.children as childId}
+								{#each (rootPersonData.children ?? []) as childId}
 									{#await getPerson(childId) then child}
 										{#if child}
 											<div class="relative">
@@ -239,15 +254,15 @@
 							</div>
 						{:else}
 							<p class="text-sm text-primary-600">
-								{rootPersonData.children.length} enfant{rootPersonData.children.length > 1 ? 's' : ''}
+								{(rootPersonData.children ?? []).length} enfant{(rootPersonData.children ?? []).length > 1 ? 's' : ''}
 							</p>
 						{/if}
 
 						<button
-							onclick={() => toggleNode(rootPersonData.id)}
+							onclick={() => toggleNode(rootPersonData!.id)}
 							class="mt-4 rounded-lg border border-primary-300 px-4 py-2 text-sm font-medium text-primary-700 transition-colors hover:bg-primary-50 active:bg-primary-100"
 						>
-							{expandedNodes.has(rootPersonData.id) ? '✕ Masquer les enfants' : '+ Afficher les enfants'}
+							{expandedNodes.has(rootPersonData!.id) ? '✕ Masquer les enfants' : '+ Afficher les enfants'}
 						</button>
 					</div>
 				{/if}

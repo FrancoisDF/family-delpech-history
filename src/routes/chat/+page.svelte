@@ -5,7 +5,15 @@
 		content: string;
 		timestamp: Date;
 		status?: 'loading' | 'streaming' | 'done';
-		sources?: Array<{ title: string; url: string; isBuilder: boolean; sourceId?: string }>;
+		sources?: Array<{
+			title: string;
+			url: string;
+			isBuilder: boolean;
+			sourceId?: string;
+			originPostId?: string;
+			originPostTitle?: string;
+			originPostUrl?: string;
+		}>;
 	}
 
 
@@ -214,7 +222,15 @@
 				}
 
 				const results = await searchFamilyData(userMessage.content, { topK: 4 });
-				let sourceReferences: Array<{ title: string; url: string; isBuilder: boolean }> = [];
+				let sourceReferences: Array<{
+					title: string;
+					url: string;
+					isBuilder: boolean;
+					sourceId?: string;
+					originPostId?: string;
+					originPostTitle?: string;
+					originPostUrl?: string;
+				}> = [];
 
 				if (!results || results.length === 0) {
 					updateMessageById(assistantMessageId, {
@@ -223,12 +239,18 @@
 							"Désolé — je ne trouve aucune information pertinente dans nos archives familiales pour répondre à cette question."
 					});
 				} else {
-					sourceReferences = results.map((r) => ({
-						title: r.chunk.title,
-						url: r.chunk.url,
-						sourceId: r.chunk.sourceId,
-						isBuilder: r.chunk.sourceModel === 'blog-articles' || r.chunk.sourceModel === 'stories'
-					}));
+					sourceReferences = results.map((r) => {
+						const isBuilderPost = r.chunk.sourceModel === 'blog-articles' || r.chunk.sourceModel === 'stories';
+						return {
+							title: r.chunk.title,
+							url: r.chunk.url,
+							sourceId: r.chunk.sourceId,
+							isBuilder: isBuilderPost,
+							originPostId: r.chunk.originPostId,
+							originPostTitle: r.chunk.originPostTitle,
+							originPostUrl: r.chunk.originPostUrl
+						};
+					});
 
 					updateMessageById(assistantMessageId, { sources: sourceReferences });
 
@@ -412,19 +434,31 @@
 									<p class="text-xs font-semibold text-primary-700">Sources:</p>
 									<div class="space-y-1">
 										{#each message.sources as source}
-											<a
-												href={source.isBuilder && source.sourceId ? `/histoires/${generateBlogUrl(source.sourceId, source.title)}` : source.url}
-												target={source.isBuilder ? undefined : "_blank"}
-												rel={source.isBuilder ? undefined : "noopener noreferrer"}
-												class="block text-xs text-accent hover:underline"
-												title={source.title}
-											>
-												{#if source.isBuilder}
-													<span class="inline-block rounded bg-accent/20 px-2 py-1 text-primary-900">📖 {source.title}</span>
-												{:else}
-													<span>📄 {source.title}</span>
+											<div class="space-y-1">
+												<a
+													href={source.isBuilder && source.sourceId ? `/histoires/${generateBlogUrl(source.sourceId, source.title)}` : source.url}
+													target={source.isBuilder ? undefined : "_blank"}
+													rel={source.isBuilder ? undefined : "noopener noreferrer"}
+													class="block text-xs text-accent hover:underline"
+													title={source.title}
+												>
+													{#if source.isBuilder}
+														<span class="inline-block rounded bg-accent/20 px-2 py-1 text-primary-900">📖 {source.title}</span>
+													{:else}
+														<span>📄 {source.title}</span>
+													{/if}
+												</a>
+
+												{#if !source.isBuilder && source.originPostUrl}
+													<a
+														href={source.originPostUrl}
+														class="block text-[11px] text-primary-700 hover:underline"
+														title={source.originPostTitle ? `Trouvé dans: ${source.originPostTitle}` : 'Trouvé dans un article'}
+													>
+														Trouvé dans: <span class="inline-block rounded bg-accent/10 px-2 py-0.5 text-primary-900">📖 {source.originPostTitle || 'Article'}</span>
+													</a>
 												{/if}
-											</a>
+											</div>
 										{/each}
 									</div>
 								</div>

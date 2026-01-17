@@ -48,13 +48,13 @@ export function getGenerationLevel(personId: string, basePersonId: string): numb
 		if (!fromPerson) return null;
 
 		// Check children (next generation)
-		for (const childId of fromPerson.children) {
+		for (const childId of fromPerson.children ?? []) {
 			const dist = calculateDistance(childId, to, new Set(visited));
 			if (dist !== null) return dist + 1;
 		}
 
 		// Check parents (previous generation)
-		for (const parentId of fromPerson.parents) {
+		for (const parentId of fromPerson.parents ?? []) {
 			const dist = calculateDistance(parentId, to, new Set(visited));
 			if (dist !== null) return dist - 1;
 		}
@@ -165,10 +165,10 @@ export async function getPersonWithRelations(id: string): Promise<PersonWithRela
 
 	return {
 		...person,
-		parentObjects: person.parents.map((pid) => peopleMap.get(pid)).filter(Boolean) as Person[],
-		spouseObjects: person.spouses.map((pid) => peopleMap.get(pid)).filter(Boolean) as Person[],
-		childObjects: person.children.map((pid) => peopleMap.get(pid)).filter(Boolean) as Person[],
-		siblingObjects: person.siblings.map((pid) => peopleMap.get(pid)).filter(Boolean) as Person[]
+		parentObjects: (person.parents ?? []).map((pid) => peopleMap.get(pid)).filter(Boolean) as Person[],
+		spouseObjects: (person.spouses ?? []).map((pid) => peopleMap.get(pid)).filter(Boolean) as Person[],
+		childObjects: (person.children ?? []).map((pid) => peopleMap.get(pid)).filter(Boolean) as Person[],
+		siblingObjects: (person.siblings ?? []).map((pid) => peopleMap.get(pid)).filter(Boolean) as Person[]
 	};
 }
 
@@ -183,7 +183,7 @@ export async function getPersonAncestors(personId: string): Promise<Person[]> {
 		const person = await getPerson(id);
 		if (!person) return;
 
-		for (const parentId of person.parents) {
+		for (const parentId of person.parents ?? []) {
 			const parent = await getPerson(parentId);
 			if (parent && !visited.has(parentId)) {
 				ancestors.push(parent);
@@ -207,7 +207,7 @@ export async function getPersonDescendants(personId: string): Promise<Person[]> 
 		const person = await getPerson(id);
 		if (!person) return;
 
-		for (const childId of person.children) {
+		for (const childId of person.children ?? []) {
 			const child = await getPerson(childId);
 			if (child && !visited.has(childId)) {
 				descendants.push(child);
@@ -276,13 +276,13 @@ export async function getPeopleByGeneration(startingPersonId: string, generation
 		if (!fromPerson) return null;
 
 		// Check parents (ancestors)
-		for (const parentId of fromPerson.parents) {
+		for (const parentId of fromPerson.parents ?? []) {
 			const dist = getGenerationDistance(parentId, to, new Set(visited));
 			if (dist !== null) return dist + 1;
 		}
 
 		// Check children (descendants)
-		for (const childId of fromPerson.children) {
+		for (const childId of fromPerson.children ?? []) {
 			const dist = getGenerationDistance(childId, to, new Set(visited));
 			if (dist !== null) return dist - 1;
 		}

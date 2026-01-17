@@ -5,7 +5,7 @@
 		onOpenModal?: (url: string, title: string) => void;
 	}
 
-	let { pdfUrl = '', pdfTitle = 'PDF Document', onOpenModal } = $props<Props>();
+	let { pdfUrl = '', pdfTitle = 'PDF Document', onOpenModal }: Props = $props();
 
 	function handleOpenPDF() {
 		if (onOpenModal) {

@@ -2,7 +2,7 @@ import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import TwoColumnTextBlock from './TwoColumnTextBlock.svelte';
 
 export const twoColumnTextBlockInfo: RegisteredComponent = {
-	component: TwoColumnTextBlock,
+	component: TwoColumnTextBlock as any,
 	name: 'TwoColumnTextBlock',
 	tag: 'Layout & Columns',
 	inputs: [

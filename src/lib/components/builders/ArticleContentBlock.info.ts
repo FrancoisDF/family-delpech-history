@@ -2,7 +2,7 @@ import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import ArticleContentBlock from './ArticleContentBlock.svelte';
 
 export const articleContentBlockInfo: RegisteredComponent = {
-	// component: ArticleContentBlock,
+	component: ArticleContentBlock as any,
 	name: 'ArticleContentBlock',
 	tag: 'Text & Paragraphs',
 	inputs: [

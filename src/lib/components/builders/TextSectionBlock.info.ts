@@ -2,7 +2,7 @@ import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import TextSectionBlock from './TextSectionBlock.svelte';
 
 export const textSectionBlockInfo: RegisteredComponent = {
-	component: TextSectionBlock,
+	component: TextSectionBlock as any,
 	name: 'TextSectionBlock',
 	tag: 'Text & Paragraphs',
 	inputs: [

@@ -2,7 +2,7 @@ import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import DividerBlock from './DividerBlock.svelte';
 
 export const dividerBlockInfo: RegisteredComponent = {
-	component: DividerBlock,
+	component: DividerBlock as any,
 	name: 'DividerBlock',
 	tag: 'Layout & Spacing',
 	inputs: [

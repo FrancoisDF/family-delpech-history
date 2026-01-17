@@ -14,7 +14,9 @@ describe('Genealogy Functions', () => {
 			bio: 'Founder and farmer',
 			gender: 'male',
 			sources: [],
-			tags: ['fondateur', 'fermier']
+			tags: ['fondateur', 'fermier'],
+			spouses: ['marguerite'],
+			children: ['marie-antoinette', 'joseph']
 		},
 		{
 			id: 'marguerite',
@@ -26,7 +28,9 @@ describe('Genealogy Functions', () => {
 			bio: 'Wife and mother',
 			gender: 'female',
 			sources: [],
-			tags: ['épouse', 'mère']
+			tags: ['épouse', 'mère'],
+			spouses: ['pierre'],
+			children: ['marie-antoinette', 'joseph']
 		},
 		{
 			id: 'marie-antoinette',
@@ -38,7 +42,10 @@ describe('Genealogy Functions', () => {
 			bio: 'Remarkable woman, teacher and manager',
 			gender: 'female',
 			sources: [],
-			tags: ['femme remarquable', '1850']
+			tags: ['femme remarquable', '1850'],
+			parents: ['pierre', 'marguerite'],
+			spouses: ['antoine'],
+			children: ['marie-louise']
 		},
 		{
 			id: 'joseph',
@@ -62,7 +69,9 @@ describe('Genealogy Functions', () => {
 			bio: 'Man of standing, agricultural manager',
 			gender: 'male',
 			sources: [],
-			tags: ['Grognier', 'mariage']
+			tags: ['Grognier', 'mariage'],
+			spouses: ['marie-antoinette'],
+			children: ['marie-louise']
 		},
 		{
 			id: 'marie-louise',
@@ -74,7 +83,8 @@ describe('Genealogy Functions', () => {
 			bio: 'Textile weaver - tisserande producing fine linens',
 			gender: 'female',
 			sources: [],
-			tags: ['tisserande', 'métiers']
+			tags: ['tisserande', 'métiers'],
+			parents: ['marie-antoinette', 'antoine']
 		},
 		{
 			id: 'jean-baptist',
@@ -114,7 +124,7 @@ describe('Genealogy Functions', () => {
 
 		it('should return positive value for ancestors', () => {
 			const result = getGenerationLevel('pierre', 'marie-antoinette');
-			expect(result).toBe(-1); // pierre is parent of marie-antoinette
+			expect(result).toBe(1); // marie-antoinette is a child of pierre
 		});
 
 		it('should return negative value for descendants', () => {
@@ -124,7 +134,7 @@ describe('Genealogy Functions', () => {
 
 		it('should handle multiple generation gaps', () => {
 			const result = getGenerationLevel('pierre', 'marie-louise');
-			expect(result).toBe(-2); // two generations down
+			expect(result).toBe(2); // two generations down
 		});
 
 		it('should return null for unrelated people', () => {

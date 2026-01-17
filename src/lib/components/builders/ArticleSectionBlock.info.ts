@@ -2,7 +2,7 @@ import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import ArticleSectionBlock from './ArticleSectionBlock.svelte';
 
 export const articleSectionBlockInfo: RegisteredComponent = {
-	component: ArticleSectionBlock,
+	component: ArticleSectionBlock as any,
 	name: 'ArticleSectionBlock',
 	tag: 'Content Sections',
 	inputs: [

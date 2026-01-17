@@ -25,9 +25,13 @@
 		tags?: string[];
 	}
 
-	let sections = await fetchSections();
+	let { sections: initialSections, articles: initialArticles } = $props<{
+		sections?: Section[];
+		articles?: BlogPost[];
+	}>();
 
-	let articles = await fetchRelatedArticles();
+	let sections = initialSections ?? (await fetchSections()) ?? [];
+	let articles = initialArticles ?? (await fetchRelatedArticles()) ?? [];
 
 	let timelineContainer = $state<HTMLElement>();
 	let lastListenedId = $state<string | null>(null);

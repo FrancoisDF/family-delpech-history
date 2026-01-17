@@ -99,6 +99,7 @@ export async function loadGenerator() {
     console.log(`Initializing AI generator with model: ${GENERATOR_MODEL}`);
 
     // We use text2text-generation for models like LaMini-Flan-T5
+    // The SDK typings may lag behind supported runtime options (e.g. `device`).
     generatorPipeline = await pipeline('text2text-generation', GENERATOR_MODEL, {
       device: 'cpu', // pipeline defaults to cpu for wasm/webgpu backends usually
       progress_callback: (progress: any) => {
@@ -112,7 +113,7 @@ export async function loadGenerator() {
           currentProgress = { status: 'done', percentage: 100 };
         }
       }
-    });
+    } as any);
 
     console.log('Generator pipeline loaded successfully');
     currentProgress = { status: 'done', percentage: 100 };
@@ -337,7 +338,14 @@ export async function summarizeFromChunks(
 
     // Format with sources
     const sourcesList = chunks
-      .map((c) => c.title || c.sourceId)
+      .map((c) => {
+        const base = c.title || c.sourceId;
+        if (!base) return '';
+        if (c.sourceType === 'attachment' && c.originPostTitle) {
+          return `${base} (dans «${c.originPostTitle}»)`;
+        }
+        return base;
+      })
       .filter(Boolean)
       .slice(0, MAX_SOURCES_IN_RESPONSE)
       .join(', ');
