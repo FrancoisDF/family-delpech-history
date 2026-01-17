@@ -5,27 +5,26 @@ import { pipeline, env } from '@xenova/transformers';
 // Configure transformers.js environment for browser usage
 if (typeof window !== 'undefined') {
   // Force remote model loading from Hugging Face using *raw file* URLs.
-  // If this is misconfigured, the library may fetch HTML "blob" pages instead of JSON, causing
-  // `Unexpected token '<' ... is not valid JSON`.
   // @ts-ignore
   env.allowRemoteModels = true;
   // @ts-ignore
   env.allowLocalModels = false;
 
-  // If the app previously cached an HTML error page (from a bad URL), it can keep failing.
-  // Bump the cache directory to force a clean download.
+  // Bump the cache directory to force a clean download if needed.
   // @ts-ignore
   env.cacheDir = 'transformers-cache-v5';
 
   // Global ONNX environment configuration
   // @ts-ignore
   env.backends.onnx.wasm.proxy = false;
+  
+  // Use multi-threading if available (capped at 4 for stability)
   // @ts-ignore
-  env.backends.onnx.wasm.numThreads = 1; // Single thread can be more stable in some browser environments
+  env.backends.onnx.wasm.numThreads = Math.min(4, navigator.hardwareConcurrency || 1);
 
-  // Set execution provider to 'wasm' explicitly to avoid WebGPU issues if not supported
+  // Set execution providers - try WebGPU first for much better performance
   // @ts-ignore
-  env.backends.onnx.executionProviders = ['wasm'];
+  env.backends.onnx.executionProviders = ['webgpu', 'wasm'];
 }
 
 // Cached generator pipeline (lazy-loaded)
@@ -67,7 +66,7 @@ export function cancelModelLoading(): void {
  * Only called when ENABLE_LOCAL_LLM is true.
  * @returns The generator pipeline or null if loading failed
  */
-async function loadGenerator() {
+export async function loadGenerator() {
   // Return cached pipeline if already loaded
   if (generatorPipeline !== null) {
     return generatorPipeline;
@@ -99,11 +98,9 @@ async function loadGenerator() {
   try {
     console.log(`Initializing AI generator with model: ${GENERATOR_MODEL}`);
 
-    // We use text-generation for instruction-following chat models
+    // We use text2text-generation for models like LaMini-Flan-T5
     generatorPipeline = await pipeline('text2text-generation', GENERATOR_MODEL, {
-      // Note: `device: 'wasm'` is not a valid device selector and can lead to undefined tensor locations.
-      // We force CPU tensors and separately restrict the ONNX execution provider to WASM.
-      device: 'cpu',
+      device: 'cpu', // pipeline defaults to cpu for wasm/webgpu backends usually
       progress_callback: (progress: any) => {
         if (progress.status === 'progress') {
           currentProgress = {
@@ -111,7 +108,6 @@ async function loadGenerator() {
             percentage: progress.progress,
             file: progress.file
           };
-          console.log(`Loading AI: ${progress.file} (${progress.progress.toFixed(1)}%)`);
         } else if (progress.status === 'done') {
           currentProgress = { status: 'done', percentage: 100 };
         }
@@ -179,37 +175,69 @@ function buildT5Prompt(messages: LocalChatMessage[]): string {
   const system = messages.find((m) => m.role === 'system')?.content || '';
   const user = messages.find((m) => m.role === 'user')?.content || '';
 
-  return `Consigne: Réponds impérativement en FRANÇAIS.\n\nContext: ${system}\n\nQuestion: ${user}\n\nRéponse en français:`;
+  return `Consigne: Réponds impérativement en FRANÇAIS.\n- Réponds en 3 phrases courtes.\n- Ne réponds jamais par un seul mot.\n- Si tu n'es pas sûre, dis-le poliment.\n\nContexte: ${system}\n\nQuestion: ${user}\n\nRéponse (3 phrases en français):`;
 }
 
 function buildPromptFromMessages(generator: any, messages: LocalChatMessage[]): string {
-  // For T5/LaMini, we stick to simple instruction format
   return buildT5Prompt(messages);
 }
 
 function extractGeneratedText(output: any): string {
   if (!output) return '';
 
-  // Typical pipeline output: [{ generated_text: string }]
   if (Array.isArray(output) && output.length > 0) {
     const first = output[0];
     const generated = first?.generated_text;
-
     if (typeof generated === 'string') return generated;
-
-    // Some chat pipelines may return an array of messages
-    if (Array.isArray(generated) && generated.length > 0) {
-      const last = generated[generated.length - 1];
-      if (typeof last?.content === 'string') return last.content;
-      return JSON.stringify(last);
-    }
-
-    if (typeof first === 'string') return first;
   }
 
   if (typeof output === 'string') return output;
-
   return '';
+}
+
+function countWords(text: string): number {
+  return text
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean).length;
+}
+
+function ensureThreeShortSentences(text: string): string {
+  const cleaned = text.replace(/\s+/g, ' ').trim();
+  if (!cleaned) return cleaned;
+
+  const endPunctuated = /[.!?]$/.test(cleaned) ? cleaned : `${cleaned}.`;
+  const sentences = endPunctuated
+    .split(/(?<=[.!?])\s+/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  const extras = [
+    "J'espère que cela répond à ta question.",
+    "Si tu veux, je peux préciser avec les sources."
+  ];
+
+  let out = sentences.join(' ');
+  let idx = 0;
+  while (out.split(/(?<=[.!?])\s+/).filter(Boolean).length < 3 && idx < extras.length) {
+    out = `${out} ${extras[idx]}`.trim();
+    idx++;
+  }
+
+  return out;
+}
+
+function buildFallbackFrenchAnswer(chunks: FamilyChunk[], query: string): string {
+  const top = chunks[0];
+  const snippet = top?.text
+    ? top.text.replace(/\s+/g, ' ').trim().slice(0, 180)
+    : '';
+
+  const base = snippet
+    ? `D'après les archives, ${snippet}`
+    : "D'après les archives, je n'ai qu'un indice partiel pour le moment";
+
+  return ensureThreeShortSentences(`${base}.`);
 }
 
 /**
@@ -217,29 +245,29 @@ function extractGeneratedText(output: any): string {
  * Synthesizes an answer based on context and persona instructions.
  * @param chunks Family history chunks to use as context
  * @param query User's original query
+ * @param onToken Callback for streaming tokens
  * @returns Generated text or null to fallback to raw passages
  */
-export async function summarizeFromChunks(chunks: FamilyChunk[], query: string): Promise<string | null> {
+export async function summarizeFromChunks(
+  chunks: FamilyChunk[], 
+  query: string,
+  onToken?: (token: string) => void
+): Promise<string | null> {
   if (!ENABLE_LOCAL_LLM) {
-    return null; // Feature flag disabled
+    return null;
   }
 
   if (!chunks || chunks.length === 0) {
-    return null; // No chunks to generate from
+    return null;
   }
 
   try {
-    // Load the generator pipeline
     const generator = await loadGenerator();
-
-    if (!generator) {
-      console.warn('Generator pipeline unavailable, falling back to passages');
-      return null;
-    }
+    if (!generator) return null;
 
     const systemPrompt = getSystemPrompt();
 
-    // Limit context to avoid overloading small models
+    // Limit context
     const MAX_CONTEXT_LENGTH = 1500;
     let contextText = '';
     for (const chunk of chunks) {
@@ -251,7 +279,7 @@ export async function summarizeFromChunks(chunks: FamilyChunk[], query: string):
     const messages: LocalChatMessage[] = [
       {
         role: 'system',
-        content: `${systemPrompt}\nRéponds UNIQUEMENT en utilisant le contexte fourni ci-dessous. Si l'information n'est pas dans le contexte, dis poliment que tu ne sais pas.`
+        content: `${systemPrompt}\nRéponds UNIQUEMENT en utilisant le contexte fourni ci-dessous.`
       },
       {
         role: 'user',
@@ -260,46 +288,51 @@ export async function summarizeFromChunks(chunks: FamilyChunk[], query: string):
     ];
 
     const promptText = buildPromptFromMessages(generator, messages);
+    
+    let streamedText = '';
+    const output = await generator(promptText, {
+      max_new_tokens: GENERATOR_MAX_NEW_TOKENS,
+      temperature: GENERATOR_TEMPERATURE,
+      top_p: GENERATOR_TOP_P,
+      do_sample: GENERATOR_DO_SAMPLE,
+      return_full_text: false,
+      // Stream handler for real-time updates (best-effort)
+      callback_function: onToken
+        ? (beams: any[]) => {
+            try {
+              const ids = beams?.[0]?.output_token_ids;
+              if (!ids || !generator?.tokenizer?.decode) return;
+              const decoded = generator.tokenizer.decode(ids, { skip_special_tokens: true });
+              streamedText = String(decoded || '').trim();
+              if (streamedText) onToken(streamedText);
+            } catch {
+              // ignore streaming decode errors
+            }
+          }
+        : undefined
+    });
 
-    console.log(`Generating response for query: "${query}" using ${chunks.length} chunks (prompt length: ${promptText.length})`);
+    // Prefer streamed text if available, otherwise use final output
+    let generatedText = (streamedText || extractGeneratedText(output) || '').replace(/\s+/g, ' ').trim();
 
-    let output;
-    try {
-      output = await generator(promptText, {
-        max_new_tokens: GENERATOR_MAX_NEW_TOKENS,
-        temperature: GENERATOR_TEMPERATURE,
-        top_p: GENERATOR_TOP_P,
-        do_sample: GENERATOR_DO_SAMPLE,
-        // When supported by the pipeline, this prevents the prompt from being echoed back.
-        return_full_text: false
-      });
-    } catch (err: any) {
-      console.error('Model execution error details:', {
-        message: err?.message,
-        stack: err?.stack,
-        model: GENERATOR_MODEL,
-        inputLength: contextText.length,
-        promptLength: promptText.length
-      });
-
-      // Attempt a self-heal on next call if the runtime had a tensor location issue
-      if (typeof err?.message === 'string' && err.message.includes('invalid data location')) {
-        console.warn('Detected ONNX tensor location issue; resetting generator pipeline for next attempt');
-        generatorPipeline = null;
-        generatorLoadError = null;
-      }
-
-      return null;
+    // Guard against empty / one-word answers
+    if (!generatedText || countWords(generatedText) < 4) {
+      generatedText = buildFallbackFrenchAnswer(chunks, query);
     }
 
-    let generatedText = extractGeneratedText(output);
+    generatedText = ensureThreeShortSentences(generatedText);
 
-    // Basic cleaning - Chat models usually return clean text, but we'll trim
-    generatedText = generatedText.trim();
-
-    if (!generatedText) {
-      console.warn('Generator returned empty text');
-      return null;
+    // Simulated streaming fallback (ensures the UI still "types" even if callback_function is not supported)
+    if (onToken && (!streamedText || streamedText.length < 5)) {
+      const words = generatedText.split(/\s+/).filter(Boolean);
+      let acc = '';
+      for (let i = 0; i < words.length; i++) {
+        acc = acc ? `${acc} ${words[i]}` : words[i];
+        onToken(acc);
+        await new Promise((r) => setTimeout(r, 40));
+      }
+    } else if (onToken) {
+      onToken(generatedText);
     }
 
     // Format with sources

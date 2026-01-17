@@ -4,6 +4,7 @@
 		type: 'user' | 'assistant';
 		content: string;
 		timestamp: Date;
+		status?: 'loading' | 'streaming' | 'done';
 		sources?: Array<{ title: string; url: string; isBuilder: boolean; sourceId?: string }>;
 	}
 
@@ -20,12 +21,13 @@
 		file?: string;
 	}
 
-	type SummarizeFromChunks = (chunks: any[], query: string) => Promise<string | null>;
+	type SummarizeFromChunks = (chunks: any[], query: string, onToken?: (token: string) => void) => Promise<string | null>;
 	type IsSummarizerLoading = () => boolean;
 	type GetGeneratorProgress = () => LoadProgress;
 	type CancelModelLoading = () => void;
 	type GetSystemPrompt = () => string;
 	type SetSystemPrompt = (prompt: string) => void;
+	type LoadGenerator = () => Promise<any>;
 
 	let summarizeFromChunksFn: SummarizeFromChunks = async () => null;
 	let isSummarizerLoadingFn: IsSummarizerLoading = () => false;
@@ -33,6 +35,8 @@
 	let cancelModelLoadingFn: CancelModelLoading = () => {};
 	let getSystemPromptFn: GetSystemPrompt = () => DEFAULT_SYSTEM_PROMPT;
 	let setSystemPromptFn: SetSystemPrompt = () => {};
+	let loadGeneratorFn: LoadGenerator = async () => null;
+	
 	let generationModuleReady = false;
 	let generationModuleLoadPromise: Promise<void> | null = null;
 
@@ -47,7 +51,13 @@
 					cancelModelLoadingFn = mod.cancelModelLoading;
 					getSystemPromptFn = mod.getSystemPrompt;
 					setSystemPromptFn = mod.setSystemPrompt;
+					loadGeneratorFn = mod.loadGenerator;
 					generationModuleReady = true;
+					
+					// Pre-load the model in the background
+					if (ENABLE_LOCAL_LLM) {
+						loadGeneratorFn().catch(console.error);
+					}
 				})
 				.catch((err) => {
 					console.warn('Failed to load local AI module, falling back to passages:', err);
@@ -132,32 +142,28 @@
 	let showSettings = $state(false);
 	let systemPrompt = $state(DEFAULT_SYSTEM_PROMPT);
 
-	async function scrollToBottom() {
-		// Wait for DOM to be fully rendered
-		await tick();
+	function updateMessageById(id: string, patch: Partial<ChatMessage>) {
+		messages = messages.map((m) => (m.id === id ? { ...m, ...patch } : m));
+	}
 
+	async function scrollToBottom() {
+		await tick();
 		if (!browser) return;
 
-		// Use requestAnimationFrame for proper timing
 		requestAnimationFrame(() => {
-			// Find the latest assistant message to scroll to its start
 			const lastAssistantMessage = messages
 				.slice()
 				.reverse()
 				.find((m) => m.type === 'assistant');
 
 			if (lastAssistantMessage) {
-				// Find the element with this message ID
 				const messageElement = document.querySelector(`[data-message-id="${lastAssistantMessage.id}"]`);
-
 				if (messageElement) {
-					// Scroll smoothly to the message start
 					messageElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
 					return;
 				}
 			}
 
-			// Fallback: scroll to bottom of the page
 			window.scrollTo({
 				top: document.documentElement.scrollHeight,
 				behavior: 'smooth'
@@ -169,7 +175,6 @@
 		const content = text || messageInput;
 		if (!content.trim()) return;
 
-		// Add user message
 		const userMessage: ChatMessage = {
 			id: Date.now().toString(),
 			type: 'user',
@@ -181,11 +186,23 @@
 		messageInput = '';
 		isLoading = true;
 
-		// Simulate API response
+		const assistantMessageId = (Date.now() + 1).toString();
+		messages = [
+			...messages,
+			{
+				id: assistantMessageId,
+				type: 'assistant',
+				status: 'loading',
+				content: 'Je réfléchis…',
+				timestamp: new Date(),
+				sources: []
+			}
+		];
+
 		(async () => {
 			try {
 				await ensureGenerationModuleLoaded();
-				// Show initialization message if generator is loading for the first time
+				
 				if (ENABLE_LOCAL_LLM && isSummarizerLoadingFn()) {
 					const initMessage: ChatMessage = {
 						id: (Date.now() + 0.5).toString(),
@@ -197,13 +214,15 @@
 				}
 
 				const results = await searchFamilyData(userMessage.content, { topK: 4 });
-				let assistantText = '';
 				let sourceReferences: Array<{ title: string; url: string; isBuilder: boolean }> = [];
 
 				if (!results || results.length === 0) {
-					assistantText = "Désolé — je ne trouve aucune information pertinente dans nos archives familiales pour répondre à cette question.";
+					updateMessageById(assistantMessageId, {
+						status: 'done',
+						content:
+							"Désolé — je ne trouve aucune information pertinente dans nos archives familiales pour répondre à cette question."
+					});
 				} else {
-					// Collect source references for display
 					sourceReferences = results.map((r) => ({
 						title: r.chunk.title,
 						url: r.chunk.url,
@@ -211,72 +230,64 @@
 						isBuilder: r.chunk.sourceModel === 'blog-articles' || r.chunk.sourceModel === 'stories'
 					}));
 
-					// Build an answer strictly from retrieved passages
-					// Optionally run the feature-flagged summarizer
+					updateMessageById(assistantMessageId, { sources: sourceReferences });
+
+					let assistantContent = '';
+
 					if (ENABLE_LOCAL_LLM) {
-						// summarizeFromChunks returns null if not enabled/implemented; fallback if necessary
 						const chunks = results.map((r) => r.chunk);
-						const summary = await summarizeFromChunksFn(chunks, userMessage.content);
-						assistantText = summary ?? 'Voici ce que j\'ai trouvé dans les archives :\n\n';
-						if (!summary) {
+						const summary = await summarizeFromChunksFn(chunks, userMessage.content, (token) => {
+							updateMessageById(assistantMessageId, {
+								status: 'streaming',
+								content: token || 'Je réfléchis…'
+							});
+							scrollToBottom();
+						});
+						
+						if (summary) {
+							updateMessageById(assistantMessageId, { status: 'done', content: summary });
+						} else {
+							assistantContent = 'Voici ce que j\'ai trouvé dans les archives :\n\n';
 							for (const r of results) {
-								assistantText += `• ${r.chunk.title} — "${cleanChunkText(r.chunk.text)}" (source: ${r.chunk.url})\n\n`;
+								assistantContent += `• ${r.chunk.title} — "${cleanChunkText(r.chunk.text)}" (source: ${r.chunk.url})\n\n`;
 							}
+							updateMessageById(assistantMessageId, { status: 'done', content: assistantContent });
 						}
 					} else {
-						assistantText = 'Voici ce que j\'ai trouvé dans les archives :\n\n';
+						assistantContent = 'Voici ce que j\'ai trouvé dans les archives :\n\n';
 						for (const r of results) {
-							assistantText += `• ${r.chunk.title} — "${cleanChunkText(r.chunk.text)}" (source: ${r.chunk.url})\n\n`;
+							assistantContent += `• ${r.chunk.title} — "${cleanChunkText(r.chunk.text)}" (source: ${r.chunk.url})\n\n`;
 						}
+						updateMessageById(assistantMessageId, { status: 'done', content: assistantContent });
 					}
 				}
-
-				const assistantMessage: ChatMessage = {
-					id: (Date.now() + 1).toString(),
-					type: 'assistant',
-					content: assistantText,
-					timestamp: new Date(),
-					sources: sourceReferences
-				};
-
-				messages = [...messages, assistantMessage];
 			} catch (err) {
 				console.error('Search failed', err);
-				messages = [
-					...messages,
-					{
-						id: (Date.now() + 2).toString(),
-						type: 'assistant',
-						content: "Erreur interne: impossible de rechercher dans les archives familiales.",
-						timestamp: new Date()
-					}
-				];
+				messages = [...messages, {
+					id: (Date.now() + 2).toString(),
+					type: 'assistant',
+					content: "Erreur interne: impossible de rechercher dans les archives familiales.",
+					timestamp: new Date()
+				}];
 			} finally {
 				isLoading = false;
-				// Auto-scroll to bottom and focus input
 				(async () => {
 					await tick();
-					setTimeout(async () => {
-						await scrollToBottom();
-					}, 1000); // slight delay to ensure DOM updates
-					
+					setTimeout(scrollToBottom, 500);
 					inputElement?.focus();
 				})();
 			}
 		})();
 	}
 
-	// Scroll to bottom whenever messages change
 	$effect(() => {
-		messages.length; // Depend on messages count
-
+		messages.length;
 		(async () => {
 			await tick();
 			await scrollToBottom();
 		})();
 	});
 
-	// Save messages to localStorage whenever they change
 	$effect(() => {
 		if (browser) {
 			localStorage.setItem('chatMessages', JSON.stringify(messages));
@@ -306,16 +317,12 @@
 		saveSystemPrompt();
 	}
 
-	// Load system prompt on mount
 	$effect.pre(() => {
 		if (browser) {
-			(async () => {
-				await loadSystemPrompt();
-			})();
+			ensureGenerationModuleLoaded().then(loadSystemPrompt);
 		}
 	});
 
-	// Keyboard shortcut for settings (Ctrl+Shift+S / Cmd+Shift+S)
 	$effect(() => {
 		if (browser) {
 			const handleKeydown = (event: KeyboardEvent) => {
@@ -324,27 +331,19 @@
 					showSettings = true;
 				}
 			};
-
 			document.addEventListener('keydown', handleKeydown);
 			return () => document.removeEventListener('keydown', handleKeydown);
 		}
 	});
 
 	function cleanChunkText(text: string): string {
-		// Clean up formatting and normalize spacing
-		let cleaned = text
-			.replace(/\s+/g, ' ')
-			.trim();
-
-		// Truncate to reasonable length
+		let cleaned = text.replace(/\s+/g, ' ').trim();
 		if (cleaned.length > 250) {
 			cleaned = cleaned.slice(0, 250).trim();
-			// Cut at word boundary
 			const lastSpace = cleaned.lastIndexOf(' ');
 			if (lastSpace > 80) cleaned = cleaned.slice(0, lastSpace);
 			cleaned += '...';
 		}
-
 		return cleaned;
 	}
 </script>
@@ -383,7 +382,7 @@
 
 	<!-- Chat Container -->
 	<div bind:this={chatContainer} class="chat-container flex-1 px-4 py-8 sm:px-6 lg:px-8">
-		<div class="mx-auto max-w-2xl space-y-6">
+		<div class="mx-auto max-w-2xl space-y-6 pb-32">
 			{#each messages as message, i (message.id)}
 				<div data-message-id={message.id} class="flex gap-4" class:justify-end={message.type === 'user'}>
 					{#if message.type === 'assistant'}
@@ -432,7 +431,6 @@
 							{/if}
 						</div>
 
-						<!-- Starter Questions for the very first message -->
 						{#if i === 0 && messages.length === 1}
 							<div class="mt-4 flex flex-wrap gap-2">
 								{#each STARTER_QUESTIONS as question}
@@ -446,7 +444,6 @@
 							</div>
 						{/if}
 
-						<!-- Follow-up suggestions after an assistant response -->
 						{#if message.type === 'assistant' && i === messages.length - 1 && !isLoading && i > 0}
 							<div class="mt-4 flex flex-wrap gap-2">
 								{#each FOLLOW_UP_SUGGESTIONS as suggestion}
@@ -483,7 +480,7 @@
 				</div>
 			{/each}
 
-			{#if isLoading}
+			{#if isLoading && currentProgress.status === 'downloading'}
 				<div class="flex gap-4">
 					<div class="flex-shrink-0">
 						<div
@@ -533,7 +530,6 @@
 								>
 									✕ Annuler le téléchargement
 								</button>
-
 								{#if networkWarning}
 									<p class="mt-1 text-[9px] italic text-amber-600 leading-tight">
 										⚠️ {networkWarning}
@@ -550,7 +546,7 @@
 		</div>
 	</div>
 
-	<!-- Input Area - Sticky at bottom of content area -->
+	<!-- Input Area -->
 	<div class="sticky bottom-0 border-t border-primary-200 bg-white px-4 py-6 shadow-lg sm:px-6 lg:px-8 z-40">
 		<div class="mx-auto max-w-4xl w-full">
 			<form
@@ -572,12 +568,9 @@
 					type="submit"
 					disabled={isLoading || !messageInput.trim()}
 					class="rounded-lg bg-primary-900 px-6 py-3 font-semibold text-cream transition-all hover:bg-primary-800 disabled:cursor-not-allowed disabled:opacity-50"
-					aria-label="Envoyer"
 				>
 					<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-						<path
-							d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5.951-2.975 5.951 2.975a1 1 0 001.169-1.409l-7-14z"
-						/>
+						<path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5.951-2.975 5.951 2.975a1 1 0 001.169-1.409l-7-14z" />
 					</svg>
 				</button>
 			</form>
@@ -639,12 +632,6 @@
 	:global(.chat-container) {
 		scroll-behavior: smooth;
 	}
-
-	.delay-100 {
-		animation-delay: 0.1s;
-	}
-
-	.delay-200 {
-		animation-delay: 0.2s;
-	}
+	.delay-100 { animation-delay: 0.1s; }
+	.delay-200 { animation-delay: 0.2s; }
 </style>
