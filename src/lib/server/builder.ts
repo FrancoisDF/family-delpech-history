@@ -6,7 +6,6 @@ export interface BuilderContent {
 	id?: string;
 	name?: string;
 	data?: Record<string, unknown>;
-	[key: string]: unknown;
 }
 
 export async function fetchBuilderContentServer(
@@ -241,8 +240,9 @@ export async function fetchBuilderPeopleWithRelationsServer(): Promise<Person[]>
 					const spouseContentId = spouseRef?.id;
 					if (spouseContentId) {
 						const spousePersonId = contentIdToPersonIdMap.get(spouseContentId);
-						if (spousePersonId && !person.spouses.includes(spousePersonId)) {
-							person.spouses.push(spousePersonId);
+						const spouses = person.spouses ?? (person.spouses = []);
+						if (spousePersonId && !spouses.includes(spousePersonId)) {
+							spouses.push(spousePersonId);
 						}
 					}
 				}
@@ -253,8 +253,9 @@ export async function fetchBuilderPeopleWithRelationsServer(): Promise<Person[]>
 					const childContentId = childRef?.id;
 					if (childContentId) {
 						const childPersonId = contentIdToPersonIdMap.get(childContentId);
-						if (childPersonId && !person.children.includes(childPersonId)) {
-							person.children.push(childPersonId);
+						const children = person.children ?? (person.children = []);
+						if (childPersonId && !children.includes(childPersonId)) {
+							children.push(childPersonId);
 						}
 					}
 				}

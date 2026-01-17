@@ -1,13 +1,21 @@
 import type { FamilyChunk } from './data';
 import { ENABLE_LOCAL_LLM, GENERATOR_MODEL, GENERATOR_MAX_NEW_TOKENS, GENERATOR_TEMPERATURE, GENERATOR_TOP_P, GENERATOR_DO_SAMPLE, DEFAULT_SYSTEM_PROMPT, MAX_SOURCES_IN_RESPONSE } from './config';
-import { pipeline, env } from '@huggingface/transformers';
+import { pipeline, env } from '@xenova/transformers';
 
 // Configure transformers.js environment for browser usage
 if (typeof window !== 'undefined') {
-  // Use the standard Hugging Face CDN
-  // @ts-ignore - allowRemoteModels exists in transformers.js
+  // Force remote model loading from Hugging Face using *raw file* URLs.
+  // If this is misconfigured, the library may fetch HTML "blob" pages instead of JSON, causing
+  // `Unexpected token '<' ... is not valid JSON`.
+  // @ts-ignore
   env.allowRemoteModels = true;
+  // @ts-ignore
   env.allowLocalModels = false;
+
+  // If the app previously cached an HTML error page (from a bad URL), it can keep failing.
+  // Bump the cache directory to force a clean download.
+  // @ts-ignore
+  env.cacheDir = 'transformers-cache-v5';
 
   // Global ONNX environment configuration
   // @ts-ignore
@@ -92,8 +100,10 @@ async function loadGenerator() {
     console.log(`Initializing AI generator with model: ${GENERATOR_MODEL}`);
 
     // We use text-generation for instruction-following chat models
-    generatorPipeline = await pipeline('text-generation', GENERATOR_MODEL, {
-      device: 'wasm', // Explicitly use WASM to avoid execution provider mismatches
+    generatorPipeline = await pipeline('text2text-generation', GENERATOR_MODEL, {
+      // Note: `device: 'wasm'` is not a valid device selector and can lead to undefined tensor locations.
+      // We force CPU tensors and separately restrict the ONNX execution provider to WASM.
+      device: 'cpu',
       progress_callback: (progress: any) => {
         if (progress.status === 'progress') {
           currentProgress = {
@@ -162,6 +172,46 @@ export function setSystemPrompt(prompt: string): void {
   }
 }
 
+type LocalChatMessage = { role: 'system' | 'user' | 'assistant'; content: string };
+
+function buildT5Prompt(messages: LocalChatMessage[]): string {
+  // Simple prompt building for T5/LaMini, emphasizing French language
+  const system = messages.find((m) => m.role === 'system')?.content || '';
+  const user = messages.find((m) => m.role === 'user')?.content || '';
+
+  return `Consigne: Réponds impérativement en FRANÇAIS.\n\nContext: ${system}\n\nQuestion: ${user}\n\nRéponse en français:`;
+}
+
+function buildPromptFromMessages(generator: any, messages: LocalChatMessage[]): string {
+  // For T5/LaMini, we stick to simple instruction format
+  return buildT5Prompt(messages);
+}
+
+function extractGeneratedText(output: any): string {
+  if (!output) return '';
+
+  // Typical pipeline output: [{ generated_text: string }]
+  if (Array.isArray(output) && output.length > 0) {
+    const first = output[0];
+    const generated = first?.generated_text;
+
+    if (typeof generated === 'string') return generated;
+
+    // Some chat pipelines may return an array of messages
+    if (Array.isArray(generated) && generated.length > 0) {
+      const last = generated[generated.length - 1];
+      if (typeof last?.content === 'string') return last.content;
+      return JSON.stringify(last);
+    }
+
+    if (typeof first === 'string') return first;
+  }
+
+  if (typeof output === 'string') return output;
+
+  return '';
+}
+
 /**
  * Generate a response from retrieved chunks using on-device transformer model.
  * Synthesizes an answer based on context and persona instructions.
@@ -198,9 +248,7 @@ export async function summarizeFromChunks(chunks: FamilyChunk[], query: string):
       contextText += (contextText ? ' ' : '') + `[Document: ${chunk.title}] ${text}`;
     }
 
-    // Use the chat template format (messages array) which is recommended for v3
-    // and ensures the model-specific markers are applied correctly by the tokenizer
-    const messages = [
+    const messages: LocalChatMessage[] = [
       {
         role: 'system',
         content: `${systemPrompt}\nRéponds UNIQUEMENT en utilisant le contexte fourni ci-dessous. Si l'information n'est pas dans le contexte, dis poliment que tu ne sais pas.`
@@ -211,43 +259,40 @@ export async function summarizeFromChunks(chunks: FamilyChunk[], query: string):
       }
     ];
 
-    console.log(`Generating response for query: "${query}" using ${chunks.length} chunks`);
+    const promptText = buildPromptFromMessages(generator, messages);
 
-    // Run generation using the messages array
-    // We wrap this in a detailed log to help debug if it fails again
+    console.log(`Generating response for query: "${query}" using ${chunks.length} chunks (prompt length: ${promptText.length})`);
+
     let output;
     try {
-      output = await generator(messages, {
+      output = await generator(promptText, {
         max_new_tokens: GENERATOR_MAX_NEW_TOKENS,
         temperature: GENERATOR_TEMPERATURE,
         top_p: GENERATOR_TOP_P,
         do_sample: GENERATOR_DO_SAMPLE,
+        // When supported by the pipeline, this prevents the prompt from being echoed back.
+        return_full_text: false
       });
     } catch (err: any) {
       console.error('Model execution error details:', {
-        message: err.message,
-        stack: err.stack,
+        message: err?.message,
+        stack: err?.stack,
         model: GENERATOR_MODEL,
-        inputLength: contextText.length
+        inputLength: contextText.length,
+        promptLength: promptText.length
       });
-      throw err;
-    }
 
-    let generatedText = '';
-    if (Array.isArray(output) && output.length > 0) {
-      // In chat mode, the output usually contains the assistant's reply
-      const lastMessage = output[0].generated_text[output[0].generated_text.length - 1];
-      generatedText = lastMessage?.content || '';
-    }
-
-    if (!generatedText) {
-      // Fallback if the output format is different
-      if (Array.isArray(output) && output[0].generated_text) {
-        generatedText = typeof output[0].generated_text === 'string'
-          ? output[0].generated_text
-          : JSON.stringify(output[0].generated_text);
+      // Attempt a self-heal on next call if the runtime had a tensor location issue
+      if (typeof err?.message === 'string' && err.message.includes('invalid data location')) {
+        console.warn('Detected ONNX tensor location issue; resetting generator pipeline for next attempt');
+        generatorPipeline = null;
+        generatorLoadError = null;
       }
+
+      return null;
     }
+
+    let generatedText = extractGeneratedText(output);
 
     // Basic cleaning - Chat models usually return clean text, but we'll trim
     generatedText = generatedText.trim();

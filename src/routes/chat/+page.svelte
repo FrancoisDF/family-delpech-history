@@ -10,14 +10,6 @@
 
 	import { searchFamilyData } from '$lib/ai/search';
 	import { ENABLE_LOCAL_LLM, DEFAULT_SYSTEM_PROMPT } from '$lib/ai/config';
-	import {
-		summarizeFromChunks,
-		isSummarizerLoading,
-		getGeneratorProgress,
-		cancelModelLoading,
-		getSystemPrompt,
-		setSystemPrompt
-	} from '$lib/ai/generation';
 	import { generateBlogUrl } from '$lib/url-utils';
 	import { browser } from '$app/environment';
 	import { tick } from 'svelte';
@@ -26,6 +18,42 @@
 		status: 'init' | 'downloading' | 'done' | 'error' | 'cancelled';
 		percentage: number;
 		file?: string;
+	}
+
+	type SummarizeFromChunks = (chunks: any[], query: string) => Promise<string | null>;
+	type IsSummarizerLoading = () => boolean;
+	type GetGeneratorProgress = () => LoadProgress;
+	type CancelModelLoading = () => void;
+	type GetSystemPrompt = () => string;
+	type SetSystemPrompt = (prompt: string) => void;
+
+	let summarizeFromChunksFn: SummarizeFromChunks = async () => null;
+	let isSummarizerLoadingFn: IsSummarizerLoading = () => false;
+	let getGeneratorProgressFn: GetGeneratorProgress = () => ({ status: 'init', percentage: 0 });
+	let cancelModelLoadingFn: CancelModelLoading = () => {};
+	let getSystemPromptFn: GetSystemPrompt = () => DEFAULT_SYSTEM_PROMPT;
+	let setSystemPromptFn: SetSystemPrompt = () => {};
+	let generationModuleReady = false;
+	let generationModuleLoadPromise: Promise<void> | null = null;
+
+	async function ensureGenerationModuleLoaded(): Promise<void> {
+		if (!browser || generationModuleReady) return;
+		if (!generationModuleLoadPromise) {
+			generationModuleLoadPromise = import('$lib/ai/generation')
+				.then((mod) => {
+					summarizeFromChunksFn = mod.summarizeFromChunks;
+					isSummarizerLoadingFn = mod.isSummarizerLoading;
+					getGeneratorProgressFn = mod.getGeneratorProgress;
+					cancelModelLoadingFn = mod.cancelModelLoading;
+					getSystemPromptFn = mod.getSystemPrompt;
+					setSystemPromptFn = mod.setSystemPrompt;
+					generationModuleReady = true;
+				})
+				.catch((err) => {
+					console.warn('Failed to load local AI module, falling back to passages:', err);
+				});
+		}
+		await generationModuleLoadPromise;
 	}
 
 	let currentProgress = $state<LoadProgress>({ status: 'init', percentage: 0 });
@@ -44,12 +72,12 @@
 	// Poll for progress when loading
 	$effect(() => {
 		let interval: any;
-		if (isLoading && isSummarizerLoading()) {
+		if (isLoading && isSummarizerLoadingFn()) {
 			interval = setInterval(() => {
-				currentProgress = getGeneratorProgress();
+				currentProgress = getGeneratorProgressFn();
 			}, 200);
 		} else {
-			currentProgress = getGeneratorProgress();
+			currentProgress = getGeneratorProgressFn();
 		}
 		return () => clearInterval(interval);
 	});
@@ -108,38 +136,32 @@
 		// Wait for DOM to be fully rendered
 		await tick();
 
-		if (!chatContainer || !browser) return;
+		if (!browser) return;
 
 		// Use requestAnimationFrame for proper timing
 		requestAnimationFrame(() => {
-			if (chatContainer) {
-				// Find the latest assistant message to scroll to its start
-				const lastAssistantMessage = messages
-					.slice()
-					.reverse()
-					.find((m) => m.type === 'assistant');
+			// Find the latest assistant message to scroll to its start
+			const lastAssistantMessage = messages
+				.slice()
+				.reverse()
+				.find((m) => m.type === 'assistant');
 
-				if (lastAssistantMessage) {
-					// Find the element with this message ID
-					const messageElement = chatContainer.querySelector(`[data-message-id="${lastAssistantMessage.id}"]`);
+			if (lastAssistantMessage) {
+				// Find the element with this message ID
+				const messageElement = document.querySelector(`[data-message-id="${lastAssistantMessage.id}"]`);
 
-					if (messageElement) {
-						// Scroll smoothly to the message start
-						messageElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-						return;
-					}
+				if (messageElement) {
+					// Scroll smoothly to the message start
+					messageElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+					return;
 				}
-
-				// Fallback: scroll to bottom minus footer height
-				const footer = document.querySelector('footer');
-				const footerHeight = footer ? footer.offsetHeight : 0;
-				const targetScroll = chatContainer.scrollHeight - footerHeight;
-
-				chatContainer.scrollTo({
-					top: targetScroll,
-					behavior: 'smooth'
-				});
 			}
+
+			// Fallback: scroll to bottom of the page
+			window.scrollTo({
+				top: document.documentElement.scrollHeight,
+				behavior: 'smooth'
+			});
 		});
 	}
 
@@ -162,8 +184,9 @@
 		// Simulate API response
 		(async () => {
 			try {
+				await ensureGenerationModuleLoaded();
 				// Show initialization message if generator is loading for the first time
-				if (ENABLE_LOCAL_LLM && isSummarizerLoading()) {
+				if (ENABLE_LOCAL_LLM && isSummarizerLoadingFn()) {
 					const initMessage: ChatMessage = {
 						id: (Date.now() + 0.5).toString(),
 						type: 'assistant',
@@ -193,7 +216,7 @@
 					if (ENABLE_LOCAL_LLM) {
 						// summarizeFromChunks returns null if not enabled/implemented; fallback if necessary
 						const chunks = results.map((r) => r.chunk);
-						const summary = await summarizeFromChunks(chunks, userMessage.content);
+						const summary = await summarizeFromChunksFn(chunks, userMessage.content);
 						assistantText = summary ?? 'Voici ce que j\'ai trouvé dans les archives :\n\n';
 						if (!summary) {
 							for (const r of results) {
@@ -267,13 +290,14 @@
 		}
 	}
 
-	function loadSystemPrompt() {
+	async function loadSystemPrompt() {
 		if (!browser) return;
-		systemPrompt = getSystemPrompt();
+		await ensureGenerationModuleLoaded();
+		systemPrompt = getSystemPromptFn();
 	}
 
 	function saveSystemPrompt() {
-		setSystemPrompt(systemPrompt);
+		setSystemPromptFn(systemPrompt);
 		showSettings = false;
 	}
 
@@ -285,7 +309,9 @@
 	// Load system prompt on mount
 	$effect.pre(() => {
 		if (browser) {
-			loadSystemPrompt();
+			(async () => {
+				await loadSystemPrompt();
+			})();
 		}
 	});
 
@@ -331,7 +357,7 @@
 	/>
 </svelte:head>
 
-<div class="flex h-full flex-col overflow-hidden">
+<div class="flex min-h-screen flex-col">
 	<!-- Header -->
 	<section class="flex-shrink-0 border-b border-primary-200 px-4 py-8 sm:px-6 lg:px-8">
 		<div class="mx-auto max-w-4xl">
@@ -356,7 +382,7 @@
 	</section>
 
 	<!-- Chat Container -->
-	<div bind:this={chatContainer} class="chat-container flex-1 overflow-y-auto px-4 py-8 sm:px-6 lg:px-8">
+	<div bind:this={chatContainer} class="chat-container flex-1 px-4 py-8 sm:px-6 lg:px-8">
 		<div class="mx-auto max-w-2xl space-y-6">
 			{#each messages as message, i (message.id)}
 				<div data-message-id={message.id} class="flex gap-4" class:justify-end={message.type === 'user'}>
@@ -500,7 +526,7 @@
 
 								<button
 									onclick={() => {
-										cancelModelLoading();
+										cancelModelLoadingFn();
 										isLoading = false;
 									}}
 									class="mt-1 text-[10px] font-bold text-red-600 hover:underline"
@@ -524,8 +550,8 @@
 		</div>
 	</div>
 
-	<!-- Input Area - Fixed at bottom of viewport -->
-	<div class="fixed bottom-0 left-0 right-0 border-t border-primary-200 bg-white px-4 py-6 shadow-lg sm:px-6 lg:px-8 z-40">
+	<!-- Input Area - Sticky at bottom of content area -->
+	<div class="sticky bottom-0 border-t border-primary-200 bg-white px-4 py-6 shadow-lg sm:px-6 lg:px-8 z-40">
 		<div class="mx-auto max-w-4xl w-full">
 			<form
 				onsubmit={(e) => {
