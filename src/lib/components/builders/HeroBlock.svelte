@@ -3,6 +3,8 @@
 	import { resolve } from '$app/paths';
 	import { browser } from '$app/environment';
 
+	type VariantType = 'grayscale' | 'color' | 'image-focus';
+
 	let {
 		title = 'Histoire de Famille',
 		description = 'Default description',
@@ -11,8 +13,19 @@
 		secondaryButtonText = 'Secondary Button',
 		secondaryButtonLink = '/',
 		backgroundImage = '',
-		backgroundImageDisplayMode = 'cover'
-	} = $props();
+		backgroundImageDisplayMode = 'cover',
+		variant = 'grayscale' as VariantType
+	} = $props<{
+		title?: string;
+		description?: string;
+		primaryButtonText?: string;
+		primaryButtonLink?: string;
+		secondaryButtonText?: string;
+		secondaryButtonLink?: string;
+		backgroundImage?: string;
+		backgroundImageDisplayMode?: 'cover' | 'contain';
+		variant?: VariantType;
+	}>();
 
 		// minimal binding target for bind:this in markup (keeps file compiling when
 		// the more sophisticated scroll effect is disabled in this file)
@@ -139,18 +152,17 @@
 	class="relative flex h-screen max-h-[800px] items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8"
 >
 	{#if backgroundImage}
-		<!-- Background layer: transforms on scroll for a parallax-esque, scale-up effect -->
+		<!-- Background layer with optional grayscale filter -->
 		<div class="absolute inset-0 overflow-hidden" aria-hidden="true">
 			<div
 				class="absolute inset-0 bg-center"
-				style={`background-image: url('${backgroundImage}'); background-size: ${backgroundImageDisplayMode === 'contain' ? 'contain' : 'cover'}; transform-origin: center center; will-change: transform, filter; transform: scale(1.05); filter: grayscale(100%); pointer-events: none;`}
+				style={`background-image: url('${backgroundImage}'); background-size: ${backgroundImageDisplayMode === 'contain' ? 'contain' : 'cover'}; transform-origin: center center; will-change: transform, filter; transform: scale(1.05); ${variant === 'grayscale' ? 'filter: grayscale(100%);' : ''} pointer-events: none;`}
 			></div>
 		</div>
 	{/if}
 
-	<div class="absolute inset-0 bg-black/60"></div>
-
-	<div class="relative z-10 mx-auto max-w-4xl text-center">
+	<!-- Dark background around text area only -->
+	<div class="relative z-10 mx-auto max-w-4xl rounded-lg bg-black/60 px-8 py-12 text-center sm:px-12 sm:py-16">
 		<h1
 			class="mb-6 font-serif text-5xl font-medium tracking-tight text-white md:text-6xl lg:text-7xl"
 		>

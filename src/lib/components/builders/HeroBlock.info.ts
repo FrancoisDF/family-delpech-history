@@ -7,6 +7,13 @@ export const heroBlockInfo: RegisteredComponent = {
 	tag: 'Hero & Headers',
 	inputs: [
 		{
+			name: 'variant',
+			type: 'string',
+			enum: ['grayscale', 'color'],
+			defaultValue: 'grayscale',
+			helperText: 'Choose a visual variant: grayscale (default), color, or image-focus'
+		},
+		{
 			name: 'title',
 			type: 'string',
 			defaultValue: 'Histoire de Famille'
