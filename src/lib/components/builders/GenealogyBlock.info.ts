@@ -132,6 +132,12 @@ export const genealogyBlockInfo: RegisteredComponent = {
 					type: 'string',
 					defaultValue: '',
 					helperText: 'ID of the related person'
+				},
+				{
+					name: 'spouseId',
+					type: 'string',
+					defaultValue: '',
+					helperText: 'ID of the spouse/partner associated with this relationship (used for child relationships to link them to a specific couple)'
 				}
 			]
 		}
