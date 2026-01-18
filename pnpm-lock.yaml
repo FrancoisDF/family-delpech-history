@@ -32,9 +32,6 @@ importers:
       mammoth:
         specifier: ^1.11.0
         version: 1.11.0
-      pdf-parse:
-        specifier: ^2.4.5
-        version: 2.4.5
       valibot:
         specifier: ^1.2.0
         version: 1.2.0(typescript@5.9.3)
@@ -75,6 +72,9 @@ importers:
       globals:
         specifier: ^16.0.0
         version: 16.5.0
+      pdf-parse:
+        specifier: ^2.4.5
+        version: 2.4.5
       playwright:
         specifier: ^1.53.0
         version: 1.57.0

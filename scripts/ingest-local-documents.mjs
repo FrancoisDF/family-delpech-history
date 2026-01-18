@@ -29,7 +29,13 @@ import mammoth from 'mammoth';
 
 // Create require for CommonJS modules
 const require = createRequire(import.meta.url);
-const pdfParse = require('pdf-parse');
+const pdfParseModule = require('pdf-parse');
+const pdfParse = typeof pdfParseModule === 'function' ? pdfParseModule : pdfParseModule?.default;
+if (typeof pdfParse !== 'function') {
+	throw new TypeError(
+		`pdf-parse did not export a function. Got: ${Object.prototype.toString.call(pdfParseModule)}`
+	);
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

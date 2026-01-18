@@ -10,10 +10,25 @@ import dotenv from 'dotenv';
 import { createHash } from 'crypto';
 import { createRequire } from 'module';
 import mammoth from 'mammoth';
+import {
+	getHeaderFieldNames,
+	getComponentConfig,
+	extractDocumentRefsFromBlock,
+	extractFieldsFromBlock,
+	getBlockComponentName,
+	getBlockData,
+	getBlockLevelExtractionComponents
+} from './lib/component-extraction-helpers.mjs';
 
 // Create require for CommonJS modules
 const require = createRequire(import.meta.url);
-const pdfParse = require('pdf-parse');
+const pdfParseModule = require('pdf-parse');
+const pdfParse = typeof pdfParseModule === 'function' ? pdfParseModule : pdfParseModule?.default;
+if (typeof pdfParse !== 'function') {
+	throw new TypeError(
+		`pdf-parse did not export a function. Got: ${Object.prototype.toString.call(pdfParseModule)}`
+	);
+}
 
 // Load .env file from project root
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -79,23 +94,41 @@ function normalizeReadableText(raw) {
 
 function resolveFileUrl(fileField) {
   if (!fileField) return '';
-  if (typeof fileField === 'string') return fileField;
+
+  const normalize = (url) => {
+    const s = String(url || '').trim();
+    if (!s) return '';
+    if (s.startsWith('//')) return `https:${s}`;
+    if (s.startsWith('/')) return `https://cdn.builder.io${s}`;
+    return s;
+  };
+
+  if (typeof fileField === 'string') return normalize(fileField);
   if (typeof fileField === 'object') {
-    if (typeof fileField.url === 'string') return fileField.url;
-    if (fileField.file && typeof fileField.file.url === 'string') return fileField.file.url;
-    if (typeof fileField.path === 'string') return fileField.path;
+    if (typeof fileField.url === 'string') return normalize(fileField.url);
+    if (fileField.file && typeof fileField.file.url === 'string') return normalize(fileField.file.url);
+    if (typeof fileField.path === 'string') return normalize(fileField.path);
   }
   return '';
 }
 
 function isProbablyDocumentUrl(url) {
   if (!url || typeof url !== 'string') return false;
+
+  // Accept Builder's own relative file URLs too
+  if (url.startsWith('/')) return url.includes('/file/') || url.includes('/api/v1/file/');
+
   if (!/^https?:\/\//i.test(url)) return false;
 
   try {
     const u = new URL(url);
     const ext = path.extname(u.pathname).toLowerCase();
-    return DOCUMENT_EXTENSIONS.has(ext);
+    if (DOCUMENT_EXTENSIONS.has(ext)) return true;
+
+    // Builder file endpoints often don't carry the extension in the pathname
+    if (u.hostname.endsWith('builder.io') && u.pathname.includes('/file/')) return true;
+
+    return false;
   } catch {
     return false;
   }
@@ -171,7 +204,8 @@ function extractBuilderPostText(entry) {
   const d = entry?.data && typeof entry.data === 'object' ? entry.data : null;
   if (!d) return pieces.filter(Boolean).join('\n\n');
 
-  const headerFields = ['title', 'excerpt', 'description', 'heading', 'subtitle', 'author', 'date', 'readTime', 'category'];
+  // Use configuration-driven header field extraction
+  const headerFields = getHeaderFieldNames();
   for (const f of headerFields) {
     if (typeof d[f] === 'string' && d[f].trim()) {
       pieces.push(normalizeReadableText(d[f]));
@@ -246,6 +280,23 @@ async function mapWithConcurrency(items, limit, fn) {
   return results;
 }
 
+function guessFileTypeFromUrl(url, contentType) {
+  try {
+    const u = new URL(url);
+    const ext = path.extname(u.pathname).toLowerCase();
+    if (DOCUMENT_EXTENSIONS.has(ext)) return ext;
+  } catch {
+    // ignore
+  }
+
+  const ct = String(contentType || '').toLowerCase();
+  if (ct.includes('pdf')) return '.pdf';
+  if (ct.includes('wordprocessingml.document')) return '.docx';
+  if (ct.includes('markdown')) return '.md';
+  if (ct.startsWith('text/')) return '.txt';
+  return '';
+}
+
 async function downloadAndExtractDocument(url) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 45_000);
@@ -254,15 +305,9 @@ async function downloadAndExtractDocument(url) {
     const res = await fetch(url, { signal: controller.signal });
     if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
 
+    const contentType = res.headers.get('content-type') || '';
     const buffer = Buffer.from(await res.arrayBuffer());
-    const ext = (() => {
-      try {
-        const u = new URL(url);
-        return path.extname(u.pathname).toLowerCase();
-      } catch {
-        return '';
-      }
-    })();
+    const ext = guessFileTypeFromUrl(url, contentType);
 
     if (ext === '.pdf') {
       const data = await pdfParse(buffer);
@@ -275,12 +320,18 @@ async function downloadAndExtractDocument(url) {
     }
 
     if (ext === '.md' || ext === '.txt') {
-      return { text: new TextDecoder('utf-8').decode(buffer).trim(), fileName: fileNameFromUrl(url) };
+      return {
+        text: new TextDecoder('utf-8').decode(buffer).trim(),
+        fileName: fileNameFromUrl(url)
+      };
     }
 
-    const ct = (res.headers.get('content-type') || '').toLowerCase();
-    if (ct.startsWith('text/')) {
-      return { text: new TextDecoder('utf-8').decode(buffer).trim(), fileName: fileNameFromUrl(url) };
+    // If content-type is text/*, still try to decode
+    if (String(contentType).toLowerCase().startsWith('text/')) {
+      return {
+        text: new TextDecoder('utf-8').decode(buffer).trim(),
+        fileName: fileNameFromUrl(url)
+      };
     }
 
     return { text: '', fileName: fileNameFromUrl(url) };
@@ -295,38 +346,33 @@ function extractDocumentRefsFromBuilderEntry(entry) {
 
   const d = entry?.data && typeof entry.data === 'object' ? entry.data : {};
 
+  // Extract top-level PDF if present
   const topPdf = resolveFileUrl(d.pdfFile);
   if (isProbablyDocumentUrl(topPdf) && !seen.has(topPdf)) {
     refs.push({ url: topPdf, label: d.title ? `${d.title} (PDF)` : undefined });
     seen.add(topPdf);
   }
 
+  // Extract documents from blocks using component configuration
   if (Array.isArray(d.blocks)) {
     for (const b of d.blocks) {
-      if (Array.isArray(b?.pdfs)) {
-        for (const item of b.pdfs) {
-          const pdfUrl = resolveFileUrl(item?.pdfFile);
-          if (isProbablyDocumentUrl(pdfUrl) && !seen.has(pdfUrl)) {
-            refs.push({ url: pdfUrl, label: item?.title || item?.name });
-            seen.add(pdfUrl);
+      const componentName = getBlockComponentName(b);
+      const config = componentName ? getComponentConfig(componentName) : null;
+      const blockData = getBlockData(b);
+
+      // Configuration-driven extraction for known components
+      if (config && blockData) {
+        const blockRefs = extractDocumentRefsFromBlock(b, config);
+        for (const ref of blockRefs) {
+          if (!seen.has(ref.url)) {
+            refs.push(ref);
+            seen.add(ref.url);
           }
         }
       }
 
-      if (Array.isArray(b?.sections)) {
-        for (const sec of b.sections) {
-          if (!Array.isArray(sec?.documents)) continue;
-          for (const doc of sec.documents) {
-            const docUrl = resolveFileUrl(doc?.file);
-            if (isProbablyDocumentUrl(docUrl) && !seen.has(docUrl)) {
-              refs.push({ url: docUrl, label: doc?.name || doc?.title });
-              seen.add(docUrl);
-            }
-          }
-        }
-      }
-
-      for (const candidate of [b?.text, b?.content]) {
+      // Fallback: extract from text/content fields for inline document links
+      for (const candidate of [blockData?.text, blockData?.content]) {
         if (typeof candidate === 'string') {
           for (const link of extractLinksFromText(candidate)) {
             if (!seen.has(link.url)) {
@@ -337,6 +383,7 @@ function extractDocumentRefsFromBuilderEntry(entry) {
         }
       }
 
+      // Deep scan for any remaining file/pdfFile references (catches edge cases)
       const stack = [b];
       const visited = new Set();
       while (stack.length) {
@@ -351,7 +398,7 @@ function extractDocumentRefsFromBuilderEntry(entry) {
         }
 
         for (const [k, v] of Object.entries(value)) {
-          if (k === 'pdfFile' || k === 'file') {
+          if ((k === 'pdfFile' || k === 'file') && !refs.some((r) => r.url === resolveFileUrl(v))) {
             const resolved = resolveFileUrl(v);
             if (isProbablyDocumentUrl(resolved) && !seen.has(resolved)) {
               const label = value?.title || value?.name || value?.label;

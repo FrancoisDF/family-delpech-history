@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
-		"ingest": "node scripts/ingest-all-content.mjs",
+		"ingest": "node scripts/ingest-all-content.js",
 		"ingest:documents": "node scripts/ingest-local-documents.mjs",
 		"ingest:builder": "node scripts/ingest-builder-content.mjs",
 		"prepare:rag": "node scripts/ingest-local-documents.mjs",
@@ -38,6 +38,7 @@
 		"eslint-config-prettier": "^10.0.1",
 		"eslint-plugin-svelte": "^3.0.0",
 		"globals": "^16.0.0",
+		"pdf-parse": "^2.4.5",
 		"playwright": "^1.53.0",
 		"prettier": "^3.4.2",
 		"prettier-plugin-svelte": "^3.3.3",
@@ -65,7 +66,6 @@
 		"dotenv": "^17.2.3",
 		"js-yaml": "^4.1.1",
 		"mammoth": "^1.11.0",
-		"pdf-parse": "^2.4.5",
 		"valibot": "^1.2.0"
 	}
 }
