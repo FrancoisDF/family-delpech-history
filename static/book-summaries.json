@@ -1,0 +1,44 @@
+[
+  {
+    "id": "summary-family-history-001",
+    "title": "Early Family Records",
+    "summary": "This document contains early family history records documenting generations of our family ancestry. It includes biographical information about ancestors from the 18th and 19th centuries.",
+    "sourceType": "document",
+    "url": "family-history-001",
+    "originalChunkCount": 3,
+    "metadata": {
+      "author": "Family Historian",
+      "year": "1800-1850",
+      "category": "genealogy",
+      "tags": ["ancestors", "early-records", "genealogy"]
+    }
+  },
+  {
+    "id": "summary-biography-001",
+    "title": "Biography of Notable Ancestors",
+    "summary": "Biographical account of prominent family members and their contributions to family history. Details their life events, marriages, and descendants.",
+    "sourceType": "document",
+    "url": "biography-001",
+    "originalChunkCount": 2,
+    "metadata": {
+      "author": "Family Historian",
+      "year": "1850-1900",
+      "category": "biography",
+      "tags": ["biography", "family-members", "lineage"]
+    }
+  },
+  {
+    "id": "summary-genealogy-001",
+    "title": "Family Tree Documentation",
+    "summary": "Complete genealogical documentation showing family relationships and lineage across multiple generations. Includes birth dates, marriage records, and descendant information.",
+    "sourceType": "document",
+    "url": "genealogy-001",
+    "originalChunkCount": 4,
+    "metadata": {
+      "author": "Family Genealogist",
+      "year": "1900-present",
+      "category": "genealogy",
+      "tags": ["family-tree", "lineage", "descendants"]
+    }
+  }
+]
