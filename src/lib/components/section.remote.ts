@@ -28,9 +28,9 @@ const loadSections = async (storySectionsRaw: any[]): Promise<StorySection[]> =>
 		console.error('Error processing sections:', error);
 		return [];
 	}
-}
+};
 
-export const fetchSections = query( async(): Promise<StorySection[] | undefined> => {
+export const fetchSections = query(async (): Promise<StorySection[] | undefined> => {
 	try {
 		const storySectionsRaw = await fetchBuilderContentServer('stories', { limit: 100 });
 		return loadSections(storySectionsRaw);
@@ -38,4 +38,4 @@ export const fetchSections = query( async(): Promise<StorySection[] | undefined>
 		console.error('Error fetching sections:', error);
 		return;
 	}
-})
+});

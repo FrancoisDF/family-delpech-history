@@ -11,7 +11,8 @@ export const GET: RequestHandler = async () => {
 			return json(
 				{
 					success: false,
-					message: 'No genealogy data available. Please ensure GEDCOM file is processed at build time.',
+					message:
+						'No genealogy data available. Please ensure GEDCOM file is processed at build time.',
 					people: [],
 					statistics: null
 				},

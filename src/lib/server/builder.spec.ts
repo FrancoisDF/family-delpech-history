@@ -72,7 +72,11 @@ describe('fetchAllBuilderPeopleServer', () => {
 			},
 			{
 				id: 'person-2',
-				data: { personId: 'marie-antoinette-delpech', displayName: 'Marie-Antoinette Delpech', tagId: 'tag-2' }
+				data: {
+					personId: 'marie-antoinette-delpech',
+					displayName: 'Marie-Antoinette Delpech',
+					tagId: 'tag-2'
+				}
 			}
 		];
 

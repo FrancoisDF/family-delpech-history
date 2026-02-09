@@ -42,9 +42,7 @@ function getProviderConfig() {
 	if (provider === 'openai') {
 		const apiKey = process.env.OPENAI_API_KEY;
 		if (!apiKey) {
-			throw new Error(
-				'OPENAI_API_KEY environment variable is required when AI_PROVIDER=openai'
-			);
+			throw new Error('OPENAI_API_KEY environment variable is required when AI_PROVIDER=openai');
 		}
 
 		const modelName = process.env.OPENAI_MODEL;
@@ -120,9 +118,7 @@ function groupChunksByTitle(chunks) {
  * (Limit to prevent token explosion)
  */
 function createSourceText(chunks, maxChars = 4000) {
-	let text = chunks
-		.map((c) => c.text)
-		.join('\n\n');
+	let text = chunks.map((c) => c.text).join('\n\n');
 
 	if (text.length > maxChars) {
 		text = text.substring(0, maxChars) + '...';

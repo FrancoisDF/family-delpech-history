@@ -59,6 +59,7 @@ This project implements a **flexible, multi-provider AI system** that supports b
 **File:** `scripts/generate-summaries-generic.mjs`
 
 **Purpose:**
+
 - Reads chunked documents from `static/family-data.json`
 - Groups documents by title/section
 - Sends each group to AI for summarization
@@ -66,12 +67,14 @@ This project implements a **flexible, multi-provider AI system** that supports b
 - Creates embeddings for semantic search
 
 **Why summaries?**
+
 - Instead of searching entire documents (which uses ~1,200-1,500 tokens per query)
 - Summaries reduce context size to ~500 tokens per query
 - Saves 60-70% of token costs
 - Faster response times
 
 **How it works:**
+
 1. Load family history documents
 2. Group documents by title (each group = one document to summarize)
 3. Send to AI: "Summarize this genealogy/family history in 2-3 sentences"
@@ -83,6 +86,7 @@ This project implements a **flexible, multi-provider AI system** that supports b
 **File:** `src/routes/api/ai-vercel-chat/+server.ts`
 
 **Purpose:**
+
 - Receives user questions from the chat interface
 - Searches summaries using semantic similarity (embeddings)
 - Retrieves top 5 most relevant summaries
@@ -91,6 +95,7 @@ This project implements a **flexible, multi-provider AI system** that supports b
 - Tracks token usage for daily budget limits
 
 **Token flow:**
+
 ```
 User Question (50-100 tokens)
        ↓
@@ -112,12 +117,14 @@ Total: ~500 tokens per query (vs 1,500+ with raw documents)
 **File:** `src/lib/ai/provider.ts`
 
 **Purpose:**
+
 - Reads environment variables to determine which AI provider to use
 - Creates the appropriate AI client
 - Provides unified interface for chat API and scripts
 - Handles errors with helpful messages
 
 **Supported providers:**
+
 - **Anthropic** (default) - Fast, cost-effective
 - **OpenAI** - gpt-4, gpt-3.5-turbo, etc.
 - **OpenAI-Compatible** - Local servers, private deployments
@@ -131,6 +138,7 @@ Total: ~500 tokens per query (vs 1,500+ with raw documents)
 You have three options:
 
 #### **Option A: Use Anthropic (Recommended for cost)**
+
 1. Go to https://console.anthropic.com/
 2. Sign up or log in
 3. Create an API key
@@ -141,6 +149,7 @@ You have three options:
 5. No need to set `AI_PROVIDER` (defaults to anthropic)
 
 #### **Option B: Use OpenAI (gpt-4/gpt-3.5-turbo)**
+
 1. Go to https://platform.openai.com/api-keys/
 2. Create an API key
 3. Set environment variables:
@@ -151,6 +160,7 @@ You have three options:
    ```
 
 #### **Option C: Use Private OpenAI-Compatible Server**
+
 1. Set up your OpenAI-compatible server (e.g., on localhost:8000)
 2. Set environment variables:
    ```bash
@@ -163,6 +173,7 @@ You have three options:
 ### Step 2: Verify Configuration
 
 Check that your chosen provider is properly configured:
+
 ```bash
 # For Anthropic
 echo $ANTHROPIC_API_KEY
@@ -177,11 +188,13 @@ echo $OPENAI_API_BASE  # (optional)
 ### Step 3: Install Dependencies
 
 The project automatically includes the necessary AI SDK packages:
+
 - `@ai-sdk/anthropic` - For Anthropic support
 - `@ai-sdk/openai` - For OpenAI support
 - `ai` - Vercel AI SDK (unified interface)
 
 Install if needed:
+
 ```bash
 npm install
 ```
@@ -191,6 +204,7 @@ npm install
 ## How to Generate Summaries
 
 ### Prerequisites
+
 - Chunked documents must exist in `static/family-data.json`
 - Generate these using: `npm run prepare:rag`
 - API key configured for your chosen provider
@@ -198,11 +212,13 @@ npm install
 ### Run Summary Generation
 
 **Using Anthropic (default):**
+
 ```bash
 ANTHROPIC_API_KEY="sk-ant-your-key" node scripts/generate-summaries-generic.mjs
 ```
 
 **Using OpenAI:**
+
 ```bash
 AI_PROVIDER=openai \
 OPENAI_API_KEY="sk-xxx" \
@@ -211,6 +227,7 @@ node scripts/generate-summaries-generic.mjs
 ```
 
 **Using private server:**
+
 ```bash
 AI_PROVIDER=openai \
 OPENAI_API_KEY="your-key" \
@@ -222,12 +239,14 @@ node scripts/generate-summaries-generic.mjs
 ### What Happens During Summary Generation
 
 1. **Loading** - Reads documents from `static/family-data.json`
+
    ```
    ✓ Loaded 250 chunks
    ✓ Found 45 unique sections/books
    ```
 
 2. **Processing** - Groups documents and sends to AI in batches of 5
+
    ```
    📚 Generating summaries for 45 sections...
    ✓ Chapter 1: Family Origins
@@ -237,10 +256,11 @@ node scripts/generate-summaries-generic.mjs
    ```
 
 3. **Saving** - Creates `static/book-summaries.json`
+
    ```
    ✅ Summaries saved to static/book-summaries.json
       Summaries available: 45
-   
+
    📊 Summarization Complete:
       Total sections: 45
       Input tokens: 5,234
@@ -251,6 +271,7 @@ node scripts/generate-summaries-generic.mjs
 ### Output Format
 
 The script creates `static/book-summaries.json`:
+
 ```json
 [
   {
@@ -291,16 +312,17 @@ The script creates `static/book-summaries.json`:
    - Example match: "Chapter 1: Family Origins" (relevance score: 0.92)
 
 4. **Build system prompt with context:**
+
    ```
    You are a family historian...
-   
+
    RELEVANT DOCUMENTS:
    - Chapter 1: Family Origins (5 chunks)
      Summary: The Delpech family originated...
-   
+
    - Marriage Records (3 chunks)
      Summary: Records show marriages between...
-   
+
    [continues with top 5]
    ```
 
@@ -337,22 +359,27 @@ The script creates `static/book-summaries.json`:
 ## Configuration Files
 
 ### `.env.example` (Your reference guide)
+
 Shows all available configuration options with explanations. Copy to `.env`:
+
 ```bash
 cp .env.example .env
 ```
 
 ### `src/lib/ai/provider.ts` (Provider factory)
+
 - Exports: `getProviderConfig()`, `createModelForChat()`, `normalizeUsage()`, `getProviderInfo()`
 - Used by: Chat API and summary generation script
 - No need to modify - just configure environment variables
 
 ### `scripts/generate-summaries-generic.mjs` (Summary generation)
+
 - Reads: `static/family-data.json`
 - Writes: `static/book-summaries.json`
 - Uses: Vercel AI SDK's `generateText()` for unified interface
 
 ### `src/routes/api/ai-vercel-chat/+server.ts` (Chat API)
+
 - Endpoint: `POST /api/ai-vercel-chat`
 - Uses provider factory to get AI model
 - Searches summaries and builds context
@@ -363,6 +390,7 @@ cp .env.example .env
 ## Token Usage Explained
 
 ### What are tokens?
+
 - Tokens are chunks of text
 - ~4 characters = 1 token
 - AI charges based on token count (input + output)
@@ -370,16 +398,19 @@ cp .env.example .env
 ### Token costs by provider:
 
 **Anthropic (Claude 3.5):**
+
 - Input: ~$3 per 1M tokens
 - Output: ~$15 per 1M tokens
 - ~7,000 tokens per query
 
 **OpenAI (gpt-3.5-turbo):**
+
 - Input: ~$0.50 per 1M tokens
 - Output: ~$1.50 per 1M tokens
 - ~498 tokens per query (using summaries)
 
 ### Cost comparison:
+
 - **Without summaries:** 1,500 tokens × 10 queries = 15,000 tokens
 - **With summaries:** 500 tokens × 10 queries = 5,000 tokens
 - **Savings:** 66% reduction
@@ -389,33 +420,43 @@ cp .env.example .env
 ## Troubleshooting
 
 ### Error: "ANTHROPIC_API_KEY not configured"
+
 **Solution:** Set your API key:
+
 ```bash
 export ANTHROPIC_API_KEY="sk-ant-your-key"
 ```
 
 ### Error: "OPENAI_MODEL environment variable is required"
+
 **Solution:** When using OpenAI, specify the model:
+
 ```bash
 export OPENAI_MODEL="gpt-3.5-turbo"
 ```
 
 ### Error: "Cannot find module 'family-data.json'"
+
 **Solution:** Generate chunked documents first:
+
 ```bash
 npm run prepare:rag
 ```
 
 ### Chat API returns error 429
+
 **Cause:** Daily token budget exceeded (5,000 tokens)
 **Solution:** Wait until next day or increase budget in code:
+
 ```typescript
 const DAILY_TOKEN_BUDGET = 10000; // Increase in +server.ts
 ```
 
 ### Summaries seem irrelevant to my question
+
 **Cause:** Embeddings need to be regenerated
 **Solution:** After generating summaries, create embeddings:
+
 ```bash
 node scripts/precompute-summary-embeddings.mjs
 ```
@@ -425,6 +466,7 @@ node scripts/precompute-summary-embeddings.mjs
 ## Common Workflows
 
 ### Workflow 1: Initial Setup (Anthropic)
+
 ```bash
 # 1. Set API key
 export ANTHROPIC_API_KEY="sk-ant-your-key"
@@ -445,6 +487,7 @@ npm run dev
 ```
 
 ### Workflow 2: Switch to OpenAI Provider
+
 ```bash
 # Set environment variables
 export AI_PROVIDER=openai
@@ -459,6 +502,7 @@ npm run dev
 ```
 
 ### Workflow 3: Use Private Server
+
 ```bash
 # Start your OpenAI-compatible server
 # (e.g., ollama, llm-server, vLLM, etc.)
@@ -492,13 +536,13 @@ npm run dev
 
 ## Files Created/Modified
 
-| File | Type | Purpose |
-|------|------|---------|
-| `src/lib/ai/provider.ts` | Created | Provider factory & configuration |
-| `scripts/generate-summaries-generic.mjs` | Created | Provider-agnostic summary generation |
-| `.env.example` | Created | Configuration documentation |
-| `src/routes/api/ai-vercel-chat/+server.ts` | Modified | Updated to use provider factory |
-| `package.json` | Modified | Added @ai-sdk/openai dependency |
+| File                                       | Type     | Purpose                              |
+| ------------------------------------------ | -------- | ------------------------------------ |
+| `src/lib/ai/provider.ts`                   | Created  | Provider factory & configuration     |
+| `scripts/generate-summaries-generic.mjs`   | Created  | Provider-agnostic summary generation |
+| `.env.example`                             | Created  | Configuration documentation          |
+| `src/routes/api/ai-vercel-chat/+server.ts` | Modified | Updated to use provider factory      |
+| `package.json`                             | Modified | Added @ai-sdk/openai dependency      |
 
 ---
 

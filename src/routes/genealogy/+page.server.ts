@@ -1,4 +1,7 @@
-import { fetchBuilderPeopleWithRelationsServer, fetchBuilderContentServer } from '$lib/server/builder';
+import {
+	fetchBuilderPeopleWithRelationsServer,
+	fetchBuilderContentServer
+} from '$lib/server/builder';
 import { loadFamilyData } from '$lib/ai/data';
 import { getGEDCOMPeople } from '$lib/gedcom';
 import type { PageServerLoad } from './$types';
@@ -10,7 +13,9 @@ export const load: PageServerLoad = async (event) => {
 		const people = await getGEDCOMPeople();
 
 		if (people.length === 0) {
-			throw new Error('No genealogy data found. Please ensure GEDCOM file is processed at build time.');
+			throw new Error(
+				'No genealogy data found. Please ensure GEDCOM file is processed at build time.'
+			);
 		}
 
 		// Fetch articles (always from Builder.io)
@@ -43,7 +48,7 @@ export const load: PageServerLoad = async (event) => {
 			articles,
 			availableRootPeople,
 			title: 'Arbre Généalogique Delpech',
-			description: 'Explorez l\'arbre généalogique de la famille Delpech à travers les générations'
+			description: "Explorez l'arbre généalogique de la famille Delpech à travers les générations"
 		};
 	} catch (error) {
 		console.error('Error loading genealogy data:', error);
@@ -54,7 +59,7 @@ export const load: PageServerLoad = async (event) => {
 			articles: [],
 			availableRootPeople: [],
 			title: 'Arbre Généalogique',
-			description: 'Explorez l\'arbre généalogique'
+			description: "Explorez l'arbre généalogique"
 		};
 	}
 };

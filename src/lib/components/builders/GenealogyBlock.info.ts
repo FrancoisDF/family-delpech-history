@@ -6,7 +6,8 @@ export const genealogyBlockInfo: RegisteredComponent = {
 	name: 'GenealogyBlock',
 	tag: 'Genealogy Tree',
 	description: 'Interactive genealogical tree component',
-	image: 'https://cdn.builder.io/api/v1/image/assets/TEMP/5c7e8f9f0c4f8e7d6c5b4a3b2c1d0e9f?width=500',
+	image:
+		'https://cdn.builder.io/api/v1/image/assets/TEMP/5c7e8f9f0c4f8e7d6c5b4a3b2c1d0e9f?width=500',
 	defaultChildren: [],
 	inputs: [
 		{
@@ -28,7 +29,8 @@ export const genealogyBlockInfo: RegisteredComponent = {
 			type: 'string',
 			defaultValue: 'marie-antoinette-delpech',
 			required: false,
-			helperText: 'ID of the root person to display (e.g., marie-antoinette-delpech, pierre-delpech)',
+			helperText:
+				'ID of the root person to display (e.g., marie-antoinette-delpech, pierre-delpech)',
 			enum: [
 				'pierre-delpech',
 				'marguerite-blanc',
@@ -66,7 +68,8 @@ export const genealogyBlockInfo: RegisteredComponent = {
 			type: 'list',
 			defaultValue: [],
 			required: false,
-			helperText: 'Add people to display in the genealogy tree. If empty, uses the root person from GEDCOM data.',
+			helperText:
+				'Add people to display in the genealogy tree. If empty, uses the root person from GEDCOM data.',
 			subFields: [
 				{
 					name: 'id',
@@ -125,7 +128,8 @@ export const genealogyBlockInfo: RegisteredComponent = {
 					type: 'string',
 					enum: ['spouse', 'child', 'parent', 'friend'],
 					defaultValue: 'spouse',
-					helperText: 'Type of relationship: spouse (for couples), child (children), parent (parents), friend'
+					helperText:
+						'Type of relationship: spouse (for couples), child (children), parent (parents), friend'
 				},
 				{
 					name: 'relatedPersonId',
@@ -137,7 +141,8 @@ export const genealogyBlockInfo: RegisteredComponent = {
 					name: 'spouseId',
 					type: 'string',
 					defaultValue: '',
-					helperText: 'ID of the spouse/partner associated with this relationship (used for child relationships to link them to a specific couple)'
+					helperText:
+						'ID of the spouse/partner associated with this relationship (used for child relationships to link them to a specific couple)'
 				}
 			]
 		}

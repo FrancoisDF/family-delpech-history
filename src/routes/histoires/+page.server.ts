@@ -38,7 +38,7 @@ export const load: PageServerLoad = async ({ url }) => {
 	const allTagsMap = new Map<string, string>();
 	const allCategoriesSet = new Set<string>();
 	const allYearsSet = new Set<string>();
-	
+
 	articles.forEach((article) => {
 		// Collect categories
 		if (article.category) {
@@ -64,19 +64,19 @@ export const load: PageServerLoad = async ({ url }) => {
 				const tagRef = tagItem.tag;
 				if (tagRef && tagRef.id) {
 					// Try to find a label
-					const label = 
-						tagRef.value?.data?.label || 
-						tagRef.value?.name || 
+					const label =
+						tagRef.value?.data?.label ||
+						tagRef.value?.name ||
 						tagRef.label || // sometimes directly on ref if customized
-						'Unknown Tag'; 
-					
-					// Only add if we have a valid ID. 
+						'Unknown Tag';
+
+					// Only add if we have a valid ID.
 					// Note: If multiple tags have same ID but different labels (unlikely), we overwrite.
 					// We prefer the one with a label.
 					if (!allTagsMap.has(tagRef.id) || allTagsMap.get(tagRef.id) === 'Unknown Tag') {
-                         if (label !== 'Unknown Tag' || !allTagsMap.has(tagRef.id)) {
-                             allTagsMap.set(tagRef.id, label);
-                         }
+						if (label !== 'Unknown Tag' || !allTagsMap.has(tagRef.id)) {
+							allTagsMap.set(tagRef.id, label);
+						}
 					}
 				}
 			});
@@ -84,8 +84,8 @@ export const load: PageServerLoad = async ({ url }) => {
 	});
 
 	const allTags = Array.from(allTagsMap.entries())
-        .map(([id, label]) => ({ id, label }))
-        .sort((a, b) => a.label.localeCompare(b.label));
+		.map(([id, label]) => ({ id, label }))
+		.sort((a, b) => a.label.localeCompare(b.label));
 
 	const allCategories = Array.from(allCategoriesSet).sort();
 	const allYears = Array.from(allYearsSet).sort().reverse(); // Newest first
@@ -93,19 +93,18 @@ export const load: PageServerLoad = async ({ url }) => {
 	// Filter articles
 	const filteredArticles = articles.filter((article) => {
 		// Text Search
-		const matchesSearch = !q || (
-			(article.title?.toLowerCase().includes(q)) ||
-			(article.excerpt?.toLowerCase().includes(q)) ||
-			(article.tags?.some((t: any) => {
+		const matchesSearch =
+			!q ||
+			article.title?.toLowerCase().includes(q) ||
+			article.excerpt?.toLowerCase().includes(q) ||
+			article.tags?.some((t: any) => {
 				const label = t.tag?.value?.data?.label || t.tag?.value?.name;
 				return label?.toLowerCase().includes(q);
-			}))
-		);
+			});
 
 		// Tag Filter
-		const matchesTags = selectedTags.length === 0 || (
-			article.tags?.some((t: any) => selectedTags.includes(t.tag?.id))
-		);
+		const matchesTags =
+			selectedTags.length === 0 || article.tags?.some((t: any) => selectedTags.includes(t.tag?.id));
 
 		// Category Filter
 		const matchesCategory = !categoryParam || article.category === categoryParam;

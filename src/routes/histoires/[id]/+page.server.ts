@@ -4,7 +4,6 @@ import { extractIdFromUrl } from '$lib/url-utils';
 import { fetchOneEntry, getBuilderSearchParams } from '@builder.io/sdk-svelte';
 import type { PageServerLoad } from './$types';
 
-
 export const load: PageServerLoad = async ({ params, url }) => {
 	try {
 		// Extract the ID from the URL parameter (first 6 characters)
@@ -19,14 +18,14 @@ export const load: PageServerLoad = async ({ params, url }) => {
 				}
 			}
 		});
-		
+
 		return {
 			post
 		};
 	} catch (error) {
 		console.error('Error loading blog post:', error);
 		return {
-			post: null,
+			post: null
 		};
 	}
 };

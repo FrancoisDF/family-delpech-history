@@ -9,16 +9,19 @@ The document ingestion pipeline processes your local family documents and create
 ## Supported File Formats
 
 ### Markdown (.md)
+
 - **Best for:** Text-based documents with rich formatting
 - **Supports:** YAML frontmatter metadata, headers, lists, emphasis
 - **Example:** `/documents/1850s/Biography.md`
 
 ### PDF (.pdf)
+
 - **Best for:** Scanned documents, printed materials, legacy archives
 - **Requirement:** Searchable text (not image-only scans)
 - **Example:** `/documents/1880s/Family_Records.pdf`
 
 ### Word Documents (.docx)
+
 - **Best for:** Modern office documents
 - **Supports:** Text extraction; complex formatting may be simplified
 - **Example:** `/documents/1900s/Travel_Accounts.docx`
@@ -76,11 +79,11 @@ For markdown files, add optional metadata at the top using YAML frontmatter:
 
 ```markdown
 ---
-title: "La Chaumière - Our Ancestral Home"
-author: "Family Archives"
+title: 'La Chaumière - Our Ancestral Home'
+author: 'Family Archives'
 year: 1818
-category: "Architecture"
-tags: ["house", "ancestral", "Provence"]
+category: 'Architecture'
+tags: ['house', 'ancestral', 'Provence']
 ---
 
 # La Chaumière
@@ -90,13 +93,13 @@ This is the document content...
 
 ### Supported Frontmatter Fields
 
-| Field | Type | Required | Example |
-|-------|------|----------|---------|
-| `title` | String | No | "La Chaumière - Ancestral Home" |
-| `author` | String | No | "Family Archives" |
-| `year` | String/Number | No | 1818 or "1850s" |
-| `category` | String | No | "Architecture", "Biography" |
-| `tags` | Array | No | ["house", "ancestral"] |
+| Field      | Type          | Required | Example                         |
+| ---------- | ------------- | -------- | ------------------------------- |
+| `title`    | String        | No       | "La Chaumière - Ancestral Home" |
+| `author`   | String        | No       | "Family Archives"               |
+| `year`     | String/Number | No       | 1818 or "1850s"                 |
+| `category` | String        | No       | "Architecture", "Biography"     |
+| `tags`     | Array         | No       | ["house", "ancestral"]          |
 
 **Note:** If frontmatter is not provided, the system will infer metadata from directory structure and filenames.
 
@@ -137,19 +140,20 @@ Create a custom configuration file (e.g., `scripts/config.custom.json`):
 
 ```json
 {
-  "sourceDir": "./my-documents",
-  "outputPath": "./static/family-data.json",
-  "chunkSize": 900,
-  "chunkOverlap": 250,
-  "minChunkLength": 50,
-  "maxFilesPerCategory": 0,
-  "verboseLogging": true,
-  "fileTypes": [".md", ".pdf", ".docx"],
-  "excludeDirs": ["node_modules", ".git"]
+	"sourceDir": "./my-documents",
+	"outputPath": "./static/family-data.json",
+	"chunkSize": 900,
+	"chunkOverlap": 250,
+	"minChunkLength": 50,
+	"maxFilesPerCategory": 0,
+	"verboseLogging": true,
+	"fileTypes": [".md", ".pdf", ".docx"],
+	"excludeDirs": ["node_modules", ".git"]
 }
 ```
 
 Then use it:
+
 ```bash
 node scripts/ingest-local-documents.mjs --config scripts/config.custom.json
 ```
@@ -161,7 +165,8 @@ node scripts/ingest-local-documents.mjs --config scripts/config.custom.json
 - **`chunkSize`** (default: 900): Characters per chunk. Larger chunks = fewer chunks but less precise retrieval.
 - **`chunkOverlap`** (default: 250): Character overlap between chunks. Helps preserve context across chunk boundaries.
 
-**Recommendation:** 
+**Recommendation:**
+
 - Small documents (< 100 pages): `chunkSize: 800, overlap: 150`
 - Large documents (> 500 pages): `chunkSize: 1200, overlap: 300`
 - Default (mixed): `chunkSize: 900, overlap: 250`
@@ -194,6 +199,7 @@ npm run ingest:documents
 ```
 
 The script will:
+
 - ✅ Walk the documents directory
 - ✅ Extract text from all supported formats
 - ✅ Parse metadata (from structure and frontmatter)
@@ -211,6 +217,7 @@ npm run prepare:embeddings
 ```
 
 This creates:
+
 - `static/family-embeddings.json` - Precomputed TF-IDF vectors
 - `static/family-vocab.json` - Vocabulary and IDF weights
 
@@ -237,15 +244,17 @@ Visit `http://localhost:5173/chat` and ask questions about your family history!
 ### Q: Chunks are too large or too small
 
 **A:** Adjust `chunkSize` and `chunkOverlap` in config.documents.json:
+
 - Too large (poor retrieval): Decrease `chunkSize` to 600-700
 - Too small (too many chunks): Increase `chunkSize` to 1000-1200
 
 ### Q: YAML frontmatter not being parsed
 
 **A:** Ensure the frontmatter is at the very beginning of the file:
+
 ```markdown
 ---
-title: "My Document"
+title: 'My Document'
 ---
 
 Content starts here...
@@ -256,13 +265,15 @@ Do not add any blank lines before the first `---`.
 ### Q: Out of memory during ingestion
 
 **A:** With very large files (> 500MB total):
+
 1. Increase Node.js memory: `node --max-old-space-size=4096 scripts/ingest-local-documents.mjs`
 2. Process in batches: Move some documents to a separate folder
 3. Reduce `chunkSize` to process faster
 
 ### Q: Chat doesn't find relevant documents
 
-**A:** 
+**A:**
+
 1. Check that `static/family-data.json` was created successfully
 2. Run embeddings precomputation: `npm run prepare:embeddings`
 3. Try enabling the local LLM summarizer in `src/lib/ai/config.ts`
@@ -271,6 +282,7 @@ Do not add any blank lines before the first `---`.
 ### Q: How to re-ingest documents?
 
 **A:** Simply run `npm run ingest:documents` again. It will:
+
 1. Re-process all documents
 2. Overwrite the previous `family-data.json`
 3. Preserve your original document files
@@ -280,6 +292,7 @@ Do not add any blank lines before the first `---`.
 ### For Large Document Collections (500MB - 2GB)
 
 1. **Batch Ingestion:** Split documents into categories, ingest separately
+
    ```bash
    mv documents/1900s documents.archive/
    npm run ingest:documents  # Ingest older documents first
@@ -288,10 +301,11 @@ Do not add any blank lines before the first `---`.
    ```
 
 2. **Optimize Chunk Size:** Use larger chunks for faster processing
+
    ```json
    {
-     "chunkSize": 1200,
-     "chunkOverlap": 300
+   	"chunkSize": 1200,
+   	"chunkOverlap": 300
    }
    ```
 
@@ -303,6 +317,7 @@ Do not add any blank lines before the first `---`.
 ### For Better Retrieval Quality
 
 1. **Enable Embeddings:** Precompute TF-IDF vectors
+
    ```bash
    npm run prepare:embeddings
    ```
@@ -371,14 +386,14 @@ See inline comments in the script for customization points.
 
 ## Files Reference
 
-| File | Purpose |
-|------|---------|
-| `scripts/ingest-local-documents.mjs` | Main document ingestion pipeline |
-| `scripts/config.documents.json` | Configuration file (optional) |
-| `documents/` | Your family document source directory |
-| `static/family-data.json` | Generated indexed chunks (do not edit) |
-| `static/family-embeddings.json` | Generated TF-IDF vectors (optional) |
-| `static/family-vocab.json` | Generated vocabulary (optional) |
+| File                                 | Purpose                                |
+| ------------------------------------ | -------------------------------------- |
+| `scripts/ingest-local-documents.mjs` | Main document ingestion pipeline       |
+| `scripts/config.documents.json`      | Configuration file (optional)          |
+| `documents/`                         | Your family document source directory  |
+| `static/family-data.json`            | Generated indexed chunks (do not edit) |
+| `static/family-embeddings.json`      | Generated TF-IDF vectors (optional)    |
+| `static/family-vocab.json`           | Generated vocabulary (optional)        |
 
 ## See Also
 

@@ -30,9 +30,7 @@ export function getProviderConfig(): ProviderConfig {
 	if (provider === 'openai') {
 		const apiKey = process.env.OPENAI_API_KEY;
 		if (!apiKey) {
-			throw new Error(
-				'OPENAI_API_KEY environment variable is required when AI_PROVIDER=openai'
-			);
+			throw new Error('OPENAI_API_KEY environment variable is required when AI_PROVIDER=openai');
 		}
 
 		const modelName = process.env.OPENAI_MODEL;

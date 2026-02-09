@@ -20,66 +20,71 @@ function formatArticles(articles: any[]): BlogArticle[] {
 	return articles.map((post: any) => ({
 		id: post.id,
 		...post.data
-	}))
+	}));
 }
 
-export const fetchArticleById = query(v.string(), async (id: string): Promise<BlogArticle | null> => {
-	try {
-		const entry = await fetchBuilderContentByIdServer('blog-articles', id);
-		if (!entry) return null;
-		return {
-			id: entry.id || id,
-			...(entry.data as any)
-		} as BlogArticle;
-	} catch (error) {
-		console.error('Error fetching article by id:', error);
-		return null;
+export const fetchArticleById = query(
+	v.string(),
+	async (id: string): Promise<BlogArticle | null> => {
+		try {
+			const entry = await fetchBuilderContentByIdServer('blog-articles', id);
+			if (!entry) return null;
+			return {
+				id: entry.id || id,
+				...(entry.data as any)
+			} as BlogArticle;
+		} catch (error) {
+			console.error('Error fetching article by id:', error);
+			return null;
+		}
 	}
-})
+);
 
-
-export const fetchArticles = query( async (): Promise<BlogArticle[]> => {
+export const fetchArticles = query(async (): Promise<BlogArticle[]> => {
 	try {
 		const articlesRaw = await fetchBuilderContentServer('blog-articles', {
 			limit: 100,
-			omit: 'data.blocks, meta, folders, variations',
+			omit: 'data.blocks, meta, folders, variations'
 		});
 		return formatArticles(articlesRaw);
 	} catch (error) {
 		console.error('Error fetching articles:', error);
 		return [];
 	}
-})
+});
 
-export const fetchArticlesByTags = query(v.array(v.string()), async (tagIds: string[]): Promise<BlogArticle[]> => {
-	try {
-		if (!tagIds || tagIds.length === 0) {
+export const fetchArticlesByTags = query(
+	v.array(v.string()),
+	async (tagIds: string[]): Promise<BlogArticle[]> => {
+		try {
+			if (!tagIds || tagIds.length === 0) {
+				return [];
+			}
+
+			const articlesRaw = await fetchBuilderContentServer('blog-articles', {
+				limit: 100,
+				omit: 'data.blocks, meta, folders, variations',
+				query: {
+					'data.tags.tag.id': { $in: tagIds }
+				}
+			});
+			return formatArticles(articlesRaw);
+		} catch (error) {
+			console.error('Error fetching articles by tags:', error);
 			return [];
 		}
-
-		const articlesRaw = await fetchBuilderContentServer('blog-articles', {
-			limit: 100,
-			omit: 'data.blocks, meta, folders, variations',
-			query: {
-				'data.tags.tag.id': { $in: tagIds }
-			}
-		});
-		return formatArticles(articlesRaw);
-	} catch (error) {
-		console.error('Error fetching articles by tags:', error);
-		return [];
 	}
-})
+);
 
-export const fetchRelatedArticles = query( async (): Promise<BlogArticle[]> => {
+export const fetchRelatedArticles = query(async (): Promise<BlogArticle[]> => {
 	try {
 		const articlesRaw = await fetchBuilderContentServer('blog-articles', {
 			limit: 100,
-			omit: 'data.blocks, meta, folders, variations',
+			omit: 'data.blocks, meta, folders, variations'
 		});
 		return formatArticles(articlesRaw);
 	} catch (error) {
 		console.error('Error fetching related articles:', error);
 		return [];
 	}
-})
+});

@@ -264,7 +264,10 @@ export async function fetchBuilderPeopleWithRelationsServer(): Promise<Person[]>
 
 		return people;
 	} catch (error) {
-		console.error('Could not fetch Builder.io people with relations. Error:', error instanceof Error ? error.message : error);
+		console.error(
+			'Could not fetch Builder.io people with relations. Error:',
+			error instanceof Error ? error.message : error
+		);
 		return [];
 	}
 }

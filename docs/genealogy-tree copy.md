@@ -3,6 +3,7 @@
 Generated from Builder.io person model on **2025-12-17T21:44:51.681Z**
 
 ## Overview
+
 - **Total people**: 15
 - **Root ancestors**: 4
 

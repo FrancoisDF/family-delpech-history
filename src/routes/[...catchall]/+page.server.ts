@@ -17,11 +17,10 @@ export const load: PageServerLoad = async (event) => {
 		return {
 			pageContent
 		};
-		
 	} catch (error) {
 		console.error('Error loading page data:', error);
 		return {
-			pageContent: null,
+			pageContent: null
 		};
 	}
 };

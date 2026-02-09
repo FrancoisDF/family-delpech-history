@@ -1,7 +1,12 @@
 import { readFileSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import type { GenealogyGraph, GraphNode, GraphEdge, CanvasBounds } from '$lib/types/genealogy-graph';
+import type {
+	GenealogyGraph,
+	GraphNode,
+	GraphEdge,
+	CanvasBounds
+} from '$lib/types/genealogy-graph';
 import type { Person } from '$lib/models/person';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -102,7 +107,8 @@ export function generateGraphFromPeople(people: Person[]): GenealogyGraph {
 
 					const spouse = personMap.get(spouseId);
 					const couple = personMap.get(person.id);
-					const label = couple && spouse ? `${couple.displayName} & ${spouse.displayName}` : coupleId;
+					const label =
+						couple && spouse ? `${couple.displayName} & ${spouse.displayName}` : coupleId;
 
 					nodes.push({
 						id: coupleId,
@@ -306,10 +312,7 @@ export function getEdgesForNode(nodeId: string, edges: GraphEdge[]): GraphEdge[]
 /**
  * Filter nodes by type
  */
-export function filterNodesByType(
-	nodes: GraphNode[],
-	type: 'person' | 'couple'
-): GraphNode[] {
+export function filterNodesByType(nodes: GraphNode[], type: 'person' | 'couple'): GraphNode[] {
 	return nodes.filter((node) => node.type === type);
 }
 

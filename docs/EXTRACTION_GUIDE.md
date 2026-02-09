@@ -9,6 +9,7 @@ The content extraction system is designed to intelligently pull structured data 
 Instead of hardcoding which fields to extract, we maintain a **component configuration file** that serves as the single source of truth for what gets extracted from each Builder component.
 
 **Key Files:**
+
 - `src/lib/config/components-to-extract.ts` — Component configuration and metadata
 - `scripts/lib/component-extraction-helpers.mjs` — Extraction utility functions
 - `scripts/ingest-builder-content.mjs` — Ingestion script for Builder.io content
@@ -44,6 +45,7 @@ For each block (component) in the article, the system:
 4. **Recursively handles nested structures** like lists of objects
 
 **Example:** A `PDFCarouselBlock` contains:
+
 ```javascript
 {
   component: 'PDFCarouselBlock',
@@ -91,11 +93,15 @@ All extracted text is normalized for consistency:
 Components are organized into categories for organizational clarity:
 
 ### Header Category
+
 Metadata about the article itself:
+
 - `ArticleHeaderBlock` — Title, excerpt, author, date, etc.
 
 ### Content Category
+
 Main body content blocks:
+
 - `ArticleContentBlock` — Rich HTML/markdown paragraph content
 - `RichTextBlock` — General rich text
 - `TextSectionBlock` — Text with section heading
@@ -106,30 +112,36 @@ Main body content blocks:
 - `CTABlock` — Call-to-action with description
 
 ### Document Category
+
 Files and downloadable documents:
+
 - `PDFCarouselBlock` — Carousel of PDF documents
 - `AccordionBlock` — Expandable sections with nested documents
 
 ### Media Category
+
 Images and videos:
+
 - `ImageBlock` — Single image with alt text and caption
 - `ImageGalleryBlock` — Gallery of multiple images
 - `VideoEmbedBlock` — Embedded video
 
 ### Nested Category
+
 Components that reference other content:
+
 - `ArticleCarouselBlock` — References to other articles
 
 ## Field Importance Levels
 
 Each extractable field has an importance level that helps prioritize what matters most:
 
-| Level | Purpose | Examples |
-|-------|---------|----------|
-| **critical** | Must be extracted; core content | `content`, `title`, `quote`, `pdfFile` |
-| **high** | Important for context and search | `excerpt`, `author`, `description` |
-| **medium** | Nice to have for enrichment | `date`, `readTime`, `caption` |
-| **low** | Metadata only | IDs, internal references |
+| Level        | Purpose                          | Examples                               |
+| ------------ | -------------------------------- | -------------------------------------- |
+| **critical** | Must be extracted; core content  | `content`, `title`, `quote`, `pdfFile` |
+| **high**     | Important for context and search | `excerpt`, `author`, `description`     |
+| **medium**   | Nice to have for enrichment      | `date`, `readTime`, `caption`          |
+| **low**      | Metadata only                    | IDs, internal references               |
 
 Future enhancements could weight critical fields higher in RAG ranking.
 
@@ -164,22 +176,22 @@ import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 import MyCustomBlock from './MyCustomBlock.svelte';
 
 export const myCustomBlockInfo: RegisteredComponent = {
-  component: MyCustomBlock as any,
-  name: 'MyCustomBlock',
-  tag: 'My Custom Block',
-  inputs: [
-    { name: 'title', type: 'string', defaultValue: '' },
-    { name: 'content', type: 'richText', defaultValue: '' },
-    {
-      name: 'items',
-      type: 'list',
-      defaultValue: [],
-      subFields: [
-        { name: 'label', type: 'string' },
-        { name: 'value', type: 'string' }
-      ]
-    }
-  ]
+	component: MyCustomBlock as any,
+	name: 'MyCustomBlock',
+	tag: 'My Custom Block',
+	inputs: [
+		{ name: 'title', type: 'string', defaultValue: '' },
+		{ name: 'content', type: 'richText', defaultValue: '' },
+		{
+			name: 'items',
+			type: 'list',
+			defaultValue: [],
+			subFields: [
+				{ name: 'label', type: 'string' },
+				{ name: 'value', type: 'string' }
+			]
+		}
+	]
 };
 ```
 
@@ -268,6 +280,7 @@ Check that your component content appears in the resulting `static/family-data.j
 ### Step 5: Update Documentation
 
 Add a section to this guide documenting:
+
 - What the component is for
 - Which fields are extracted and why
 - Any special handling needed
@@ -279,6 +292,7 @@ Add a section to this guide documenting:
 **Problem:** Your component's content doesn't appear in chunks.
 
 **Solutions:**
+
 1. Check that the component is registered in `src/lib/components/builders/index.ts`
 2. Verify the component name matches exactly in the config (case-sensitive)
 3. Ensure fields are defined in the config with the correct `fieldName`
@@ -296,6 +310,7 @@ Add a section to this guide documenting:
 **Problem:** Linked PDFs/documents not being extracted.
 
 **Check:**
+
 1. Are file URLs in the correct format? (must start with `https://` or `http://`)
 2. Do they have document extensions (.pdf, .docx, .md, .txt)?
 3. Check ingestion logs for 404 errors or timeout messages
@@ -303,16 +318,16 @@ Add a section to this guide documenting:
 
 ## Field Types Reference
 
-| Type | Description | Example | Extraction |
-|------|-------------|---------|-----------|
-| `text` | Plain text string | `"Article Title"` | Extracted as-is |
-| `string` | Short text field | `"author name"` | Extracted as-is |
-| `richText` | HTML/Markdown content | `"<p>Content</p>"` or `"# Heading"` | Normalized (HTML stripped/Markdown simplified) |
-| `file` | File URL or file object | `"https://example.com/doc.pdf"` or `{url: "..."}` | URL extracted for document processing |
-| `url` | Web URL | `"https://example.com/video"` | Extracted as-is |
-| `list` | Array of objects | `[{title: "...", value: "..."}]` | Each item's extractable fields are processed |
-| `number` | Numeric value | `42`, `3.14` | Not extracted (metadata only) |
-| `boolean` | True/false flag | `true` | Not extracted (metadata only) |
+| Type       | Description             | Example                                           | Extraction                                     |
+| ---------- | ----------------------- | ------------------------------------------------- | ---------------------------------------------- |
+| `text`     | Plain text string       | `"Article Title"`                                 | Extracted as-is                                |
+| `string`   | Short text field        | `"author name"`                                   | Extracted as-is                                |
+| `richText` | HTML/Markdown content   | `"<p>Content</p>"` or `"# Heading"`               | Normalized (HTML stripped/Markdown simplified) |
+| `file`     | File URL or file object | `"https://example.com/doc.pdf"` or `{url: "..."}` | URL extracted for document processing          |
+| `url`      | Web URL                 | `"https://example.com/video"`                     | Extracted as-is                                |
+| `list`     | Array of objects        | `[{title: "...", value: "..."}]`                  | Each item's extractable fields are processed   |
+| `number`   | Numeric value           | `42`, `3.14`                                      | Not extracted (metadata only)                  |
+| `boolean`  | True/false flag         | `true`                                            | Not extracted (metadata only)                  |
 
 ## Configuration Structure
 

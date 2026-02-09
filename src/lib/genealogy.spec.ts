@@ -1,5 +1,11 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { getGenerationLevel, filterPeopleByTag, filterPeopleByProfession, searchPeopleByNameInBuilder, setPeopleData } from './genealogy';
+import {
+	getGenerationLevel,
+	filterPeopleByTag,
+	filterPeopleByProfession,
+	searchPeopleByNameInBuilder,
+	setPeopleData
+} from './genealogy';
 import type { Person } from './models/person';
 
 describe('Genealogy Functions', () => {

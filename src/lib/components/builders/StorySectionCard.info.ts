@@ -36,7 +36,8 @@ export const storySectionCardInfo: RegisteredComponent = {
 			type: 'string',
 			defaultValue: '',
 			required: false,
-			helperText: 'Comma-separated list of tags to filter related blog posts (e.g., "family,history,1800s")'
+			helperText:
+				'Comma-separated list of tags to filter related blog posts (e.g., "family,history,1800s")'
 		}
 	]
 };

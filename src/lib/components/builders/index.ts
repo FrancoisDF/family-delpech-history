@@ -144,7 +144,7 @@ Builder.register('insertMenu', {
 		{ name: imageGalleryBlockInfo.tag, item: imageGalleryBlockInfo.name },
 		{ name: twoColumnTextBlockInfo.tag, item: twoColumnTextBlockInfo.name },
 		{ name: blogDetailBlockInfo.tag, item: blogDetailBlockInfo.name },
-		{ name: genealogyBlockInfo.tag, item: genealogyBlockInfo.name },
+		{ name: genealogyBlockInfo.tag, item: genealogyBlockInfo.name }
 	]
 });
 

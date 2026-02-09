@@ -72,7 +72,9 @@ export const POST: RequestHandler = async ({ request }) => {
 			if (isRelatedQuery) {
 				// Reuse cached summaries for this related query
 				// In production, could load actual summary objects here
-				console.log(`Reusing context from ${sessionContext.summariesUsed.length} previous summaries`);
+				console.log(
+					`Reusing context from ${sessionContext.summariesUsed.length} previous summaries`
+				);
 				usedCachedContext = true;
 				// For MVP, still do a fresh search but with cached context as hints
 				contextSummaries = await getSummarySummaries(message, { topK: 5 });

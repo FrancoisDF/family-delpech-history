@@ -812,9 +812,7 @@ export const EXTRACTABLE_COMPONENTS: ExtractableComponentConfig[] = [
  * @param componentName Component class name (e.g., 'ArticleHeaderBlock')
  * @returns Component configuration or undefined if not found
  */
-export function getComponentConfig(
-	componentName: string
-): ExtractableComponentConfig | undefined {
+export function getComponentConfig(componentName: string): ExtractableComponentConfig | undefined {
 	return EXTRACTABLE_COMPONENTS.find((c) => c.componentName === componentName);
 }
 
@@ -838,9 +836,8 @@ export function getHeaderFieldNames(): string[] {
 export function getCriticalFields(componentName: string): string[] {
 	const config = getComponentConfig(componentName);
 	return (
-		config?.extractableFields
-			.filter((f) => f.importance === 'critical')
-			.map((f) => f.fieldName) ?? []
+		config?.extractableFields.filter((f) => f.importance === 'critical').map((f) => f.fieldName) ??
+		[]
 	);
 }
 
@@ -862,9 +859,7 @@ export function getComponentsByCategory(
  * @returns Array of component names
  */
 export function getBlockLevelExtractionComponents(): string[] {
-	return EXTRACTABLE_COMPONENTS.filter((c) => c.blockLevelExtraction).map((c) =>
-		c.componentName
-	);
+	return EXTRACTABLE_COMPONENTS.filter((c) => c.blockLevelExtraction).map((c) => c.componentName);
 }
 
 /**
@@ -884,11 +879,7 @@ export function getFileFields(): Array<{
 	}> = [];
 
 	for (const component of EXTRACTABLE_COMPONENTS) {
-		function collectFileFields(
-			fields: ExtractableField[],
-			componentName: string,
-			prefix = ''
-		) {
+		function collectFileFields(fields: ExtractableField[], componentName: string, prefix = '') {
 			for (const field of fields) {
 				if (field.fieldType === 'file' || field.fieldType === 'url') {
 					fileFields.push({

@@ -20,7 +20,8 @@ export const load: PageServerLoad = async () => {
 			// Try to load pre-generated graph as fallback
 			graph = loadGenealogyGraph();
 			if (!graph) {
-				error = 'Genealogy graph data not found. Please ensure GEDCOM file is processed at build time.';
+				error =
+					'Genealogy graph data not found. Please ensure GEDCOM file is processed at build time.';
 			}
 		}
 
@@ -28,7 +29,7 @@ export const load: PageServerLoad = async () => {
 			graph,
 			error,
 			title: 'Arbre Généalogique Interactif',
-			description: 'Explorez l\'arbre généalogique interactif de la famille Delpech'
+			description: "Explorez l'arbre généalogique interactif de la famille Delpech"
 		};
 	} catch (error) {
 		console.error('Error loading genealogy graph:', error);

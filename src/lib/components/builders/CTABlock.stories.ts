@@ -40,7 +40,8 @@ export const Default: Story = {
 export const ExploreStories: Story = {
 	args: {
 		title: 'Découvrez les Histoires Familiales',
-		description: 'Plongez dans les récits captivants de votre histoire familiale et explorez les générations passées.',
+		description:
+			'Plongez dans les récits captivants de votre histoire familiale et explorez les générations passées.',
 		buttonText: 'Voir les Histoires',
 		buttonLink: '/histoires'
 	}
@@ -49,8 +50,9 @@ export const ExploreStories: Story = {
 export const GenealogyFocus: Story = {
 	args: {
 		title: 'Explorez Votre Généalogie',
-		description: 'Visualisez votre arbre généalogique et découvrez les connexions entre vos ancêtres.',
-		buttonText: 'Voir l\'Arbre Généalogique',
+		description:
+			'Visualisez votre arbre généalogique et découvrez les connexions entre vos ancêtres.',
+		buttonText: "Voir l'Arbre Généalogique",
 		buttonLink: '/genealogy'
 	}
 };

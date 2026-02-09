@@ -85,7 +85,8 @@ export function searchPeopleByNameInBuilder(query: string, people: Person[]): Pe
 	const lowerQuery = query.toLowerCase();
 
 	return people.filter((person) => {
-		const searchText = `${person.displayName} ${person.givenName} ${person.familyName}`.toLowerCase();
+		const searchText =
+			`${person.displayName} ${person.givenName} ${person.familyName}`.toLowerCase();
 		return searchText.includes(lowerQuery);
 	});
 }
@@ -165,10 +166,18 @@ export async function getPersonWithRelations(id: string): Promise<PersonWithRela
 
 	return {
 		...person,
-		parentObjects: (person.parents ?? []).map((pid) => peopleMap.get(pid)).filter(Boolean) as Person[],
-		spouseObjects: (person.spouses ?? []).map((pid) => peopleMap.get(pid)).filter(Boolean) as Person[],
-		childObjects: (person.children ?? []).map((pid) => peopleMap.get(pid)).filter(Boolean) as Person[],
-		siblingObjects: (person.siblings ?? []).map((pid) => peopleMap.get(pid)).filter(Boolean) as Person[]
+		parentObjects: (person.parents ?? [])
+			.map((pid) => peopleMap.get(pid))
+			.filter(Boolean) as Person[],
+		spouseObjects: (person.spouses ?? [])
+			.map((pid) => peopleMap.get(pid))
+			.filter(Boolean) as Person[],
+		childObjects: (person.children ?? [])
+			.map((pid) => peopleMap.get(pid))
+			.filter(Boolean) as Person[],
+		siblingObjects: (person.siblings ?? [])
+			.map((pid) => peopleMap.get(pid))
+			.filter(Boolean) as Person[]
 	};
 }
 
@@ -237,7 +246,9 @@ export async function getRelatedArticles(personId: string): Promise<any[]> {
 	// Filter family data chunks by matching tags
 	const relatedChunks = familyData.filter((chunk) => {
 		const chunkTags = (chunk.tags || []).map((tag) => tag.toLowerCase());
-		return searchTags.some((tag) => chunkTags.some((ctag) => ctag.includes(tag) || tag.includes(ctag)));
+		return searchTags.some((tag) =>
+			chunkTags.some((ctag) => ctag.includes(tag) || tag.includes(ctag))
+		);
 	});
 
 	// Convert chunks to article-like objects
@@ -258,7 +269,10 @@ export async function searchPeopleByName(query: string): Promise<Person[]> {
 	return searchPeopleByNameInBuilder(query, people);
 }
 
-export async function getPeopleByGeneration(startingPersonId: string, generationOffset: number): Promise<Person[]> {
+export async function getPeopleByGeneration(
+	startingPersonId: string,
+	generationOffset: number
+): Promise<Person[]> {
 	const person = await getPerson(startingPersonId);
 	if (!person) return [];
 
@@ -266,7 +280,11 @@ export async function getPeopleByGeneration(startingPersonId: string, generation
 	const peopleMap = await getPeopleMap();
 
 	// Helper to calculate generation distance
-	function getGenerationDistance(from: string, to: string, visited = new Set<string>()): number | null {
+	function getGenerationDistance(
+		from: string,
+		to: string,
+		visited = new Set<string>()
+	): number | null {
 		if (visited.has(from)) return null;
 		visited.add(from);
 

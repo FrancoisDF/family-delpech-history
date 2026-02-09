@@ -76,7 +76,10 @@ Answer the user's question based ONLY on the above summaries. If the information
  * Get relevant context summaries for a query
  * This is the primary context retrieval in Phase 1 (token-efficient RAG)
  */
-export async function getSummarySummaries(query: string, opts?: { topK?: number }): Promise<BookSummary[]> {
+export async function getSummarySummaries(
+	query: string,
+	opts?: { topK?: number }
+): Promise<BookSummary[]> {
 	try {
 		const results = await searchSummaries(query, { topK: opts?.topK ?? 5 });
 		return results.map((r) => r.summary);

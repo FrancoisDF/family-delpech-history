@@ -58,7 +58,9 @@ export async function getGEDCOMPeople(): Promise<Person[]> {
  */
 export function getGEDCOMPeopleSync(): Person[] {
 	if (!_peopleCached) {
-		console.warn('GEDCOM people data not yet loaded. Call getGEDCOMPeople() first or use async version.');
+		console.warn(
+			'GEDCOM people data not yet loaded. Call getGEDCOMPeople() first or use async version.'
+		);
 		return [];
 	}
 	return _peopleCached;

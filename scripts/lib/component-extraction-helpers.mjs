@@ -318,9 +318,7 @@ export function getHeaderFieldNames() {
  * @returns {string[]}
  */
 function getCriticalFieldsFromArray(extractableFields) {
-	return extractableFields
-		.filter((f) => f.importance === 'critical')
-		.map((f) => f.fieldName);
+	return extractableFields.filter((f) => f.importance === 'critical').map((f) => f.fieldName);
 }
 
 /**
@@ -379,9 +377,7 @@ function extractListItem(item, field) {
 		if (value === null || value === undefined) continue;
 
 		if (itemField.fieldType === 'list' && Array.isArray(value)) {
-			result[itemField.fieldName] = value.map((subItem) =>
-				extractListItem(subItem, itemField)
-			);
+			result[itemField.fieldName] = value.map((subItem) => extractListItem(subItem, itemField));
 		} else if (itemField.fieldType === 'file') {
 			result[itemField.fieldName] = resolveFileUrl(value);
 		} else {
@@ -436,11 +432,7 @@ export function extractDocumentRefsFromBlock(block, config) {
 											if (url && !seen.has(url)) {
 												refs.push({
 													url,
-													label:
-														subItem.title ||
-														subItem.name ||
-														item.title ||
-														subField.fieldName
+													label: subItem.title || subItem.name || item.title || subField.fieldName
 												});
 												seen.add(url);
 											}
@@ -478,7 +470,8 @@ export function resolveFileUrl(fileField) {
 	if (typeof fileField === 'string') return normalize(fileField);
 	if (typeof fileField === 'object') {
 		if (typeof fileField.url === 'string') return normalize(fileField.url);
-		if (fileField.file && typeof fileField.file.url === 'string') return normalize(fileField.file.url);
+		if (fileField.file && typeof fileField.file.url === 'string')
+			return normalize(fileField.file.url);
 		if (typeof fileField.path === 'string') return normalize(fileField.path);
 	}
 	return '';
@@ -489,9 +482,7 @@ export function resolveFileUrl(fileField) {
  * @returns {string[]}
  */
 export function getBlockLevelExtractionComponents() {
-	return EXTRACTABLE_COMPONENTS.filter((c) => c.blockLevelExtraction).map(
-		(c) => c.componentName
-	);
+	return EXTRACTABLE_COMPONENTS.filter((c) => c.blockLevelExtraction).map((c) => c.componentName);
 }
 
 /**
@@ -531,7 +522,10 @@ export function flattenExtractedContent(componentName, blockData, config) {
 					}
 				}
 			}
-		} else if (typeof value === 'string' && (field.fieldType === 'text' || field.fieldType === 'richText')) {
+		} else if (
+			typeof value === 'string' &&
+			(field.fieldType === 'text' || field.fieldType === 'richText')
+		) {
 			pieces.push(value);
 		}
 	}

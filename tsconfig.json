@@ -21,9 +21,4 @@
 		"src/service-worker/**/*.d.ts",
 		"src/lib/gedcom.spec.ts"
 	]
-	
-	
-	
-	
-	
 }

@@ -47,7 +47,7 @@ export const Default: Story = {
 export const LargeCentered: Story = {
 	args: {
 		content:
-			'L\'histoire de nos familles est tissée dans le temps, chaque génération ajoutant son fil à la tapisserie de notre héritage.',
+			"L'histoire de nos familles est tissée dans le temps, chaque génération ajoutant son fil à la tapisserie de notre héritage.",
 		textSize: 'text-2xl',
 		textAlign: 'text-center',
 		connectTop: false,
@@ -58,7 +58,7 @@ export const LargeCentered: Story = {
 export const BodyText: Story = {
 	args: {
 		content:
-			'La généalogie est l\'étude des relations familiales sur plusieurs générations. Elle nous aide à comprendre d\'où nous venons et comment notre famille s\'est développée au fil du temps.',
+			"La généalogie est l'étude des relations familiales sur plusieurs générations. Elle nous aide à comprendre d'où nous venons et comment notre famille s'est développée au fil du temps.",
 		textSize: 'text-base',
 		textAlign: 'text-justify',
 		connectTop: false,

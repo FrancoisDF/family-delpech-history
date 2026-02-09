@@ -8,7 +8,7 @@
 	@apply antialiased;
 }
 
-[style*="display: contents"] {
+[style*='display: contents'] {
 	@apply h-full;
 }
 
