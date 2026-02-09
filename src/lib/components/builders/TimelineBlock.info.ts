@@ -16,6 +16,11 @@ export const timelineBlockInfo: RegisteredComponent = {
 			type: 'string',
 			defaultValue:
 				'Écoutez et suivez votre progression à travers les différentes périodes de notre histoire'
+		},
+		{
+			name: 'showProgression',
+			type: 'boolean',
+			defaultValue: true
 		}
 	]
 };

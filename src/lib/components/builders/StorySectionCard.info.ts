@@ -38,6 +38,13 @@ export const storySectionCardInfo: RegisteredComponent = {
 			required: false,
 			helperText:
 				'Comma-separated list of tags to filter related blog posts (e.g., "family,history,1800s")'
+		},
+		{
+			name: 'blog',
+			type: 'object',
+			defaultValue: null,
+			required: false,
+			helperText: 'Main blog article associated with this timeline section'
 		}
 	]
 };

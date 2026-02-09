@@ -125,7 +125,7 @@
 	function loadMessagesFromStorage(): ChatMessage[] {
 		if (!browser) return [DEFAULT_MESSAGE];
 		try {
-			const stored = localStorage.getItem('chatMessages');
+			const stored = sessionStorage.getItem('chatMessages');
 			if (stored) {
 				const parsed = JSON.parse(stored) as ChatMessage[];
 				// Convert timestamp strings back to Date objects
@@ -141,6 +141,7 @@
 	}
 
 	let messages = $state<ChatMessage[]>(loadMessagesFromStorage());
+	let hasStartedChat = $state(false);
 
 	let messageInput = $state('');
 	let isLoading = $state(false);
@@ -154,7 +155,7 @@
 		messages = messages.map((m) => (m.id === id ? { ...m, ...patch } : m));
 	}
 
-	async function scrollToBottom() {
+	async function scrollToResponseTop() {
 		await tick();
 		if (!browser) return;
 
@@ -168,20 +169,16 @@
 				const messageElement = document.querySelector(`[data-message-id="${lastAssistantMessage.id}"]`);
 				if (messageElement) {
 					messageElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-					return;
 				}
 			}
-
-			window.scrollTo({
-				top: document.documentElement.scrollHeight,
-				behavior: 'smooth'
-			});
 		});
 	}
 
 	function handleSendMessage(text?: string) {
 		const content = text || messageInput;
 		if (!content.trim()) return;
+
+		hasStartedChat = true;
 
 		const userMessage: ChatMessage = {
 			id: Date.now().toString(),
@@ -193,6 +190,15 @@
 		messages = [...messages, userMessage];
 		messageInput = '';
 		isLoading = true;
+
+		// Scroll to show the user message immediately
+		(async () => {
+			await tick();
+			const userMessageElement = document.querySelector(`[data-message-id="${userMessage.id}"]`);
+			if (userMessageElement) {
+				userMessageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+			}
+		})();
 
 		const assistantMessageId = (Date.now() + 1).toString();
 		messages = [
@@ -207,6 +213,12 @@
 			}
 		];
 
+		// Scroll to top of the new response
+		(async () => {
+			await tick();
+			await scrollToResponseTop();
+		})();
+
 		(async () => {
 			try {
 				await ensureGenerationModuleLoaded();
@@ -220,6 +232,9 @@
 					};
 					messages = [...messages, initMessage];
 				}
+
+				// Wait 100ms before processing the response
+				await new Promise(resolve => setTimeout(resolve, 100));
 
 				const results = await searchFamilyData(userMessage.content, { topK: 4 });
 				let sourceReferences: Array<{
@@ -252,6 +267,18 @@
 						};
 					});
 
+					// Deduplicate sources
+					const seenIdentifiers = new Set<string>();
+					sourceReferences = sourceReferences.filter((source) => {
+						// Use sourceId as primary identifier for builder posts, url for others
+						const identifier = source.sourceId || source.url;
+						if (seenIdentifiers.has(identifier)) {
+							return false;
+						}
+						seenIdentifiers.add(identifier);
+						return true;
+					});
+
 					updateMessageById(assistantMessageId, { sources: sourceReferences });
 
 					let assistantContent = '';
@@ -263,7 +290,7 @@
 								status: 'streaming',
 								content: token || 'Je réfléchis…'
 							});
-							scrollToBottom();
+							scrollToResponseTop();
 						});
 						
 						if (summary) {
@@ -295,7 +322,7 @@
 				isLoading = false;
 				(async () => {
 					await tick();
-					setTimeout(scrollToBottom, 500);
+					setTimeout(scrollToResponseTop, 500);
 					inputElement?.focus();
 				})();
 			}
@@ -304,22 +331,26 @@
 
 	$effect(() => {
 		messages.length;
-		(async () => {
-			await tick();
-			await scrollToBottom();
-		})();
+		// Only scroll if chat has started (more than just the default message)
+		if (hasStartedChat && messages.length > 1) {
+			(async () => {
+				await tick();
+				await scrollToResponseTop();
+			})();
+		}
 	});
 
 	$effect(() => {
 		if (browser) {
-			localStorage.setItem('chatMessages', JSON.stringify(messages));
+			sessionStorage.setItem('chatMessages', JSON.stringify(messages));
 		}
 	});
 
 	function clearChatHistory() {
 		if (browser) {
-			localStorage.removeItem('chatMessages');
+			sessionStorage.removeItem('chatMessages');
 			messages = [DEFAULT_MESSAGE];
+			hasStartedChat = false;
 		}
 	}
 

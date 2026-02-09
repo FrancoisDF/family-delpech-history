@@ -6,9 +6,11 @@
 	let {
 		title = 'Un Voyage à Travers le Temps',
 		description = 'Écoutez et suivez votre progression à travers les différentes périodes de notre histoire',
+		showProgression = true,
 	}: {
 		title?: string;
 		description?: string;
+		showProgression?: boolean;
 	} = $props();
 
 	let sections = await fetchSections();
@@ -26,5 +28,5 @@
 			</p>
 		</div>
 	</div>
-	<Timeline {sections} {articles} />
+	<Timeline {sections} {articles} {showProgression} />
 </section>
