@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { isSectionCompleted, markSectionCompleted, unmarkSectionCompleted } from '$lib/progress';
 	import ArticleCarousel from './ArticleCarousel.svelte';
+	import { generateBlogUrl } from '$lib/url-utils';
 
+	// Navigation is done via normal anchors now (SSR-friendly) — helper kept
+	
 	interface BlogPost {
 		id: string;
 		title: string;
@@ -78,6 +81,11 @@
 	function extractTags(tags: any[]) {
 		return tags.map((tag) => tag.value?.data?.name.toLowerCase().trim() ?? null);
 	}
+
+	// exported in case other modules need it.
+	export function getArticleHref(article: BlogPost) {
+		return `/histoires/${generateBlogUrl(article.id, article.title)}`;
+	}
 </script>
 
 <div
@@ -127,7 +135,7 @@
 			<!-- Main Blog Article Link -->
 			{#if blog}
 				<a
-					href={`/blog/${blog.slug}`}
+					href={getArticleHref(blog)}
 					class="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 font-semibold text-white transition-all hover:shadow-lg hover:scale-105 flex-shrink-0"
 				>
 					Lire l'article
@@ -176,7 +184,7 @@
 		{/if}
 
 		<!-- Learn More Section -->
-		{#if tags.length > 0 && availablePosts.length > 0}
+		{#if false}
 			<div class="mt-8 border-t border-primary-200 pt-8">
 				<!-- <button
 					onclick={toggleExpand}

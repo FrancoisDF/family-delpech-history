@@ -14,7 +14,8 @@
 	} = $props();
 
 	let sections = await fetchSections();
-	let articles = await fetchRelatedArticles();
+	// let articles = await fetchRelatedArticles();
+	let articles = undefined;
 </script>
 
 <section class="">
