@@ -3,6 +3,7 @@
 	import { page } from '$app/stores';
 	import { generateBlogUrl } from '$lib/url-utils';
 	import type { PageData } from './$types';
+	import CTABlock from '$lib/components/builders/CTABlock.svelte';
 
 	let { data } = $props<{ data: PageData }>();
 
@@ -358,44 +359,16 @@
 				</div>
 			{/if}
 		</div>
-
-		<!-- CTA Section -->
-		<section class="bg-gradient-to-r from-accent/5 to-accent/10 px-4 py-16 sm:px-6 lg:px-8 mt-20 -mx-4 sm:-mx-6 lg:-mx-8">
-			<div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-				<div class="rounded-2xl border border-accent/20 bg-white p-8">
-					<div class="mb-6 text-center">
-						<h2 class="mb-3 font-serif text-3xl font-bold text-primary-900">
-							Explorez nos archives complètes
-						</h2>
-						<p class="mx-auto max-w-2xl text-lg text-primary-700">
-							Accédez à nos documents archivés et utilisez notre assistant IA pour des recherches plus approfondies dans nos archives familiales.
-						</p>
-					</div>
-					<div class="flex flex-wrap justify-center gap-4">
-						<a
-							href="/documents"
-							class="inline-flex items-center gap-2 rounded-lg border-2 border-primary-300 px-6 py-3 font-semibold text-primary-900 transition-all hover:border-primary-400 hover:bg-primary-50"
-						>
-							<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-							</svg>
-							Documents et Archives
-						</a>
-						<a
-							href="/chat"
-							class="inline-flex items-center gap-2 rounded-lg bg-accent px-6 py-3 font-semibold text-white transition-all hover:bg-accent/90 hover:shadow-lg"
-						>
-							<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-4l-4 4z" />
-							</svg>
-							Assistant Familial IA
-						</a>
-					</div>
-				</div>
-			</div>
-		</section>
 	</div>
 </div>
+{#if data.siteConfig }
+	<CTABlock
+		title={data.siteConfig.ctaBlockTitle as string}
+		description={data.siteConfig.ctaBlockDescription as string}
+		buttonLink={data.siteConfig.ctaBlockButtonLink as string}
+		buttonText={data.siteConfig.ctaBlockButtonText as string}
+	/>
+{/if}
 
 <style>
 	:global(.line-clamp-2) {

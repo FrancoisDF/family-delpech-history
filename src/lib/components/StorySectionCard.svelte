@@ -122,7 +122,20 @@
 
 	<div class="pl-10 sm:pl-12 md:pl-12">
 		<div class="mb-4 flex items-start justify-between">
-			<h3 class="font-serif text-3xl font-medium text-primary-800">{title}</h3>
+			<h3 class="font-serif text-3xl font-medium text-primary-800">{title}
+			</h3>
+			<!-- Main Blog Article Link -->
+			{#if blog}
+				<a
+					href={`/blog/${blog.slug}`}
+					class="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 font-semibold text-white transition-all hover:shadow-lg hover:scale-105 flex-shrink-0"
+				>
+					Lire l'article
+					<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+					</svg>
+				</a>
+			{/if}
 			{#if isCompleted}
 				<div class="ml-4 flex-shrink-0">
 					<div class="flex h-8 w-8 items-center justify-center rounded-full bg-accent">
@@ -159,39 +172,6 @@
 					<source src={audioUrl} type="audio/mpeg" />
 					Votre navigateur ne supporte pas l'élément audio.
 				</audio>
-			</div>
-		{/if}
-
-		<!-- Main Blog Article Link -->
-		{#if blog}
-			<div class="mt-8 border-t border-primary-200 pt-8">
-				<div class="rounded-lg bg-gradient-to-br from-accent/5 to-accent/10 p-6 border-l-4 border-accent">
-					<div class="flex items-start justify-between gap-4">
-						<div class="flex-1">
-							<h4 class="text-lg font-semibold text-primary-800 mb-2">{blog.title}</h4>
-							{#if blog.excerpt}
-								<p class="text-sm text-primary-700 mb-4 line-clamp-2">{blog.excerpt}</p>
-							{/if}
-							<div class="flex items-center gap-4 text-xs text-primary-600">
-								{#if blog.date}
-									<span>{blog.date}</span>
-								{/if}
-								{#if blog.readTime}
-									<span>{blog.readTime}</span>
-								{/if}
-							</div>
-						</div>
-						<a
-							href={`/blog/${blog.slug}`}
-							class="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 font-semibold text-white transition-all hover:shadow-lg hover:scale-105 flex-shrink-0"
-						>
-							Lire l'article
-							<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-							</svg>
-						</a>
-					</div>
-				</div>
 			</div>
 		{/if}
 
