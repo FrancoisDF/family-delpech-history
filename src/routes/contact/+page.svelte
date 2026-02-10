@@ -111,6 +111,11 @@
 	}
 </script>
 
+<svelte:head>
+	<title>contact - Histoire de Famille</title>
+	<meta name="description" content="Contactez-nous pour toute question ou information sur notre famille." />
+</svelte:head>
+
 <div class="mx-auto max-w-2xl px-4 py-12 sm:px-6 lg:px-8">
 	<!-- Page Title -->
 	<div class="mb-12 text-center">

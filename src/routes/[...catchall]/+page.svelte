@@ -15,7 +15,7 @@
 </script>
 
 <svelte:head>
-	<title>{pageTitle}</title>
+	<title>{pageTitle} - Histoire de Famille</title>
 	<meta name="description" content={pageDescription} />
 </svelte:head>
 
