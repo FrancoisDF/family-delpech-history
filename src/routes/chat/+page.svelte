@@ -10,101 +10,75 @@
 			url: string;
 			isBuilder: boolean;
 			sourceId?: string;
+			contentType?: string;
 			originPostId?: string;
-			originPostTitle?: string;
 			originPostUrl?: string;
+		}>;
+		linkedBlogPosts?: Array<{
+			id: string;
+			title: string;
+			url: string;
 		}>;
 	}
 
-
-	import { searchFamilyData } from '$lib/ai/search';
-	import { ENABLE_LOCAL_LLM, DEFAULT_SYSTEM_PROMPT } from '$lib/ai/config';
+	import { DEFAULT_SYSTEM_PROMPT } from '$lib/ai/config';
+	import type { LoadProgress } from '$lib/ai/generation';
+	import type { FamilyChunk } from '$lib/ai/data';
 	import { generateBlogUrl } from '$lib/url-utils';
 	import { browser } from '$app/environment';
-	import { tick } from 'svelte';
+	import { onMount, tick } from 'svelte';
 
-	interface LoadProgress {
-		status: 'init' | 'downloading' | 'done' | 'error' | 'cancelled';
-		percentage: number;
-		file?: string;
-	}
+	// Dynamic import handle — loaded only in browser to avoid SSR pulling in sharp/onnx
+	let generationModule: typeof import('$lib/ai/generation') | null = null;
 
-	type SummarizeFromChunks = (chunks: any[], query: string, onToken?: (token: string) => void) => Promise<string | null>;
-	type IsSummarizerLoading = () => boolean;
-	type GetGeneratorProgress = () => LoadProgress;
-	type CancelModelLoading = () => void;
-	type GetSystemPrompt = () => string;
-	type SetSystemPrompt = (prompt: string) => void;
-	type LoadGenerator = () => Promise<any>;
+	// --- Local LLM loading state ---
+	let modelStatus = $state<'idle' | 'loading' | 'ready' | 'error'>('idle');
+	let modelProgress = $state<LoadProgress>({ status: 'init', percentage: 0 });
+	let modelError = $state<string | null>(null);
 
-	let summarizeFromChunksFn: SummarizeFromChunks = async () => null;
-	let isSummarizerLoadingFn: IsSummarizerLoading = () => false;
-	let getGeneratorProgressFn: GetGeneratorProgress = () => ({ status: 'init', percentage: 0 });
-	let cancelModelLoadingFn: CancelModelLoading = () => {};
-	let getSystemPromptFn: GetSystemPrompt = () => DEFAULT_SYSTEM_PROMPT;
-	let setSystemPromptFn: SetSystemPrompt = () => {};
-	let loadGeneratorFn: LoadGenerator = async () => null;
-	
-	let generationModuleReady = false;
-	let generationModuleLoadPromise: Promise<void> | null = null;
-
-	async function ensureGenerationModuleLoaded(): Promise<void> {
-		if (!browser || generationModuleReady) return;
-		if (!generationModuleLoadPromise) {
-			generationModuleLoadPromise = import('$lib/ai/generation')
-				.then((mod) => {
-					summarizeFromChunksFn = mod.summarizeFromChunks;
-					isSummarizerLoadingFn = mod.isSummarizerLoading;
-					getGeneratorProgressFn = mod.getGeneratorProgress;
-					cancelModelLoadingFn = mod.cancelModelLoading;
-					getSystemPromptFn = mod.getSystemPrompt;
-					setSystemPromptFn = mod.setSystemPrompt;
-					loadGeneratorFn = mod.loadGenerator;
-					generationModuleReady = true;
-					
-					// Pre-load the model in the background
-					if (ENABLE_LOCAL_LLM) {
-						loadGeneratorFn().catch(console.error);
-					}
-				})
-				.catch((err) => {
-					console.warn('Failed to load local AI module, falling back to passages:', err);
-				});
+	/** Preload the local LLM model on mount (browser only) */
+	onMount(async () => {
+		try {
+			// Dynamic import to avoid SSR loading @xenova/transformers (sharp/onnx)
+			generationModule = await import('$lib/ai/generation');
+		} catch (err) {
+			modelStatus = 'error';
+			modelError = 'Impossible de charger le module IA.';
+			return;
 		}
-		await generationModuleLoadPromise;
-	}
 
-	let currentProgress = $state<LoadProgress>({ status: 'init', percentage: 0 });
-	let networkWarning = $state('');
-
-	// Check network connection on mount
-	$effect(() => {
-		if (browser && 'connection' in navigator) {
-			const conn = (navigator as any).connection;
-			if (conn.saveData || conn.effectiveType === '2g' || conn.effectiveType === '3g') {
-				networkWarning = "Connexion lente détectée. Le téléchargement de l'IA (~350MB) est plus rapide en WiFi.";
+		modelStatus = 'loading';
+		const progressInterval = setInterval(() => {
+			if (generationModule) {
+				modelProgress = generationModule.getGeneratorProgress();
 			}
-		}
-	});
+		}, 300);
 
-	// Poll for progress when loading
-	$effect(() => {
-		let interval: any;
-		if (isLoading && isSummarizerLoadingFn()) {
-			interval = setInterval(() => {
-				currentProgress = getGeneratorProgressFn();
-			}, 200);
-		} else {
-			currentProgress = getGeneratorProgressFn();
+		try {
+			const gen = await generationModule.loadGenerator();
+			clearInterval(progressInterval);
+			modelProgress = generationModule.getGeneratorProgress();
+			if (gen) {
+				modelStatus = 'ready';
+			} else {
+				modelStatus = 'error';
+				modelError = 'Le modèle IA local n\'a pas pu être chargé.';
+			}
+		} catch (err: any) {
+			clearInterval(progressInterval);
+			modelStatus = 'error';
+			modelError = err?.message || 'Erreur de chargement du modèle';
 		}
-		return () => clearInterval(interval);
+
+		// Load saved system prompt
+		systemPrompt = generationModule.getSystemPrompt();
 	});
 
 	const DEFAULT_MESSAGE: ChatMessage = {
 		id: '1',
 		type: 'assistant',
 		content:
-			"Bonjour ! Bienvenue dans l'archive familiale. Je vais vous aider à explorer nos archives en répondant à vos questions. Actuellement, vous verrez les passages pertinents directement des documents archivés. Posez vos questions sur nos ancêtres, nos traditions, et les événements importants qui ont marqué notre histoire.",
+			"Bonjour ! Bienvenue dans l'archive familiale. Je vais vous aider à explorer nos archives en répondant à vos questions. Posez vos questions sur nos ancêtres, nos traditions, et les événements importants qui ont marqué notre histoire.",
 		timestamp: new Date()
 	};
 
@@ -128,7 +102,6 @@
 			const stored = sessionStorage.getItem('chatMessages');
 			if (stored) {
 				const parsed = JSON.parse(stored) as ChatMessage[];
-				// Convert timestamp strings back to Date objects
 				return parsed.map(m => ({
 					...m,
 					timestamp: new Date(m.timestamp)
@@ -160,13 +133,13 @@
 		if (!browser) return;
 
 		requestAnimationFrame(() => {
-			const lastAssistantMessage = messages
+			const lastUserMessage = messages
 				.slice()
 				.reverse()
-				.find((m) => m.type === 'assistant');
+				.find((m) => m.type === 'user');
 
-			if (lastAssistantMessage) {
-				const messageElement = document.querySelector(`[data-message-id="${lastAssistantMessage.id}"]`);
+			if (lastUserMessage) {
+				const messageElement = document.querySelector(`[data-message-id="${lastUserMessage.id}"]`);
 				if (messageElement) {
 					messageElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
 				}
@@ -207,7 +180,7 @@
 				id: assistantMessageId,
 				type: 'assistant',
 				status: 'loading',
-				content: 'Je réfléchis…',
+				content: 'Recherche dans les archives…',
 				timestamp: new Date(),
 				sources: []
 			}
@@ -221,103 +194,87 @@
 
 		(async () => {
 			try {
-				await ensureGenerationModuleLoaded();
-				
-				if (ENABLE_LOCAL_LLM && isSummarizerLoadingFn()) {
-					const initMessage: ChatMessage = {
-						id: (Date.now() + 0.5).toString(),
-						type: 'assistant',
-						content: 'Initialisation de l\'IA locale... L\'IA est traitée directement sur votre appareil pour garantir votre confidentialité. Le premier téléchargement peut être volumineux (~350MB).',
-						timestamp: new Date()
-					};
-					messages = [...messages, initMessage];
+				// Step 1: Call the RAG endpoint for semantic search via Supabase
+				const res = await fetch('/api/rag-search', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ message: userMessage.content })
+				});
+
+				if (!res.ok) {
+					const errText = await res.text();
+					throw new Error(errText || `HTTP ${res.status}`);
 				}
 
-				// Wait 100ms before processing the response
-				await new Promise(resolve => setTimeout(resolve, 100));
+				const data = await res.json();
+				const chunks: FamilyChunk[] = data.chunks || [];
+				const linkedBlogs = data.linkedBlogPosts || [];
 
-				const results = await searchFamilyData(userMessage.content, { topK: 4 });
-				let sourceReferences: Array<{
-					title: string;
-					url: string;
-					isBuilder: boolean;
-					sourceId?: string;
-					originPostId?: string;
-					originPostTitle?: string;
-					originPostUrl?: string;
-				}> = [];
+				// Build source references from RAG results
+				const sourceReferences = chunks
+					.filter((c: any) => c.title)
+					.reduce((acc: Array<{ title: string; url: string; isBuilder: boolean; sourceId?: string; contentType?: string }>, c: any) => {
+						if (!acc.find(s => s.title === c.title)) {
+							acc.push({
+								title: c.title,
+								url: c.url || '',
+								isBuilder: c.isBuilderContent || false,
+								sourceId: c.sourceId || c.title,
+								contentType: c.contentType || 'document',
+								originPostId: c.originPostId || '',
+								originPostUrl: c.originPostUrl || ''
+							});
+						}
+						return acc;
+					}, [])
+					.slice(0, 4);
 
-				if (!results || results.length === 0) {
+				if (chunks.length === 0) {
 					updateMessageById(assistantMessageId, {
 						status: 'done',
-						content:
-							"Désolé — je ne trouve aucune information pertinente dans nos archives familiales pour répondre à cette question."
+						content: "Je n'ai trouvé aucun document correspondant dans les archives familiales. Essayez de reformuler votre question.",
+						sources: [],
+						linkedBlogPosts: []
 					});
-				} else {
-					sourceReferences = results.map((r) => {
-						const isBuilderPost = r.chunk.sourceModel === 'blog-articles' || r.chunk.sourceModel === 'stories';
-						return {
-							title: r.chunk.title,
-							url: r.chunk.url,
-							sourceId: r.chunk.sourceId,
-							isBuilder: isBuilderPost,
-							originPostId: r.chunk.originPostId,
-							originPostTitle: r.chunk.originPostTitle,
-							originPostUrl: r.chunk.originPostUrl
-						};
-					});
-
-					// Deduplicate sources
-					const seenIdentifiers = new Set<string>();
-					sourceReferences = sourceReferences.filter((source) => {
-						// Use sourceId as primary identifier for builder posts, url for others
-						const identifier = source.sourceId || source.url;
-						if (seenIdentifiers.has(identifier)) {
-							return false;
-						}
-						seenIdentifiers.add(identifier);
-						return true;
-					});
-
-					updateMessageById(assistantMessageId, { sources: sourceReferences });
-
-					let assistantContent = '';
-
-					if (ENABLE_LOCAL_LLM) {
-						const chunks = results.map((r) => r.chunk);
-						const summary = await summarizeFromChunksFn(chunks, userMessage.content, (token) => {
-							updateMessageById(assistantMessageId, {
-								status: 'streaming',
-								content: token || 'Je réfléchis…'
-							});
-							scrollToResponseTop();
-						});
-						
-						if (summary) {
-							updateMessageById(assistantMessageId, { status: 'done', content: summary });
-						} else {
-							assistantContent = 'Voici ce que j\'ai trouvé dans les archives :\n\n';
-							for (const r of results) {
-								assistantContent += `• ${r.chunk.title} — "${cleanChunkText(r.chunk.text)}" (source: ${r.chunk.url})\n\n`;
-							}
-							updateMessageById(assistantMessageId, { status: 'done', content: assistantContent });
-						}
-					} else {
-						assistantContent = 'Voici ce que j\'ai trouvé dans les archives :\n\n';
-						for (const r of results) {
-							assistantContent += `• ${r.chunk.title} — "${cleanChunkText(r.chunk.text)}" (source: ${r.chunk.url})\n\n`;
-						}
-						updateMessageById(assistantMessageId, { status: 'done', content: assistantContent });
-					}
+					return;
 				}
+
+				// Step 2: Generate response using local LLM
+				updateMessageById(assistantMessageId, {
+					status: 'streaming',
+					content: 'Génération de la réponse…'
+				});
+
+				const generated = generationModule ? await generationModule.summarizeFromChunks(
+					chunks,
+					userMessage.content,
+					(streamedText: string) => {
+						// Live-update the message as tokens stream in
+						updateMessageById(assistantMessageId, {
+							status: 'streaming',
+							content: streamedText,
+							sources: sourceReferences
+						});
+					}
+				) : null;
+
+				// Use generated text, or fall back to showing raw context
+				const finalContent = generated
+					|| chunks.map(c => c.text).join('\n\n').slice(0, 500)
+					|| "Je n'ai pas pu générer de réponse.";
+
+				updateMessageById(assistantMessageId, {
+					status: 'done',
+					content: finalContent,
+					sources: sourceReferences,
+					linkedBlogPosts: linkedBlogs
+				});
 			} catch (err) {
-				console.error('Search failed', err);
-				messages = [...messages, {
-					id: (Date.now() + 2).toString(),
-					type: 'assistant',
-					content: "Erreur interne: impossible de rechercher dans les archives familiales.",
-					timestamp: new Date()
-				}];
+				console.error('Chat failed', err);
+				updateMessageById(assistantMessageId, {
+					status: 'done',
+					content: "Erreur: impossible de contacter le service. Veuillez réessayer."
+				});
 			} finally {
 				isLoading = false;
 				(async () => {
@@ -331,7 +288,6 @@
 
 	$effect(() => {
 		messages.length;
-		// Only scroll if chat has started (more than just the default message)
 		if (hasStartedChat && messages.length > 1) {
 			(async () => {
 				await tick();
@@ -354,27 +310,16 @@
 		}
 	}
 
-	async function loadSystemPrompt() {
-		if (!browser) return;
-		await ensureGenerationModuleLoaded();
-		systemPrompt = getSystemPromptFn();
-	}
-
 	function saveSystemPrompt() {
-		setSystemPromptFn(systemPrompt);
+		generationModule?.setSystemPrompt(systemPrompt);
 		showSettings = false;
 	}
 
 	function resetSystemPrompt() {
 		systemPrompt = DEFAULT_SYSTEM_PROMPT;
-		saveSystemPrompt();
+		generationModule?.setSystemPrompt(DEFAULT_SYSTEM_PROMPT);
+		showSettings = false;
 	}
-
-	$effect.pre(() => {
-		if (browser) {
-			ensureGenerationModuleLoaded().then(loadSystemPrompt);
-		}
-	});
 
 	$effect(() => {
 		if (browser) {
@@ -388,17 +333,6 @@
 			return () => document.removeEventListener('keydown', handleKeydown);
 		}
 	});
-
-	function cleanChunkText(text: string): string {
-		let cleaned = text.replace(/\s+/g, ' ').trim();
-		if (cleaned.length > 250) {
-			cleaned = cleaned.slice(0, 250).trim();
-			const lastSpace = cleaned.lastIndexOf(' ');
-			if (lastSpace > 80) cleaned = cleaned.slice(0, lastSpace);
-			cleaned += '...';
-		}
-		return cleaned;
-	}
 </script>
 
 <svelte:head>
@@ -430,6 +364,38 @@
 					</button>
 				</div>
 			</div>
+
+			<!-- Model loading status bar -->
+			{#if modelStatus === 'loading'}
+				<div class="mt-4 rounded-lg bg-primary-50 p-3">
+					<div class="flex items-center gap-2 text-sm text-primary-700">
+						<svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+							<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+							<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+						</svg>
+						<span>Chargement du modèle IA local…</span>
+						{#if modelProgress.percentage > 0}
+							<span class="font-mono text-xs">{Math.round(modelProgress.percentage)}%</span>
+						{/if}
+					</div>
+					{#if modelProgress.percentage > 0}
+						<div class="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-primary-200">
+							<div
+								class="h-full rounded-full bg-accent transition-all duration-300"
+								style="width: {modelProgress.percentage}%"
+							></div>
+						</div>
+					{/if}
+				</div>
+			{:else if modelStatus === 'error'}
+				<div class="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">
+					{modelError || 'Le modèle IA n\'a pas pu être chargé.'} Les réponses seront basées sur les extraits d'archives.
+				</div>
+			{:else if modelStatus === 'ready'}
+				<div class="mt-4 rounded-lg bg-green-50 p-2 text-xs text-green-700">
+					Modèle IA local prêt
+				</div>
+			{/if}
 		</div>
 	</section>
 
@@ -462,34 +428,46 @@
 
 							{#if message.type === 'assistant' && message.sources && message.sources.length > 0}
 								<div class="mt-4 space-y-2 border-t border-primary-100 pt-3">
-									<p class="text-xs font-semibold text-primary-700">Sources:</p>
+									<p class="text-xs font-semibold text-primary-700">Sources documentaires:</p>
 									<div class="space-y-1">
 										{#each message.sources as source}
 											<div class="space-y-1">
-												<a
-													href={source.isBuilder && source.sourceId ? `/histoires/${generateBlogUrl(source.sourceId, source.title)}` : source.url}
-													target={source.isBuilder ? undefined : "_blank"}
-													rel={source.isBuilder ? undefined : "noopener noreferrer"}
-													class="block text-xs text-accent hover:underline"
-													title={source.title}
-												>
-													{#if source.isBuilder}
-														<span class="inline-block rounded bg-accent/20 px-2 py-1 text-primary-900">📖 {source.title}</span>
-													{:else}
-														<span>📄 {source.title}</span>
-													{/if}
-												</a>
-
-												{#if !source.isBuilder && source.originPostUrl}
+												{#if source.contentType === 'blog_post' || source.isBuilder}
 													<a
-														href={source.originPostUrl}
-														class="block text-[11px] text-primary-700 hover:underline"
-														title={source.originPostTitle ? `Trouvé dans: ${source.originPostTitle}` : 'Trouvé dans un article'}
+														href={source.sourceId ? `/histoires/${generateBlogUrl(source.sourceId, source.title)}` : source.url}
+														class="block text-xs text-accent hover:underline"
+														title={source.title}
 													>
-														Trouvé dans: <span class="inline-block rounded bg-accent/10 px-2 py-0.5 text-primary-900">📖 {source.originPostTitle || 'Article'}</span>
+														<span class="inline-block rounded bg-accent/20 px-2 py-1 text-primary-900">{source.title}</span>
 													</a>
+												{:else if source.originPostId || source.originPostUrl}
+													<a
+														href={source.originPostUrl || `/histoires/${generateBlogUrl(source.originPostId || '', source.title)}`}
+														class="block text-xs text-accent hover:underline"
+														title={source.title}
+													>
+														<span class="inline-block rounded bg-primary-100 px-2 py-1 text-primary-800">{source.title}</span>
+													</a>
+												{:else}
+													<span class="inline-block rounded bg-primary-100 px-2 py-1 text-xs text-primary-800">{source.title}</span>
 												{/if}
 											</div>
+										{/each}
+									</div>
+								</div>
+							{/if}
+
+							{#if message.type === 'assistant' && message.linkedBlogPosts && message.linkedBlogPosts.length > 0}
+								<div class="mt-3 space-y-2 border-t border-primary-100 pt-3">
+									<p class="text-xs font-semibold text-primary-700">Articles connexes:</p>
+									<div class="space-y-1">
+										{#each message.linkedBlogPosts as blogPost}
+											<a
+												href={blogPost.url || '#'}
+												class="block text-xs text-accent hover:underline"
+											>
+												<span class="inline-block rounded bg-accent/10 px-2 py-1 text-primary-800">{blogPost.title}</span>
+											</a>
 										{/each}
 									</div>
 								</div>
@@ -544,70 +522,6 @@
 					{/if}
 				</div>
 			{/each}
-
-			{#if isLoading && currentProgress.status === 'downloading'}
-				<div class="flex gap-4">
-					<div class="flex-shrink-0">
-						<div
-							class="flex h-8 w-8 items-center justify-center rounded-full bg-primary-900 text-cream"
-						>
-							<svg class="h-5 w-5 animate-spin" fill="currentColor" viewBox="0 0 20 20">
-								<path d="M10 0a10 10 0 110 20 10 10 0 010-20zm0 2a8 8 0 100 16 8 8 0 000-16z" />
-							</svg>
-						</div>
-					</div>
-					<div class="flex flex-col gap-2 rounded-lg bg-white p-4 text-primary-900 shadow-sm min-w-[200px]">
-						<div class="flex items-center gap-2">
-							<span class="animate-pulse">●</span>
-							<span class="animate-pulse delay-100">●</span>
-							<span class="animate-pulse delay-200">●</span>
-							<span class="ml-2 text-sm font-medium">
-								{#if currentProgress.status === 'downloading'}
-									Chargement IA&nbsp;: {currentProgress.percentage.toFixed(0)}%
-								{:else}
-									Traitement en cours...
-								{/if}
-							</span>
-						</div>
-
-						{#if currentProgress.status === 'downloading'}
-							<div class="mt-2 space-y-2">
-								<div class="flex justify-between text-[10px] text-primary-600">
-									<span>Téléchargement du modèle...</span>
-									<span>{currentProgress.percentage.toFixed(0)}%</span>
-								</div>
-								<div class="h-1.5 w-full overflow-hidden rounded-full bg-primary-100">
-									<div
-										class="h-full bg-primary-900 transition-all duration-300"
-										style="width: {currentProgress.percentage}%"
-									></div>
-								</div>
-								{#if currentProgress.file}
-									<p class="truncate text-[9px] text-primary-400">{currentProgress.file}</p>
-								{/if}
-
-								<button
-									onclick={() => {
-										cancelModelLoadingFn();
-										isLoading = false;
-									}}
-									class="mt-1 text-[10px] font-bold text-red-600 hover:underline"
-								>
-									✕ Annuler le téléchargement
-								</button>
-								{#if networkWarning}
-									<p class="mt-1 text-[9px] italic text-amber-600 leading-tight">
-										⚠️ {networkWarning}
-									</p>
-								{/if}
-								<p class="mt-1 text-[10px] text-primary-500 leading-tight">
-									L'IA est en cours de chargement sur votre appareil. Ce processus est nécessaire pour garantir la confidentialité et la rapidité des réponses. Merci de patienter, ce chargement n'a lieu qu'une seule fois.
-								</p>
-							</div>
-						{/if}
-					</div>
-				</div>
-			{/if}
 		</div>
 	</div>
 
@@ -672,7 +586,7 @@
 						onclick={saveSystemPrompt}
 						class="flex-1 rounded-lg bg-primary-900 px-4 py-2 font-semibold text-cream transition-all hover:bg-primary-800"
 					>
-						✓ Enregistrer
+						Enregistrer
 					</button>
 					<button
 						onclick={() => (showSettings = false)}
@@ -685,7 +599,7 @@
 						class="rounded-lg border border-primary-300 px-4 py-2 text-xs text-primary-700 transition-all hover:border-primary-500 hover:bg-primary-50"
 						title="Restaurer le prompt par défaut"
 					>
-						↻ Réinitialiser
+						Réinitialiser
 					</button>
 				</div>
 			</div>
@@ -697,6 +611,4 @@
 	:global(.chat-container) {
 		scroll-behavior: smooth;
 	}
-	.delay-100 { animation-delay: 0.1s; }
-	.delay-200 { animation-delay: 0.2s; }
 </style>

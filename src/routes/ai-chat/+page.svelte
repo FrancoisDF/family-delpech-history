@@ -23,6 +23,7 @@
 		timestamp: number;
 		tokensUsed?: number;
 		usedCachedContext?: boolean;
+		linkedBlogPosts?: Array<{ id: string; title: string; url: string }>;
 	}
 
 	let messages: ChatMessage[] = [];
@@ -118,12 +119,7 @@
 				responseContent += `\n\n_(Sources: ${sourceList})_`;
 			}
 
-			// Add context reuse indicator if applicable
-			if (data.usedCachedContext) {
-				responseContent += '\n\n💾 _(Used cached context from previous query)_';
-			}
-
-			// Add assistant message
+			// Add assistant message with linked blog posts
 			messages = [
 				...messages,
 				{
@@ -132,7 +128,8 @@
 					content: responseContent,
 					timestamp: Date.now(),
 					tokensUsed: data.totalTokens,
-					usedCachedContext: data.usedCachedContext
+					usedCachedContext: data.usedCachedContext,
+					linkedBlogPosts: data.linkedBlogPosts || []
 				}
 			];
 
@@ -250,6 +247,19 @@
 								<div class="whitespace-pre-wrap text-sm leading-relaxed">
 									{msg.content}
 								</div>
+								{#if msg.role === 'assistant' && msg.linkedBlogPosts && msg.linkedBlogPosts.length > 0}
+									<div class="mt-3 border-t border-slate-100 pt-2">
+										<p class="mb-1 text-xs font-semibold text-slate-500">Articles connexes:</p>
+										{#each msg.linkedBlogPosts as blogPost}
+											<a
+												href={blogPost.url || '#'}
+												class="mb-1 block text-xs text-blue-600 hover:underline"
+											>
+												{blogPost.title}
+											</a>
+										{/each}
+									</div>
+								{/if}
 								{#if msg.tokensUsed}
 									<div class={`mt-2 text-xs ${msg.role === 'user' ? 'text-blue-100' : 'text-slate-500'}`}>
 										{msg.tokensUsed} tokens

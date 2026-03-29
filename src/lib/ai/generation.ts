@@ -185,7 +185,7 @@ function buildT5Prompt(messages: LocalChatMessage[]): string {
 	const system = messages.find((m) => m.role === 'system')?.content || '';
 	const user = messages.find((m) => m.role === 'user')?.content || '';
 
-	return `Consigne: Réponds impérativement en FRANÇAIS.\n- Réponds en 3 phrases courtes.\n- Ne réponds jamais par un seul mot.\n- Si tu n'es pas sûre, dis-le poliment.\n\nContexte: ${system}\n\nQuestion: ${user}\n\nRéponse (3 phrases en français):`;
+	return `Consigne: Réponds impérativement en FRANÇAIS.\n- Donne une réponse détaillée et complète en plusieurs paragraphes.\n- Ne réponds jamais par un seul mot.\n- Cite les documents et sources pertinents.\n- Si tu n'es pas sûre, dis-le poliment.\n\nContexte: ${system}\n\nQuestion: ${user}\n\nRéponse détaillée en français:`;
 }
 
 function buildPromptFromMessages(generator: any, messages: LocalChatMessage[]): string {
@@ -209,29 +209,12 @@ function countWords(text: string): number {
 	return text.trim().split(/\s+/).filter(Boolean).length;
 }
 
-function ensureThreeShortSentences(text: string): string {
+function cleanupGeneratedText(text: string): string {
 	const cleaned = text.replace(/\s+/g, ' ').trim();
 	if (!cleaned) return cleaned;
 
-	const endPunctuated = /[.!?]$/.test(cleaned) ? cleaned : `${cleaned}.`;
-	const sentences = endPunctuated
-		.split(/(?<=[.!?])\s+/)
-		.map((s) => s.trim())
-		.filter(Boolean);
-
-	const extras = [
-		"J'espère que cela répond à ta question.",
-		'Si tu veux, je peux préciser avec les sources.'
-	];
-
-	let out = sentences.join(' ');
-	let idx = 0;
-	while (out.split(/(?<=[.!?])\s+/).filter(Boolean).length < 3 && idx < extras.length) {
-		out = `${out} ${extras[idx]}`.trim();
-		idx++;
-	}
-
-	return out;
+	// Ensure text ends with proper punctuation
+	return /[.!?]$/.test(cleaned) ? cleaned : `${cleaned}.`;
 }
 
 function buildFallbackFrenchAnswer(chunks: FamilyChunk[], query: string): string {
@@ -242,7 +225,7 @@ function buildFallbackFrenchAnswer(chunks: FamilyChunk[], query: string): string
 		? `D'après les archives, ${snippet}`
 		: "D'après les archives, je n'ai qu'un indice partiel pour le moment";
 
-	return ensureThreeShortSentences(`${base}.`);
+	return cleanupGeneratedText(`${base}.`);
 }
 
 /**
@@ -273,7 +256,7 @@ export async function summarizeFromChunks(
 		const systemPrompt = getSystemPrompt();
 
 		// Limit context
-		const MAX_CONTEXT_LENGTH = 1500;
+		const MAX_CONTEXT_LENGTH = 2500;
 		let contextText = '';
 		for (const chunk of chunks) {
 			const text = chunk.text.replace(/\s+/g, ' ').trim();
@@ -293,6 +276,12 @@ export async function summarizeFromChunks(
 		];
 
 		const promptText = buildPromptFromMessages(generator, messages);
+
+		if (import.meta.env.DEV) {
+			console.group('%c[Local LLM] Full prompt sent to model', 'color: #7c3aed; font-weight: bold;');
+			console.log(promptText);
+			console.groupEnd();
+		}
 
 		let streamedText = '';
 		const output = await generator(promptText, {
@@ -327,7 +316,7 @@ export async function summarizeFromChunks(
 			generatedText = buildFallbackFrenchAnswer(chunks, query);
 		}
 
-		generatedText = ensureThreeShortSentences(generatedText);
+		generatedText = cleanupGeneratedText(generatedText);
 
 		// Simulated streaming fallback (ensures the UI still "types" even if callback_function is not supported)
 		if (onToken && (!streamedText || streamedText.length < 5)) {

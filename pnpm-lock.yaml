@@ -23,6 +23,9 @@ importers:
       '@huggingface/transformers':
         specifier: ^3.8.1
         version: 3.8.1
+      '@supabase/supabase-js':
+        specifier: ^2.100.1
+        version: 2.100.1
       '@xenova/transformers':
         specifier: 2.17.2
         version: 2.17.2
@@ -44,6 +47,9 @@ importers:
       mammoth:
         specifier: ^1.11.0
         version: 1.11.0
+      sharp:
+        specifier: ^0.34.5
+        version: 0.34.5
       valibot:
         specifier: ^1.2.0
         version: 1.2.0(typescript@5.9.3)
@@ -1237,6 +1243,33 @@ packages:
       react: '*'
       react-dom: '*'
 
+  '@supabase/auth-js@2.100.1':
+    resolution: {integrity: sha512-c5FB4nrG7cs1mLSzFGuIVl2iR2YO5XkSJ96uF4zubYm8YDn71XOi2emE9sBm/avfGCj61jaRBLOvxEAVnpys0Q==}
+    engines: {node: '>=20.0.0'}
+
+  '@supabase/functions-js@2.100.1':
+    resolution: {integrity: sha512-mo8QheoV4KR+wSubtyEWhZUxWnCM7YZ23TncccMAlbWAHb8YTDqRGRm9IalWCAswniKyud6buZCk9snRqI86KA==}
+    engines: {node: '>=20.0.0'}
+
+  '@supabase/phoenix@0.4.0':
+    resolution: {integrity: sha512-RHSx8bHS02xwfHdAbX5Lpbo6PXbgyf7lTaXTlwtFDPwOIw64NnVRwFAXGojHhjtVYI+PEPNSWwkL90f4agN3bw==}
+
+  '@supabase/postgrest-js@2.100.1':
+    resolution: {integrity: sha512-OIh4mOSo2LdqF2kox76OAPDtcSs+PwKABJOjc6plUV4/LXhFEsI2uwdEEIs7K7fd141qehWEVl/Y+Ts0fNvYsw==}
+    engines: {node: '>=20.0.0'}
+
+  '@supabase/realtime-js@2.100.1':
+    resolution: {integrity: sha512-FHuRWPX4qZQ4x+0Q+ZrKaBZnOiVGiwsgiAUJM98pYRib1yeaE/fOM1lZ1ozd+4gA8Udw23OyaD8SxKS5mT5NYw==}
+    engines: {node: '>=20.0.0'}
+
+  '@supabase/storage-js@2.100.1':
+    resolution: {integrity: sha512-x9xpEIoWM4xKiAlwfWTgHPSN6N4Y0aS4FVU4F6ZPbq7Gayw08SrtC6/YH/gOr8CjXQr0HxXYXDop2xGTSjubYA==}
+    engines: {node: '>=20.0.0'}
+
+  '@supabase/supabase-js@2.100.1':
+    resolution: {integrity: sha512-CAeFm5sfX8sbTzxoxRafhohreIzl9a7R6qHTck3MrgTqm5M5g/u0IHfEKYzI9w/17r8NINl8UZrw2i08wrO7Iw==}
+    engines: {node: '>=20.0.0'}
+
   '@sveltejs/acorn-typescript@1.0.8':
     resolution: {integrity: sha512-esgN+54+q0NjB0Y/4BomT9samII7jGwNy/2a3wNZbT2A2RpmXsXwUt24LvLhx6jUq2gVk4cWEvcRO6MFQbOfNA==}
     peerDependencies:
@@ -1330,6 +1363,9 @@ packages:
 
   '@types/react@19.2.13':
     resolution: {integrity: sha512-KkiJeU6VbYbUOp5ITMIc7kBfqlYkKA5KhEHVrGMmUUMt7NeaZg65ojdPk+FtNrBAOXNVM5QM72jnADjM+XVRAQ==}
+
+  '@types/ws@8.18.1':
+    resolution: {integrity: sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==}
 
   '@typescript-eslint/eslint-plugin@8.53.0':
     resolution: {integrity: sha512-eEXsVvLPu8Z4PkFibtuFJLJOTAV/nPdgtSjkGoPpddpFk3/ym2oy97jynY6ic2m6+nc5M8SE1e9v/mHKsulcJg==}
@@ -2240,6 +2276,10 @@ packages:
 
   html-escaper@2.0.2:
     resolution: {integrity: sha512-H2iMtd0I4Mt5eYiapRdIDjp+XzelXQ0tFE4JS7YFwFevXXMmOp9myNrUvCg0D6ws8iqkRPBfKHgbwig1SmlLfg==}
+
+  iceberg-js@0.8.1:
+    resolution: {integrity: sha512-1dhVQZXhcHje7798IVM+xoo/1ZdVfzOMIc8/rgVSijRK38EDqOJoGula9N/8ZI5RD8QTxNQtK/Gozpr+qUqRRA==}
+    engines: {node: '>=20.0.0'}
 
   ieee754@1.2.1:
     resolution: {integrity: sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==}
@@ -3365,6 +3405,7 @@ packages:
 
   telejson@3.3.0:
     resolution: {integrity: sha512-er08AylQ+LEbDLp1GRezORZu5wKOHaBczF6oYJtgC3Idv10qZ8A3p6ffT+J5BzDKkV9MqBvu8HAKiIIOp6KJ2w==}
+    deprecated: 'SECURITY: Upgrade to v6 or above'
 
   text-decoder@1.2.3:
     resolution: {integrity: sha512-3/o9z3X0X0fTupwsYvR03pJ/DjWuqqrfwBgTQzdWDiQSm9KitAyz/9WqsT2JQW7KV2m+bC2ol/zqpW37NHxLaA==}
@@ -3878,6 +3919,18 @@ snapshots:
       '@emotion/utils': 0.11.3
       '@emotion/weak-memoize': 0.2.5
 
+  '@emotion/core@10.3.1(react@16.14.0)':
+    dependencies:
+      '@babel/runtime': 7.28.6
+      '@emotion/cache': 10.0.29
+      '@emotion/css': 10.0.27
+      '@emotion/serialize': 0.11.16
+      '@emotion/sheet': 0.9.4
+      '@emotion/utils': 0.11.3
+      react: 16.14.0
+    transitivePeerDependencies:
+      - supports-color
+
   '@emotion/core@10.3.1(react@19.2.4)':
     dependencies:
       '@babel/runtime': 7.28.6
@@ -3916,7 +3969,7 @@ snapshots:
 
   '@emotion/sheet@0.9.4': {}
 
-  '@emotion/styled-base@10.3.0(@emotion/core@10.3.1(react@16.14.0))(react@16.14.0)':
+  '@emotion/styled-base@10.3.0(@emotion/core@10.3.1(react@19.2.4))(react@16.14.0)':
     dependencies:
       '@babel/runtime': 7.28.6
       '@emotion/core': 10.3.1(react@19.2.4)
@@ -3925,10 +3978,10 @@ snapshots:
       '@emotion/utils': 0.11.3
       react: 16.14.0
 
-  '@emotion/styled@10.3.0(@emotion/core@10.3.1(react@16.14.0))(react@16.14.0)':
+  '@emotion/styled@10.3.0(@emotion/core@10.3.1(react@19.2.4))(react@16.14.0)':
     dependencies:
       '@emotion/core': 10.3.1(react@19.2.4)
-      '@emotion/styled-base': 10.3.0(@emotion/core@10.3.1(react@16.14.0))(react@16.14.0)
+      '@emotion/styled-base': 10.3.0(@emotion/core@10.3.1(react@19.2.4))(react@16.14.0)
       babel-plugin-emotion: 10.2.2
       react: 16.14.0
     transitivePeerDependencies:
@@ -4644,12 +4697,12 @@ snapshots:
 
   '@storybook/theming@5.3.22(react-dom@19.2.4(react@19.2.4))(react@16.14.0)':
     dependencies:
-      '@emotion/core': 10.3.1(react@19.2.4)
-      '@emotion/styled': 10.3.0(@emotion/core@10.3.1(react@16.14.0))(react@16.14.0)
+      '@emotion/core': 10.3.1(react@16.14.0)
+      '@emotion/styled': 10.3.0(@emotion/core@10.3.1(react@19.2.4))(react@16.14.0)
       '@storybook/client-logger': 5.3.22
       core-js: 3.48.0
       deep-object-diff: 1.1.9
-      emotion-theming: 10.3.0(@emotion/core@10.3.1(react@16.14.0))(react@16.14.0)
+      emotion-theming: 10.3.0(@emotion/core@10.3.1(react@19.2.4))(react@16.14.0)
       global: 4.4.0
       memoizerific: 1.11.3
       polished: 3.7.2
@@ -4660,6 +4713,46 @@ snapshots:
       ts-dedent: 1.2.0
     transitivePeerDependencies:
       - supports-color
+
+  '@supabase/auth-js@2.100.1':
+    dependencies:
+      tslib: 2.8.1
+
+  '@supabase/functions-js@2.100.1':
+    dependencies:
+      tslib: 2.8.1
+
+  '@supabase/phoenix@0.4.0': {}
+
+  '@supabase/postgrest-js@2.100.1':
+    dependencies:
+      tslib: 2.8.1
+
+  '@supabase/realtime-js@2.100.1':
+    dependencies:
+      '@supabase/phoenix': 0.4.0
+      '@types/ws': 8.18.1
+      tslib: 2.8.1
+      ws: 8.19.0
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
+  '@supabase/storage-js@2.100.1':
+    dependencies:
+      iceberg-js: 0.8.1
+      tslib: 2.8.1
+
+  '@supabase/supabase-js@2.100.1':
+    dependencies:
+      '@supabase/auth-js': 2.100.1
+      '@supabase/functions-js': 2.100.1
+      '@supabase/postgrest-js': 2.100.1
+      '@supabase/realtime-js': 2.100.1
+      '@supabase/storage-js': 2.100.1
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
 
   '@sveltejs/acorn-typescript@1.0.8(acorn@8.15.0)':
     dependencies:
@@ -4770,6 +4863,10 @@ snapshots:
   '@types/react@19.2.13':
     dependencies:
       csstype: 3.2.3
+
+  '@types/ws@8.18.1':
+    dependencies:
+      '@types/node': 25.0.9
 
   '@typescript-eslint/eslint-plugin@8.53.0(@typescript-eslint/parser@8.53.0(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3))(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3)':
     dependencies:
@@ -5412,7 +5509,7 @@ snapshots:
 
   electron-to-chromium@1.5.267: {}
 
-  emotion-theming@10.3.0(@emotion/core@10.3.1(react@16.14.0))(react@16.14.0):
+  emotion-theming@10.3.0(@emotion/core@10.3.1(react@19.2.4))(react@16.14.0):
     dependencies:
       '@babel/runtime': 7.28.6
       '@emotion/core': 10.3.1(react@19.2.4)
@@ -5764,6 +5861,8 @@ snapshots:
       react-is: 16.13.1
 
   html-escaper@2.0.2: {}
+
+  iceberg-js@0.8.1: {}
 
   ieee754@1.2.1: {}
 
