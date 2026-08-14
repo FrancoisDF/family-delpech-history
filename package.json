@@ -4,7 +4,7 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
-		"dev": "vite dev",
+		"dev": "vite dev --port=4200",
 		"ingest": "node scripts/ingest-all-content.js",
 		"ingest:documents": "node scripts/ingest-local-documents.mjs",
 		"ingest:builder": "node scripts/ingest-builder-content.mjs",
