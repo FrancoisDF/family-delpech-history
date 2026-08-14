@@ -1,4 +1,17 @@
 <script lang="ts">
+	type ArticleSectionBlockProps = {
+		title?: string;
+		content?: string;
+		image?: string;
+		imageAlt?: string;
+		imagePosition?: string;
+		imageDisplayMode?: string;
+		backgroundColor?: string;
+		connectTop?: boolean;
+		connectBottom?: boolean;
+		anchorId?: string;
+	};
+
 	let {
 		title = '',
 		content = '',
@@ -8,8 +21,9 @@
 		imageDisplayMode = 'cover',
 		backgroundColor = 'bg-white',
 		connectTop = false,
-		connectBottom = false
-	} = $props();
+		connectBottom = false,
+		anchorId = ''
+	} = $props<ArticleSectionBlockProps>();
 
 	const spacingTop = $derived(connectTop ? '' : 'pt-12');
 	const spacingBottom = $derived(connectBottom ? '' : 'pb-12');
@@ -28,7 +42,7 @@
 	const shadowClasses = $derived(connectTop || connectBottom ? '' : 'shadow-lg');
 </script>
 
-<section class=" px-4 {spacingTop} {spacingBottom} sm:px-6 lg:px-8">
+<section id={anchorId || undefined} class="scroll-mt-28 px-4 {spacingTop} {spacingBottom} sm:px-6 lg:px-8">
 	<div class="mx-auto max-w-4xl">
 		<div class="{roundedClasses} {shadowClasses} {backgroundColor} p-8 md:p-12">
 			{#if title}

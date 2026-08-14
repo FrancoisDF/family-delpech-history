@@ -224,6 +224,12 @@ export const EXTRACTABLE_COMPONENTS: ExtractableComponentConfig[] = [
 				description: 'Section heading'
 			},
 			{
+				fieldName: 'anchorId',
+				fieldType: 'string',
+				importance: 'low',
+				description: 'Stable HTML ID used by article section navigation'
+			},
+			{
 				fieldName: 'content',
 				fieldType: 'richText',
 				importance: 'critical',

@@ -12,6 +12,12 @@ export const articleSectionBlockInfo: RegisteredComponent = {
 			defaultValue: ''
 		},
 		{
+			name: 'anchorId',
+			type: 'string',
+			defaultValue: '',
+			helperText: 'Stable HTML ID matching an article navigation entry, for example arbre-manuscrit'
+		},
+		{
 			name: 'content',
 			type: 'richText',
 			defaultValue: 'Votre contenu de section ici...'
