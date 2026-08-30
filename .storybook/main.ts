@@ -1,21 +1,21 @@
 import type { StorybookConfig } from '@storybook/sveltekit';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import type { StorybookConfig } from '@storybook/sveltekit';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const config: StorybookConfig = {
-	stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|ts|svelte)'],
+	stories: ['../src/**/*.mdx', '../src/lib/components/builders/*.stories.ts'],
 	addons: [
-		'@storybook/addon-svelte-csf',
-		'@builder.io/storybook',
-		'@chromatic-com/storybook',
+				'@chromatic-com/storybook',
 		'@storybook/addon-vitest',
 		'@storybook/addon-a11y',
 		'@storybook/addon-docs'
 	],
 	framework: '@storybook/sveltekit',
+	staticDirs: ['../static'],
 	async viteFinal(config) {
 		config.plugins = config.plugins || [];
 		config.plugins.push({

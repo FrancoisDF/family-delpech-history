@@ -12,40 +12,13 @@ export const articleCarouselBlockInfo: RegisteredComponent = {
 			defaultValue: 'Articles Connexes'
 		},
 		{
-			name: 'articles',
+			name: 'tags',
 			type: 'list',
+			defaultValue: [],
 			subFields: [
 				{
-					name: 'id',
-					type: 'string'
-				},
-				{
-					name: 'title',
-					type: 'string'
-				},
-				{
-					name: 'excerpt',
-					type: 'string'
-				},
-				{
-					name: 'date',
-					type: 'string'
-				},
-				{
-					name: 'readTime',
-					type: 'string'
-				},
-				{
-					name: 'category',
-					type: 'string'
-				},
-				{
-					name: 'featuredImage',
-					type: 'file'
-				},
-				{
-					name: 'handle',
-					type: 'string'
+					name: 'tag',
+					type: 'object'
 				}
 			]
 		},

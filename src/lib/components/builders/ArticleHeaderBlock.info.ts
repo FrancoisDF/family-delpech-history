@@ -48,6 +48,12 @@ export const articleHeaderBlockInfo: RegisteredComponent = {
 			name: 'author',
 			type: 'string',
 			defaultValue: ''
+		},
+		{
+			name: 'pdfFile',
+			type: 'file',
+			allowedFileTypes: ['pdf'],
+			defaultValue: ''
 		}
 	]
 };

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/svelte';
+import type { Meta, StoryObj } from '@storybook/sveltekit';
 import TextSectionBlock from './TextSectionBlock.svelte';
 
 const meta = {
@@ -6,62 +6,47 @@ const meta = {
 	component: TextSectionBlock,
 	tags: ['autodocs'],
 	argTypes: {
-		content: {
-			control: 'text',
-			description: 'Rich text content'
-		},
-		textSize: {
-			control: 'select',
-			options: ['text-base', 'text-lg', 'text-xl', 'text-2xl'],
-			description: 'Text size'
-		},
+		content: { control: 'text' },
+		textSize: { control: 'select', options: ['text-base', 'text-lg', 'text-xl', 'text-2xl'] },
 		textAlign: {
 			control: 'select',
-			options: ['text-left', 'text-center', 'text-right'],
-			description: 'Text alignment'
+			options: ['text-left', 'text-center', 'text-right', 'text-justify']
 		},
-		connectTop: {
-			control: 'boolean',
-			description: 'Remove top spacing'
-		},
-		connectBottom: {
-			control: 'boolean',
-			description: 'Remove bottom spacing'
-		}
+		connectTop: { control: 'boolean' },
+		connectBottom: { control: 'boolean' }
 	}
-} satisfies Meta<TextSectionBlock>;
+} satisfies Meta<typeof TextSectionBlock>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+const content =
+	'<p>La généalogie est une enquête patiente où chaque indice relie une génération à la suivante.</p>';
+
 export const Default: Story = {
 	args: {
-		content: 'Votre texte ici...',
+		content,
 		textSize: 'text-lg',
 		textAlign: 'text-left',
 		connectTop: false,
 		connectBottom: false
 	}
 };
-
 export const LargeCentered: Story = {
 	args: {
-		content:
-			"L'histoire de nos familles est tissée dans le temps, chaque génération ajoutant son fil à la tapisserie de notre héritage.",
+		content,
 		textSize: 'text-2xl',
 		textAlign: 'text-center',
 		connectTop: false,
 		connectBottom: false
 	}
 };
-
-export const BodyText: Story = {
+export const Connected: Story = {
 	args: {
-		content:
-			"La généalogie est l'étude des relations familiales sur plusieurs générations. Elle nous aide à comprendre d'où nous venons et comment notre famille s'est développée au fil du temps.",
+		content,
 		textSize: 'text-base',
 		textAlign: 'text-justify',
-		connectTop: false,
-		connectBottom: false
+		connectTop: true,
+		connectBottom: true
 	}
 };

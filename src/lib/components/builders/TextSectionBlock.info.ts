@@ -20,7 +20,7 @@ export const textSectionBlockInfo: RegisteredComponent = {
 		{
 			name: 'textAlign',
 			type: 'string',
-			enum: ['text-left', 'text-center', 'text-right'],
+			enum: ['text-left', 'text-center', 'text-right', 'text-justify'],
 			defaultValue: 'text-left'
 		},
 		{
