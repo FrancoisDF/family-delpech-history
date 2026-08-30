@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 const config: StorybookConfig = {
 	stories: ['../src/**/*.mdx', '../src/lib/components/builders/*.stories.ts'],
 	addons: [
-				'@chromatic-com/storybook',
+		'@chromatic-com/storybook',
 		'@storybook/addon-vitest',
 		'@storybook/addon-a11y',
 		'@storybook/addon-docs'
