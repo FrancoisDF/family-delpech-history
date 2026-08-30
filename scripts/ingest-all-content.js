@@ -28,8 +28,11 @@ import { PDFParse } from 'pdf-parse';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const PUBLIC_BUILDER_API_KEY =
-	process.env.PUBLIC_BUILDER_API_KEY || '6c20c92cc5704aba88edd4187fbfd8f0';
+const PUBLIC_BUILDER_API_KEY = process.env.PUBLIC_BUILDER_API_KEY;
+if (!PUBLIC_BUILDER_API_KEY) {
+	console.error('Error: PUBLIC_BUILDER_API_KEY environment variable is not set');
+	process.exit(1);
+}
 // ============================================================================
 // Configuration
 // ============================================================================

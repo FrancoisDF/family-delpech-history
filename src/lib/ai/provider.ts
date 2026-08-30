@@ -25,7 +25,10 @@ export interface NormalizedUsage {
  * Validates that required keys are present for the selected provider
  */
 export function getProviderConfig(): ProviderConfig {
-	const provider = (process.env.AI_PROVIDER || 'anthropic') as 'anthropic' | 'openai';
+	const provider = (process.env.AI_PROVIDER || 'anthropic').toLowerCase() as 'anthropic' | 'openai';
+	if (provider !== 'anthropic' && provider !== 'openai') {
+		throw new Error('AI_PROVIDER must be anthropic or openai');
+	}
 
 	if (provider === 'openai') {
 		const apiKey = process.env.OPENAI_API_KEY;
@@ -56,7 +59,7 @@ export function getProviderConfig(): ProviderConfig {
 		);
 	}
 
-	const modelName = process.env.ANTHROPIC_MODEL || 'claude-3-5-sonnet-20241022';
+	const modelName = process.env.ANTHROPIC_MODEL || 'claude-3-5-haiku-20241022';
 
 	return {
 		provider: 'anthropic',
@@ -94,8 +97,8 @@ export function createModelForChat(): LanguageModel {
  */
 export function normalizeUsage(usage: any): NormalizedUsage {
 	return {
-		promptTokens: usage.promptTokens || usage.prompt_tokens || 0,
-		completionTokens: usage.completionTokens || usage.completion_tokens || 0
+		promptTokens: usage?.inputTokens || usage?.promptTokens || usage?.prompt_tokens || 0,
+		completionTokens: usage?.outputTokens || usage?.completionTokens || usage?.completion_tokens || 0
 	};
 }
 

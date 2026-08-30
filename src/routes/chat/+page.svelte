@@ -1,404 +1,191 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
+	import { tick } from 'svelte';
+
+	interface ChatSource {
+		id: string;
+		title: string;
+		url?: string;
+		sourceType: string;
+		score: number;
+	}
+
 	interface ChatMessage {
 		id: string;
 		type: 'user' | 'assistant';
 		content: string;
 		timestamp: Date;
-		status?: 'loading' | 'streaming' | 'done';
-		sources?: Array<{
-			title: string;
-			url: string;
-			isBuilder: boolean;
-			sourceId?: string;
-			originPostId?: string;
-			originPostTitle?: string;
-			originPostUrl?: string;
-		}>;
+		status?: 'loading' | 'streaming' | 'done' | 'error';
+		sources?: ChatSource[];
 	}
 
-
-	import { searchFamilyData } from '$lib/ai/search';
-	import { ENABLE_LOCAL_LLM, DEFAULT_SYSTEM_PROMPT } from '$lib/ai/config';
-	import { generateBlogUrl } from '$lib/url-utils';
-	import { browser } from '$app/environment';
-	import { tick } from 'svelte';
-
-	interface LoadProgress {
-		status: 'init' | 'downloading' | 'done' | 'error' | 'cancelled';
-		percentage: number;
-		file?: string;
+	interface StreamEvent {
+		type: 'text' | 'done' | 'error';
+		text?: string;
+		message?: string;
+		sources?: ChatSource[];
 	}
-
-	type SummarizeFromChunks = (chunks: any[], query: string, onToken?: (token: string) => void) => Promise<string | null>;
-	type IsSummarizerLoading = () => boolean;
-	type GetGeneratorProgress = () => LoadProgress;
-	type CancelModelLoading = () => void;
-	type GetSystemPrompt = () => string;
-	type SetSystemPrompt = (prompt: string) => void;
-	type LoadGenerator = () => Promise<any>;
-
-	let summarizeFromChunksFn: SummarizeFromChunks = async () => null;
-	let isSummarizerLoadingFn: IsSummarizerLoading = () => false;
-	let getGeneratorProgressFn: GetGeneratorProgress = () => ({ status: 'init', percentage: 0 });
-	let cancelModelLoadingFn: CancelModelLoading = () => {};
-	let getSystemPromptFn: GetSystemPrompt = () => DEFAULT_SYSTEM_PROMPT;
-	let setSystemPromptFn: SetSystemPrompt = () => {};
-	let loadGeneratorFn: LoadGenerator = async () => null;
-	
-	let generationModuleReady = false;
-	let generationModuleLoadPromise: Promise<void> | null = null;
-
-	async function ensureGenerationModuleLoaded(): Promise<void> {
-		if (!browser || generationModuleReady) return;
-		if (!generationModuleLoadPromise) {
-			generationModuleLoadPromise = import('$lib/ai/generation')
-				.then((mod) => {
-					summarizeFromChunksFn = mod.summarizeFromChunks;
-					isSummarizerLoadingFn = mod.isSummarizerLoading;
-					getGeneratorProgressFn = mod.getGeneratorProgress;
-					cancelModelLoadingFn = mod.cancelModelLoading;
-					getSystemPromptFn = mod.getSystemPrompt;
-					setSystemPromptFn = mod.setSystemPrompt;
-					loadGeneratorFn = mod.loadGenerator;
-					generationModuleReady = true;
-					
-					// Pre-load the model in the background
-					if (ENABLE_LOCAL_LLM) {
-						loadGeneratorFn().catch(console.error);
-					}
-				})
-				.catch((err) => {
-					console.warn('Failed to load local AI module, falling back to passages:', err);
-				});
-		}
-		await generationModuleLoadPromise;
-	}
-
-	let currentProgress = $state<LoadProgress>({ status: 'init', percentage: 0 });
-	let networkWarning = $state('');
-
-	// Check network connection on mount
-	$effect(() => {
-		if (browser && 'connection' in navigator) {
-			const conn = (navigator as any).connection;
-			if (conn.saveData || conn.effectiveType === '2g' || conn.effectiveType === '3g') {
-				networkWarning = "Connexion lente détectée. Le téléchargement de l'IA (~350MB) est plus rapide en WiFi.";
-			}
-		}
-	});
-
-	// Poll for progress when loading
-	$effect(() => {
-		let interval: any;
-		if (isLoading && isSummarizerLoadingFn()) {
-			interval = setInterval(() => {
-				currentProgress = getGeneratorProgressFn();
-			}, 200);
-		} else {
-			currentProgress = getGeneratorProgressFn();
-		}
-		return () => clearInterval(interval);
-	});
 
 	const DEFAULT_MESSAGE: ChatMessage = {
-		id: '1',
+		id: 'welcome',
 		type: 'assistant',
 		content:
-			"Bonjour ! Bienvenue dans l'archive familiale. Je vais vous aider à explorer nos archives en répondant à vos questions. Actuellement, vous verrez les passages pertinents directement des documents archivés. Posez vos questions sur nos ancêtres, nos traditions, et les événements importants qui ont marqué notre histoire.",
-		timestamp: new Date()
+			"Bonjour ! Bienvenue dans l'archive familiale. Posez vos questions sur nos ancêtres, nos traditions et les événements importants de notre histoire. Je réponds uniquement à partir des documents retrouvés dans les archives.",
+		timestamp: new Date(),
+		status: 'done'
 	};
 
 	const STARTER_QUESTIONS = [
-		"Qui était Marie Antoinette ?",
-		"Quels étaient les métiers de nos ancêtres ?",
-		"Où habitait la famille au 19ème siècle ?",
-		"Raconte-moi une anecdote sur la famille."
+		'Qui était Marie Antoinette ?',
+		'Quels étaient les métiers de nos ancêtres ?',
+		'Où habitait la famille au 19ème siècle ?',
+		'Raconte-moi une anecdote sur la famille.'
 	];
 
 	const FOLLOW_UP_SUGGESTIONS = [
 		"Peux-tu m'en dire plus ?",
-		"Quelles sont les sources de cette information ?",
+		'Quelles sont les sources de cette information ?',
 		"Y a-t-il d'autres documents à ce sujet ?",
-		"Qui d'autre est mentionné ?"
+		'Qui d’autre est mentionné ?'
 	];
 
-	function loadMessagesFromStorage(): ChatMessage[] {
+	function loadMessages(): ChatMessage[] {
 		if (!browser) return [DEFAULT_MESSAGE];
 		try {
 			const stored = sessionStorage.getItem('chatMessages');
-			if (stored) {
-				const parsed = JSON.parse(stored) as ChatMessage[];
-				// Convert timestamp strings back to Date objects
-				return parsed.map(m => ({
-					...m,
-					timestamp: new Date(m.timestamp)
-				}));
-			}
-		} catch (err) {
-			console.warn('Failed to load chat history:', err);
+			if (!stored) return [DEFAULT_MESSAGE];
+			return (JSON.parse(stored) as ChatMessage[]).map((message) => ({
+				...message,
+				timestamp: new Date(message.timestamp)
+			}));
+		} catch {
+			return [DEFAULT_MESSAGE];
 		}
-		return [DEFAULT_MESSAGE];
 	}
 
-	let messages = $state<ChatMessage[]>(loadMessagesFromStorage());
-	let hasStartedChat = $state(false);
-
+	let messages = $state<ChatMessage[]>(loadMessages());
 	let messageInput = $state('');
 	let isLoading = $state(false);
-	let chatContainer = $state<HTMLDivElement>();
 	let inputElement = $state<HTMLInputElement>();
 
-	let showSettings = $state(false);
-	let systemPrompt = $state(DEFAULT_SYSTEM_PROMPT);
-
-	function updateMessageById(id: string, patch: Partial<ChatMessage>) {
-		messages = messages.map((m) => (m.id === id ? { ...m, ...patch } : m));
+	function updateMessage(id: string, patch: Partial<ChatMessage>) {
+		messages = messages.map((message) => (message.id === id ? { ...message, ...patch } : message));
 	}
 
-	async function scrollToResponseTop() {
+	async function scrollToResponse() {
 		await tick();
-		if (!browser) return;
-
-		requestAnimationFrame(() => {
-			const lastAssistantMessage = messages
-				.slice()
-				.reverse()
-				.find((m) => m.type === 'assistant');
-
-			if (lastAssistantMessage) {
-				const messageElement = document.querySelector(`[data-message-id="${lastAssistantMessage.id}"]`);
-				if (messageElement) {
-					messageElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-				}
-			}
+		const lastAssistant = messages
+			.slice()
+			.reverse()
+			.find((message) => message.type === 'assistant');
+		if (lastAssistant) {
+			document.querySelector(`[data-message-id="${lastAssistant.id}"]`)?.scrollIntoView({
+			behavior: 'smooth',
+			block: 'start'
 		});
+		}
 	}
 
-	function handleSendMessage(text?: string) {
-		const content = text || messageInput;
-		if (!content.trim()) return;
+	async function readStream(response: Response, assistantId: string) {
+		if (!response.body) throw new Error('Réponse vide du service.');
+		const reader = response.body.getReader();
+		const decoder = new TextDecoder();
+		let buffer = '';
+		let content = '';
 
-		hasStartedChat = true;
-
-		const userMessage: ChatMessage = {
-			id: Date.now().toString(),
-			type: 'user',
-			content: content,
-			timestamp: new Date()
+		const processEvent = (line: string) => {
+			if (!line.startsWith('data: ')) return;
+			const raw = line.slice(6);
+			if (raw === '[DONE]') return;
+			const event = JSON.parse(raw) as StreamEvent;
+			if (event.type === 'text' && event.text) {
+				content += event.text;
+				updateMessage(assistantId, { content, status: 'streaming' });
+			} else if (event.type === 'done') {
+				updateMessage(assistantId, { status: 'done', sources: event.sources || [] });
+			} else if (event.type === 'error') {
+				throw new Error(event.message || 'La réponse n’a pas pu être générée.');
+			}
 		};
 
-		messages = [...messages, userMessage];
-		messageInput = '';
-		isLoading = true;
+		while (true) {
+			const { value, done } = await reader.read();
+			buffer += decoder.decode(value || new Uint8Array(), { stream: !done });
+			const events = buffer.split('\n\n');
+			buffer = events.pop() || '';
+			for (const event of events) processEvent(event);
+			if (done) break;
+		}
+		if (buffer.trim()) processEvent(buffer);
+	}
 
-		// Scroll to show the user message immediately
-		(async () => {
-			await tick();
-			const userMessageElement = document.querySelector(`[data-message-id="${userMessage.id}"]`);
-			if (userMessageElement) {
-				userMessageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-			}
-		})();
+	async function handleSendMessage(text?: string) {
+		const content = (text ?? messageInput).trim();
+		if (!content || isLoading) return;
 
-		const assistantMessageId = (Date.now() + 1).toString();
+		const history = messages
+			.filter((message) => message.id !== 'welcome' && message.status !== 'loading')
+			.slice(-6)
+			.map((message) => ({
+				role: message.type,
+				content: message.content
+			}));
+		const userMessage: ChatMessage = {
+			id: crypto.randomUUID(),
+			type: 'user',
+			content,
+			timestamp: new Date(),
+			status: 'done'
+		};
+		const assistantId = crypto.randomUUID();
 		messages = [
 			...messages,
+			userMessage,
 			{
-				id: assistantMessageId,
+				id: assistantId,
 				type: 'assistant',
-				status: 'loading',
-				content: 'Je réfléchis…',
+				content: 'Je consulte les archives…',
 				timestamp: new Date(),
+				status: 'loading',
 				sources: []
 			}
 		];
+		messageInput = '';
+		isLoading = true;
+		await scrollToResponse();
 
-		// Scroll to top of the new response
-		(async () => {
-			await tick();
-			await scrollToResponseTop();
-		})();
-
-		(async () => {
-			try {
-				await ensureGenerationModuleLoaded();
-				
-				if (ENABLE_LOCAL_LLM && isSummarizerLoadingFn()) {
-					const initMessage: ChatMessage = {
-						id: (Date.now() + 0.5).toString(),
-						type: 'assistant',
-						content: 'Initialisation de l\'IA locale... L\'IA est traitée directement sur votre appareil pour garantir votre confidentialité. Le premier téléchargement peut être volumineux (~350MB).',
-						timestamp: new Date()
-					};
-					messages = [...messages, initMessage];
-				}
-
-				// Wait 100ms before processing the response
-				await new Promise(resolve => setTimeout(resolve, 100));
-
-				const results = await searchFamilyData(userMessage.content, { topK: 4 });
-				let sourceReferences: Array<{
-					title: string;
-					url: string;
-					isBuilder: boolean;
-					sourceId?: string;
-					originPostId?: string;
-					originPostTitle?: string;
-					originPostUrl?: string;
-				}> = [];
-
-				if (!results || results.length === 0) {
-					updateMessageById(assistantMessageId, {
-						status: 'done',
-						content:
-							"Désolé — je ne trouve aucune information pertinente dans nos archives familiales pour répondre à cette question."
-					});
-				} else {
-					sourceReferences = results.map((r) => {
-						const isBuilderPost = r.chunk.sourceModel === 'blog-articles' || r.chunk.sourceModel === 'stories';
-						return {
-							title: r.chunk.title,
-							url: r.chunk.url,
-							sourceId: r.chunk.sourceId,
-							isBuilder: isBuilderPost,
-							originPostId: r.chunk.originPostId,
-							originPostTitle: r.chunk.originPostTitle,
-							originPostUrl: r.chunk.originPostUrl
-						};
-					});
-
-					// Deduplicate sources
-					const seenIdentifiers = new Set<string>();
-					sourceReferences = sourceReferences.filter((source) => {
-						// Use sourceId as primary identifier for builder posts, url for others
-						const identifier = source.sourceId || source.url;
-						if (seenIdentifiers.has(identifier)) {
-							return false;
-						}
-						seenIdentifiers.add(identifier);
-						return true;
-					});
-
-					updateMessageById(assistantMessageId, { sources: sourceReferences });
-
-					let assistantContent = '';
-
-					if (ENABLE_LOCAL_LLM) {
-						const chunks = results.map((r) => r.chunk);
-						const summary = await summarizeFromChunksFn(chunks, userMessage.content, (token) => {
-							updateMessageById(assistantMessageId, {
-								status: 'streaming',
-								content: token || 'Je réfléchis…'
-							});
-							scrollToResponseTop();
-						});
-						
-						if (summary) {
-							updateMessageById(assistantMessageId, { status: 'done', content: summary });
-						} else {
-							assistantContent = 'Voici ce que j\'ai trouvé dans les archives :\n\n';
-							for (const r of results) {
-								assistantContent += `• ${r.chunk.title} — "${cleanChunkText(r.chunk.text)}" (source: ${r.chunk.url})\n\n`;
-							}
-							updateMessageById(assistantMessageId, { status: 'done', content: assistantContent });
-						}
-					} else {
-						assistantContent = 'Voici ce que j\'ai trouvé dans les archives :\n\n';
-						for (const r of results) {
-							assistantContent += `• ${r.chunk.title} — "${cleanChunkText(r.chunk.text)}" (source: ${r.chunk.url})\n\n`;
-						}
-						updateMessageById(assistantMessageId, { status: 'done', content: assistantContent });
-					}
-				}
-			} catch (err) {
-				console.error('Search failed', err);
-				messages = [...messages, {
-					id: (Date.now() + 2).toString(),
-					type: 'assistant',
-					content: "Erreur interne: impossible de rechercher dans les archives familiales.",
-					timestamp: new Date()
-				}];
-			} finally {
-				isLoading = false;
-				(async () => {
-					await tick();
-					setTimeout(scrollToResponseTop, 500);
-					inputElement?.focus();
-				})();
+		try {
+			const response = await fetch('/api/ai-vercel-chat', {
+				method: 'POST',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify({ message: content, history })
+			});
+			if (!response.ok) {
+				const message = await response.text();
+				throw new Error(message || 'Le service est momentanément indisponible.');
 			}
-		})();
+			await readStream(response, assistantId);
+		} catch (cause) {
+			console.error('Chat request failed', cause);
+			updateMessage(assistantId, {
+				status: 'error',
+				content: cause instanceof Error ? cause.message : 'La consultation a échoué. Veuillez réessayer.'
+			});
+		} finally {
+			isLoading = false;
+			await tick();
+			inputElement?.focus();
+		}
 	}
-
-	$effect(() => {
-		messages.length;
-		// Only scroll if chat has started (more than just the default message)
-		if (hasStartedChat && messages.length > 1) {
-			(async () => {
-				await tick();
-				await scrollToResponseTop();
-			})();
-		}
-	});
-
-	$effect(() => {
-		if (browser) {
-			sessionStorage.setItem('chatMessages', JSON.stringify(messages));
-		}
-	});
 
 	function clearChatHistory() {
-		if (browser) {
-			sessionStorage.removeItem('chatMessages');
-			messages = [DEFAULT_MESSAGE];
-			hasStartedChat = false;
-		}
+		if (browser) sessionStorage.removeItem('chatMessages');
+		messages = [DEFAULT_MESSAGE];
 	}
-
-	async function loadSystemPrompt() {
-		if (!browser) return;
-		await ensureGenerationModuleLoaded();
-		systemPrompt = getSystemPromptFn();
-	}
-
-	function saveSystemPrompt() {
-		setSystemPromptFn(systemPrompt);
-		showSettings = false;
-	}
-
-	function resetSystemPrompt() {
-		systemPrompt = DEFAULT_SYSTEM_PROMPT;
-		saveSystemPrompt();
-	}
-
-	$effect.pre(() => {
-		if (browser) {
-			ensureGenerationModuleLoaded().then(loadSystemPrompt);
-		}
-	});
 
 	$effect(() => {
-		if (browser) {
-			const handleKeydown = (event: KeyboardEvent) => {
-				if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'S') {
-					event.preventDefault();
-					showSettings = true;
-				}
-			};
-			document.addEventListener('keydown', handleKeydown);
-			return () => document.removeEventListener('keydown', handleKeydown);
-		}
+		if (browser) sessionStorage.setItem('chatMessages', JSON.stringify(messages));
 	});
-
-	function cleanChunkText(text: string): string {
-		let cleaned = text.replace(/\s+/g, ' ').trim();
-		if (cleaned.length > 250) {
-			cleaned = cleaned.slice(0, 250).trim();
-			const lastSpace = cleaned.lastIndexOf(' ');
-			if (lastSpace > 80) cleaned = cleaned.slice(0, lastSpace);
-			cleaned += '...';
-		}
-		return cleaned;
-	}
 </script>
 
 <svelte:head>
@@ -410,46 +197,34 @@
 </svelte:head>
 
 <div class="flex min-h-screen flex-col">
-	<!-- Header -->
 	<section class="flex-shrink-0 border-b border-primary-200 px-4 py-8 sm:px-6 lg:px-8">
 		<div class="mx-auto max-w-4xl">
-			<div class="flex items-start justify-between">
-				<div class="flex-1">
+			<div class="flex items-start justify-between gap-4">
+				<div>
 					<h1 class="mb-2 font-serif text-3xl font-bold text-primary-900">Assistant Familial IA</h1>
 					<p class="text-primary-700">
-						Posez vos questions sur l'histoire de notre famille et explorez nos archives numériques
+						Posez vos questions sur l'histoire de notre famille et explorez nos archives numériques.
 					</p>
 				</div>
-				<div class="ml-4 flex flex-shrink-0 gap-2">
-					<button
-						onclick={clearChatHistory}
-						class="rounded-lg border border-primary-300 px-4 py-2 text-sm text-primary-700 transition-all hover:border-primary-500 hover:bg-primary-50"
-						title="Start a new chat"
-					>
-						+ Nouveau Chat
-					</button>
-				</div>
+				<button
+					onclick={clearChatHistory}
+					class="rounded-lg border border-primary-300 px-4 py-2 text-sm text-primary-700 transition-all hover:border-primary-500 hover:bg-primary-50"
+				>
+					+ Nouveau Chat
+				</button>
 			</div>
 		</div>
 	</section>
 
-	<!-- Chat Container -->
-	<div bind:this={chatContainer} class="chat-container flex-1 px-4 py-8 sm:px-6 lg:px-8">
+	<div class="chat-container flex-1 px-4 py-8 sm:px-6 lg:px-8">
 		<div class="mx-auto max-w-2xl space-y-6 pb-32">
-			{#each messages as message, i (message.id)}
+			{#each messages as message, index (message.id)}
 				<div data-message-id={message.id} class="flex gap-4" class:justify-end={message.type === 'user'}>
 					{#if message.type === 'assistant'}
-						<div class="flex-shrink-0">
-							<div
-								class="flex h-8 w-8 items-center justify-center rounded-full bg-primary-900 text-cream"
-							>
-								<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-									<path d="M10 0a10 10 0 110 20 10 10 0 010-20zm0 2a8 8 0 100 16 8 8 0 000-16z" />
-								</svg>
-							</div>
+						<div class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary-900 text-cream">
+							<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 0a10 10 0 110 20 10 10 0 010-20zm0 2a8 8 0 100 16 8 8 0 000-16z" /></svg>
 						</div>
 					{/if}
-
 					<div class="flex max-w-xs flex-col lg:max-w-2xl" class:max-w-md={message.type === 'user'}>
 						<div
 							class="rounded-lg p-4 shadow-sm"
@@ -459,168 +234,57 @@
 							class:text-cream={message.type === 'user'}
 						>
 							<p class="whitespace-pre-wrap">{message.content}</p>
-
 							{#if message.type === 'assistant' && message.sources && message.sources.length > 0}
 								<div class="mt-4 space-y-2 border-t border-primary-100 pt-3">
-									<p class="text-xs font-semibold text-primary-700">Sources:</p>
-									<div class="space-y-1">
-										{#each message.sources as source}
-											<div class="space-y-1">
-												<a
-													href={source.isBuilder && source.sourceId ? `/histoires/${generateBlogUrl(source.sourceId, source.title)}` : source.url}
-													target={source.isBuilder ? undefined : "_blank"}
-													rel={source.isBuilder ? undefined : "noopener noreferrer"}
-													class="block text-xs text-accent hover:underline"
-													title={source.title}
-												>
-													{#if source.isBuilder}
-														<span class="inline-block rounded bg-accent/20 px-2 py-1 text-primary-900">📖 {source.title}</span>
-													{:else}
-														<span>📄 {source.title}</span>
-													{/if}
-												</a>
-
-												{#if !source.isBuilder && source.originPostUrl}
-													<a
-														href={source.originPostUrl}
-														class="block text-[11px] text-primary-700 hover:underline"
-														title={source.originPostTitle ? `Trouvé dans: ${source.originPostTitle}` : 'Trouvé dans un article'}
-													>
-														Trouvé dans: <span class="inline-block rounded bg-accent/10 px-2 py-0.5 text-primary-900">📖 {source.originPostTitle || 'Article'}</span>
-													</a>
-												{/if}
-											</div>
-										{/each}
-									</div>
+									<p class="text-xs font-semibold text-primary-700">Sources vérifiées :</p>
+									{#each message.sources as source}
+										{#if source.url}
+											<a
+											href={source.url}
+											target={source.url.startsWith('/') ? undefined : '_blank'}
+											rel={source.url.startsWith('/') ? undefined : 'noopener noreferrer'}
+											class="block text-xs text-accent hover:underline"
+										>
+											{source.title}
+										</a>
+									{:else}
+										<p class="text-xs text-primary-700">{source.title}</p>
+									{/if}
+								{/each}
 								</div>
 							{/if}
 						</div>
-
-						{#if i === 0 && messages.length === 1}
+						{#if index === 0 && messages.length === 1}
 							<div class="mt-4 flex flex-wrap gap-2">
 								{#each STARTER_QUESTIONS as question}
-									<button
-										onclick={() => handleSendMessage(question)}
-										class="rounded-full border border-primary-200 bg-white px-3 py-1.5 text-xs text-primary-700 transition-all hover:border-primary-400 hover:bg-primary-50"
-									>
-										{question}
-									</button>
+									<button onclick={() => handleSendMessage(question)} class="rounded-full border border-primary-200 bg-white px-3 py-1.5 text-xs text-primary-700 transition-all hover:border-primary-400 hover:bg-primary-50">{question}</button>
 								{/each}
 							</div>
 						{/if}
-
-						{#if message.type === 'assistant' && i === messages.length - 1 && !isLoading && i > 0}
+						{#if message.type === 'assistant' && index === messages.length - 1 && !isLoading && index > 0}
 							<div class="mt-4 flex flex-wrap gap-2">
 								{#each FOLLOW_UP_SUGGESTIONS as suggestion}
-									<button
-										onclick={() => handleSendMessage(suggestion)}
-										class="rounded-full border border-accent/30 bg-accent/5 px-3 py-1.5 text-xs text-primary-800 transition-all hover:border-accent hover:bg-accent/10"
-									>
-										{suggestion}
-									</button>
+									<button onclick={() => handleSendMessage(suggestion)} class="rounded-full border border-accent/30 bg-accent/5 px-3 py-1.5 text-xs text-primary-800 transition-all hover:border-accent hover:bg-accent/10">{suggestion}</button>
 								{/each}
 							</div>
 						{/if}
-
-						<span
-							class="mt-1 text-xs text-primary-600"
-							class:text-right={message.type === 'user'}
-						>
-							{message.timestamp.toLocaleTimeString('fr-FR', {
-								hour: '2-digit',
-								minute: '2-digit'
-							})}
+						<span class="mt-1 text-xs text-primary-600" class:text-right={message.type === 'user'}>
+							{message.timestamp.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
 						</span>
 					</div>
-
 					{#if message.type === 'user'}
-						<div class="flex-shrink-0">
-							<div class="bg-gold flex h-8 w-8 items-center justify-center rounded-full">
-								<svg class="h-5 w-5 text-primary-900" fill="currentColor" viewBox="0 0 20 20">
-									<path d="M10 0a10 10 0 110 20 10 10 0 010-20zm0 2a8 8 0 100 16 8 8 0 000-16z" />
-								</svg>
-							</div>
+						<div class="bg-gold flex h-8 w-8 flex-shrink-0 items-center justify-center">
+							<svg class="h-5 w-5 text-primary-900" fill="currentColor" viewBox="0 0 20 20"><path d="M10 0a10 10 0 110 20 10 10 0 010-20zm0 2a8 8 0 100 16 8 8 0 000-16z" /></svg>
 						</div>
 					{/if}
 				</div>
 			{/each}
-
-			{#if isLoading && currentProgress.status === 'downloading'}
-				<div class="flex gap-4">
-					<div class="flex-shrink-0">
-						<div
-							class="flex h-8 w-8 items-center justify-center rounded-full bg-primary-900 text-cream"
-						>
-							<svg class="h-5 w-5 animate-spin" fill="currentColor" viewBox="0 0 20 20">
-								<path d="M10 0a10 10 0 110 20 10 10 0 010-20zm0 2a8 8 0 100 16 8 8 0 000-16z" />
-							</svg>
-						</div>
-					</div>
-					<div class="flex flex-col gap-2 rounded-lg bg-white p-4 text-primary-900 shadow-sm min-w-[200px]">
-						<div class="flex items-center gap-2">
-							<span class="animate-pulse">●</span>
-							<span class="animate-pulse delay-100">●</span>
-							<span class="animate-pulse delay-200">●</span>
-							<span class="ml-2 text-sm font-medium">
-								{#if currentProgress.status === 'downloading'}
-									Chargement IA&nbsp;: {currentProgress.percentage.toFixed(0)}%
-								{:else}
-									Traitement en cours...
-								{/if}
-							</span>
-						</div>
-
-						{#if currentProgress.status === 'downloading'}
-							<div class="mt-2 space-y-2">
-								<div class="flex justify-between text-[10px] text-primary-600">
-									<span>Téléchargement du modèle...</span>
-									<span>{currentProgress.percentage.toFixed(0)}%</span>
-								</div>
-								<div class="h-1.5 w-full overflow-hidden rounded-full bg-primary-100">
-									<div
-										class="h-full bg-primary-900 transition-all duration-300"
-										style="width: {currentProgress.percentage}%"
-									></div>
-								</div>
-								{#if currentProgress.file}
-									<p class="truncate text-[9px] text-primary-400">{currentProgress.file}</p>
-								{/if}
-
-								<button
-									onclick={() => {
-										cancelModelLoadingFn();
-										isLoading = false;
-									}}
-									class="mt-1 text-[10px] font-bold text-red-600 hover:underline"
-								>
-									✕ Annuler le téléchargement
-								</button>
-								{#if networkWarning}
-									<p class="mt-1 text-[9px] italic text-amber-600 leading-tight">
-										⚠️ {networkWarning}
-									</p>
-								{/if}
-								<p class="mt-1 text-[10px] text-primary-500 leading-tight">
-									L'IA est en cours de chargement sur votre appareil. Ce processus est nécessaire pour garantir la confidentialité et la rapidité des réponses. Merci de patienter, ce chargement n'a lieu qu'une seule fois.
-								</p>
-							</div>
-						{/if}
-					</div>
-				</div>
-			{/if}
 		</div>
 	</div>
 
-	<!-- Input Area -->
-	<div class="sticky bottom-0 border-t border-primary-200 bg-white px-4 py-6 shadow-lg sm:px-6 lg:px-8 z-40">
-		<div class="mx-auto max-w-4xl w-full">
-			<form
-				onsubmit={(e) => {
-					e.preventDefault();
-					handleSendMessage();
-				}}
-				class="flex gap-4"
-			>
+	<div class="sticky bottom-0 z-40 border-t border-primary-200 bg-white px-4 py-6 shadow-lg sm:px-6 lg:px-8">
+		<div class="mx-auto w-full max-w-4xl">
+			<form onsubmit={(event) => { event.preventDefault(); handleSendMessage(); }} class="flex gap-4">
 				<input
 					type="text"
 					bind:value={messageInput}
@@ -629,74 +293,15 @@
 					class="flex-1 rounded-lg border border-primary-300 bg-cream px-4 py-3 text-primary-900 placeholder-primary-600 outline-none transition-colors focus:border-primary-900 focus:bg-white"
 					disabled={isLoading}
 				/>
-				<button
-					type="submit"
-					disabled={isLoading || !messageInput.trim()}
-					class="rounded-lg bg-primary-900 px-6 py-3 font-semibold text-cream transition-all hover:bg-primary-800 disabled:cursor-not-allowed disabled:opacity-50"
-				>
-					<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-						<path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5.951-2.975 5.951 2.975a1 1 0 001.169-1.409l-7-14z" />
-					</svg>
+				<button type="submit" disabled={isLoading || !messageInput.trim()} class="rounded-lg bg-primary-900 px-6 py-3 font-semibold text-cream transition-all hover:bg-primary-800 disabled:cursor-not-allowed disabled:opacity-50">
+					{isLoading ? '…' : 'Envoyer'}
 				</button>
 			</form>
+			<p class="mt-2 text-xs text-primary-600">Les réponses s’appuient uniquement sur les archives familiales disponibles.</p>
 		</div>
 	</div>
-
-	<!-- Settings Modal -->
-	{#if showSettings}
-		<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-			<div class="w-full max-w-2xl rounded-lg bg-white p-6 shadow-xl">
-				<h2 class="mb-4 font-serif text-2xl font-bold text-primary-900">Personnalité de l'Assistant</h2>
-
-				<div class="mb-4">
-					<label for="prompt" class="mb-2 block text-sm font-semibold text-primary-900">
-						Instructions système (prompt personnalisé):
-					</label>
-					<textarea
-						id="prompt"
-						bind:value={systemPrompt}
-						class="w-full rounded-lg border border-primary-300 bg-cream p-3 text-sm text-primary-900 outline-none transition-colors focus:border-primary-900 focus:bg-white"
-						rows="6"
-						placeholder="Décrivez comment l'assistant doit se comporter..."
-					/>
-				</div>
-
-				<div class="mb-6 rounded-lg bg-primary-50 p-3">
-					<p class="text-xs text-primary-700">
-						<strong>Conseil:</strong> Décrivez le rôle, le ton, et le style de réponse souhaité. Par exemple: "Je suis une femme âgée qui raconte l'histoire de ma famille avec tendresse..."
-					</p>
-				</div>
-
-				<div class="flex gap-3">
-					<button
-						onclick={saveSystemPrompt}
-						class="flex-1 rounded-lg bg-primary-900 px-4 py-2 font-semibold text-cream transition-all hover:bg-primary-800"
-					>
-						✓ Enregistrer
-					</button>
-					<button
-						onclick={() => (showSettings = false)}
-						class="rounded-lg border border-primary-300 px-4 py-2 text-primary-700 transition-all hover:border-primary-500 hover:bg-primary-50"
-					>
-						Annuler
-					</button>
-					<button
-						onclick={resetSystemPrompt}
-						class="rounded-lg border border-primary-300 px-4 py-2 text-xs text-primary-700 transition-all hover:border-primary-500 hover:bg-primary-50"
-						title="Restaurer le prompt par défaut"
-					>
-						↻ Réinitialiser
-					</button>
-				</div>
-			</div>
-		</div>
-	{/if}
 </div>
 
 <style>
-	:global(.chat-container) {
-		scroll-behavior: smooth;
-	}
-	.delay-100 { animation-delay: 0.1s; }
-	.delay-200 { animation-delay: 0.2s; }
+	:global(.chat-container) { scroll-behavior: smooth; }
 </style>
