@@ -169,8 +169,7 @@
 			if (!response.ok) {
 				const body = await response.json().catch(() => null);
 					throw new Error(body?.message || 'Le service est momentanément indisponible.');
-				throw new Error(message || 'Le service est momentanément indisponible.');
-			}
+							}
 			await readStream(response, assistantId);
 		} catch (cause) {
 			console.error('Chat request failed', cause);

@@ -7,7 +7,6 @@ import { buildArchiveSystemPrompt, validateChatRequest, ChatRequestError } from 
 import { searchArchive } from '$lib/server/retrieval';
 import {
 	calculateCost,
-	recordFailedUsage,
 	recordUsage,
 	reserveUsage,
 	UsageLimitError,
@@ -93,10 +92,7 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 		hits = searchResult.hits;
 		embeddingTokens = searchResult.embeddingTokens;
 	} catch (cause) {
-		await recordFailedUsage(reservation, providerConfig.modelName, config).catch((recordError) =>
-			console.error('Failed to record retrieval failure', recordError)
-		);
-		console.error('Archive retrieval error', cause);
+		console.error('Archive retrieval error; preserving usage reservation', cause);
 		return error(503, 'Les archives sont momentanément indisponibles.');
 	}
 
@@ -104,19 +100,29 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 		await recordUsage(
 			reservation,
 			{
-					inputTokens: embeddingTokens,
-					outputTokens: 0,
-					costUsd: embeddingCost(embeddingTokens, config)
-				},
+				inputTokens: embeddingTokens,
+				outputTokens: 0,
+				costUsd: embeddingCost(embeddingTokens, config)
+			},
 			providerConfig.modelName,
 			config
 		).catch((cause) => console.error('Failed to reconcile empty retrieval', cause));
 		return new Response(
 			new ReadableStream({
 				start(controller) {
-					controller.enqueue(new TextEncoder().encode(sse({ type: 'text', text: ARCHIVE_NOT_FOUND_MESSAGE })));
 					controller.enqueue(
-						encoder.encode(sse({ type: 'done', sources: [], inputTokens: embeddingTokens, outputTokens: 0, totalTokens: embeddingTokens }))
+						new TextEncoder().encode(sse({ type: 'text', text: ARCHIVE_NOT_FOUND_MESSAGE }))
+					);
+					controller.enqueue(
+						new TextEncoder().encode(
+							sse({
+								type: 'done',
+								sources: [],
+								inputTokens: embeddingTokens,
+								outputTokens: 0,
+								totalTokens: embeddingTokens
+							})
+						)
 					);
 					controller.enqueue(new TextEncoder().encode(sse('[DONE]')));
 					controller.close();
@@ -132,9 +138,16 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 	try {
 		model = createModelForChat();
 	} catch (cause) {
-		await recordFailedUsage(reservation, providerConfig.modelName, config).catch((recordError) =>
-			console.error('Failed to record provider failure', recordError)
-		);
+		await recordUsage(
+			reservation,
+			{
+				inputTokens: embeddingTokens,
+				outputTokens: 0,
+				costUsd: embeddingCost(embeddingTokens, config)
+			},
+			providerConfig.modelName,
+			config
+		).catch((recordError) => console.error('Failed to reconcile embedding usage', recordError));
 		console.error('AI model creation error', cause);
 		return error(503, 'Le service de consultation est momentanément indisponible.');
 	}
@@ -178,7 +191,10 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 						config
 					);
 				} catch (cause) {
-					console.error('Failed to reconcile completed AI usage; reservation remains conservative', cause);
+					console.error(
+						'Failed to reconcile completed AI usage; reservation remains conservative',
+						cause
+					);
 				}
 				controller.enqueue(
 					encoder.encode(

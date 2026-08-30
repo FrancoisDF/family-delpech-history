@@ -75,7 +75,9 @@ async function callUsageRpc(
 		signal: AbortSignal.timeout(5000)
 	});
 	if (!response.ok) throw new Error(`Usage service returned ${response.status}`);
-	return response.json();
+	if (response.status === 204) return undefined;
+	const text = await response.text();
+	return text ? JSON.parse(text) : undefined;
 }
 
 export async function reserveUsage(
@@ -123,24 +125,6 @@ export async function recordUsage(
 		p_input_tokens: usage.inputTokens,
 		p_output_tokens: usage.outputTokens,
 		p_actual_cost_usd: usage.costUsd
-	});
-}
-
-export async function recordFailedUsage(
-	reservation: UsageReservation,
-	model: string,
-	config = getAiRuntimeConfig()
-) {
-	await callUsageRpc(config, 'record_ai_usage', {
-		p_reservation_id: reservation.reservationId,
-		p_request_id: reservation.requestId,
-		p_visitor_hash: reservation.visitorHash,
-		p_ip_hash: reservation.ipHash,
-		p_model: model,
-		p_status: 'failed',
-		p_input_tokens: 0,
-		p_output_tokens: 0,
-		p_actual_cost_usd: 0
 	});
 }
 

@@ -129,5 +129,8 @@ begin
 end;
 $$;
 
+revoke execute on function public.reserve_ai_usage(uuid, text, text, integer, numeric, integer, integer, numeric, integer, numeric) from public, anon, authenticated;
+revoke execute on function public.record_ai_usage(uuid, uuid, text, text, text, text, integer, integer, numeric) from public, anon, authenticated;
+
 grant execute on function public.reserve_ai_usage(uuid, text, text, integer, numeric, integer, integer, numeric, integer, numeric) to service_role;
 grant execute on function public.record_ai_usage(uuid, uuid, text, text, text, text, integer, integer, numeric) to service_role;

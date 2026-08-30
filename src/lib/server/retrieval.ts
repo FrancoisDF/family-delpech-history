@@ -101,7 +101,8 @@ export async function createQueryEmbedding(
 	}
 	return {
 		embedding,
-		inputTokens: result.usage?.prompt_tokens || result.usage?.input_tokens || Math.ceil(query.length / 4)
+		inputTokens:
+			result.usage?.prompt_tokens || result.usage?.input_tokens || Math.ceil(query.length / 4)
 	};
 }
 
