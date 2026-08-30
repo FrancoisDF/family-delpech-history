@@ -31,21 +31,6 @@ export const storySectionCardInfo: RegisteredComponent = {
 			allowedFileTypes: ['mp3', 'wav', 'ogg', 'mpeg'],
 			defaultValue: '',
 			required: false
-		},
-		{
-			name: 'tags',
-			type: 'string',
-			defaultValue: '',
-			required: false,
-			helperText:
-				'Comma-separated list of tags to filter related blog posts (e.g., "family,history,1800s")'
-		},
-		{
-			name: 'blog',
-			type: 'object',
-			defaultValue: null,
-			required: false,
-			helperText: 'Main blog article associated with this timeline section'
 		}
 	]
 };

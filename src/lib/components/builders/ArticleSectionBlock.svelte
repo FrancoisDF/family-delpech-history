@@ -23,7 +23,7 @@
 		connectTop = false,
 		connectBottom = false,
 		anchorId = ''
-	} = $props<ArticleSectionBlockProps>();
+	}: ArticleSectionBlockProps = $props();
 
 	const spacingTop = $derived(connectTop ? '' : 'pt-12');
 	const spacingBottom = $derived(connectBottom ? '' : 'pb-12');

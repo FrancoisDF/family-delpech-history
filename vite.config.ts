@@ -1,6 +1,6 @@
 /// <reference types="vitest/config" />
 import { sveltekit } from '@sveltejs/kit/vite';
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
@@ -10,7 +10,16 @@ const dirname =
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
-	plugins: [sveltekit()],
+	plugins: [sveltekit() as any],
+	optimizeDeps: {
+		exclude: [
+			'@builder.io/sdk-svelte',
+			'@storybook/svelte',
+			'@storybook/sveltekit',
+			'@storybook/addon-vitest',
+			'isolated-vm'
+		]
+	},
 	test: {
 		projects: [
 			{
@@ -20,7 +29,7 @@ export default defineConfig({
 					environment: 'browser',
 					browser: {
 						enabled: true,
-						provider: 'playwright',
+						provider: playwright({}),
 						instances: [
 							{
 								browser: 'chromium'
@@ -43,6 +52,11 @@ export default defineConfig({
 			},
 			{
 				extends: true,
+				resolve: {
+					alias: {
+						'@builder.io/sdk-svelte': path.resolve(dirname, 'src/mocks/builder-sdk.mock.ts')
+					}
+				},
 				plugins: [
 					// The plugin will run tests for the stories defined in your Storybook config
 					// See options at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon#storybooktest

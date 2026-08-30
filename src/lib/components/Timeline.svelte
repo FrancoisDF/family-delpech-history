@@ -32,8 +32,8 @@
 		showProgression?: boolean;
 	}>();
 
-	let sections = initialSections ?? (await fetchSections()) ?? [];
-	let articles = initialArticles ?? (await fetchRelatedArticles()) ?? [];
+	let sections: Section[] = initialSections ?? (await fetchSections()) ?? [];
+	let articles: BlogPost[] = initialArticles ?? (await fetchRelatedArticles()) ?? [];
 
 	let timelineContainer = $state<HTMLElement>();
 	let scrubberContainer = $state<HTMLElement>();

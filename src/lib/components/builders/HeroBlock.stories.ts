@@ -1,89 +1,63 @@
-import type { Meta, StoryObj } from '@storybook/svelte';
+import type { Meta, StoryObj } from '@storybook/sveltekit';
 import HeroBlock from './HeroBlock.svelte';
 
 const meta = {
 	title: 'Builder Components/HeroBlock',
 	component: HeroBlock,
 	tags: ['autodocs'],
+	parameters: { layout: 'fullscreen' },
 	argTypes: {
-		title: {
-			control: 'text',
-			description: 'Hero title text'
-		},
-		description: {
-			control: 'text',
-			description: 'Hero description text'
-		},
-		variant: {
-			control: 'select',
-			options: ['grayscale', 'color', 'image-focus'],
-			description: 'Visual variant'
-		},
-		primaryButtonText: {
-			control: 'text',
-			description: 'Primary button text'
-		},
-		primaryButtonLink: {
-			control: 'text',
-			description: 'Primary button link'
-		},
-		secondaryButtonText: {
-			control: 'text',
-			description: 'Secondary button text'
-		},
-		secondaryButtonLink: {
-			control: 'text',
-			description: 'Secondary button link'
-		},
-		backgroundImage: {
-			control: 'text',
-			description: 'Background image URL'
-		},
-		backgroundImageDisplayMode: {
-			control: 'select',
-			options: ['cover', 'contain'],
-			description: 'Background image display mode'
-		}
+		title: { control: 'text' },
+		description: { control: 'text' },
+		variant: { control: 'select', options: ['grayscale', 'color', 'image-focus'] },
+		primaryButtonText: { control: 'text' },
+		primaryButtonLink: { control: 'text' },
+		secondaryButtonText: { control: 'text' },
+		secondaryButtonLink: { control: 'text' },
+		backgroundImage: { control: 'text' },
+		backgroundImageDisplayMode: { control: 'select', options: ['cover', 'contain'] }
 	}
-} satisfies Meta<HeroBlock>;
+} satisfies Meta<typeof HeroBlock>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+const actions = {
+	primaryButtonText: 'Explorer',
+	primaryButtonLink: '/histoires',
+	secondaryButtonText: 'En savoir plus',
+	secondaryButtonLink: '/a-propos'
+};
+
 export const Default: Story = {
 	args: {
-		title: 'Histoire de Famille',
-		description: 'Discover the stories and history of your family',
-		primaryButtonText: 'Explore',
-		primaryButtonLink: '/',
-		secondaryButtonText: 'Learn More',
-		secondaryButtonLink: '/',
-		variant: 'grayscale'
+		title: 'Histoire de famille',
+		description: 'Découvrez les histoires et les archives de votre famille.',
+		...actions,
+		variant: 'grayscale',
+		backgroundImage: '',
+		backgroundImageDisplayMode: 'cover'
 	}
 };
 
 export const WithBackground: Story = {
 	args: {
 		title: 'Familia Delpech',
-		description: 'Un voyage à travers le temps et les générations',
-		primaryButtonText: 'Commencer',
-		primaryButtonLink: '/',
-		secondaryButtonText: 'En savoir plus',
-		secondaryButtonLink: '/',
+		description: 'Un voyage à travers le temps et les générations.',
+		...actions,
 		variant: 'color',
-		backgroundImage:
-			'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=800&fit=crop'
+		backgroundImage: '/logo-ddf.png',
+		backgroundImageDisplayMode: 'contain'
 	}
 };
 
-export const Minimal: Story = {
+export const ImageFocus: Story = {
 	args: {
-		title: 'Welcome',
-		description: 'Your family history awaits',
-		primaryButtonText: 'Get Started',
-		primaryButtonLink: '/',
-		secondaryButtonText: '',
-		secondaryButtonLink: '/',
-		variant: 'grayscale'
+		title: 'Les archives prennent vie',
+		description: 'Un patrimoine à découvrir et à transmettre.',
+		...actions,
+		variant: 'image-focus',
+		backgroundImage: '/logo-ddf.png',
+		backgroundImageDisplayMode: 'cover'
 	}
 };
