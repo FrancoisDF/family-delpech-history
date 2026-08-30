@@ -5,7 +5,7 @@ export const dividerBlockInfo: RegisteredComponent = {
 	component: DividerBlock as any,
 	name: 'DividerBlock',
 	friendlyName: 'Séparateur',
-	tag: 'Layout & Spacing',
+	tag: 'Mise en page et espacement',
 	inputs: [
 		{
 			name: 'style',

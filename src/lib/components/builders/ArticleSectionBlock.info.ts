@@ -5,7 +5,7 @@ export const articleSectionBlockInfo: RegisteredComponent = {
 	component: ArticleSectionBlock as any,
 	name: 'ArticleSectionBlock',
 	friendlyName: 'Section d’article',
-	tag: 'Content Sections',
+	tag: 'Sections de contenu',
 	inputs: [
 		{
 			name: 'title',

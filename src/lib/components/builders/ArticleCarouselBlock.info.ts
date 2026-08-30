@@ -5,7 +5,7 @@ export const articleCarouselBlockInfo: RegisteredComponent = {
 	component: ArticleCarouselBlock as any,
 	name: 'ArticleCarouselBlock',
 	friendlyName: 'Carrousel d’articles',
-	tag: 'Carousels & Sliders',
+	tag: 'Carrousels et curseurs',
 	inputs: [
 		{
 			name: 'title',

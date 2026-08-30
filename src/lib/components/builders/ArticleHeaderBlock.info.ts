@@ -5,7 +5,7 @@ export const articleHeaderBlockInfo: RegisteredComponent = {
 	component: ArticleHeaderBlock as any,
 	name: 'ArticleHeaderBlock',
 	friendlyName: 'En-tête d’article',
-	tag: 'Headers & Titles',
+	tag: 'En-têtes et titres',
 	inputs: [
 		{
 			name: 'title',

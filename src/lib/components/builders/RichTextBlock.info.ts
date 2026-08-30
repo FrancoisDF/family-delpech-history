@@ -5,7 +5,7 @@ export const richTextBlockInfo: RegisteredComponent = {
 	component: RichTextBlock as any,
 	name: 'RichTextBlock',
 	friendlyName: 'Texte enrichi',
-	tag: 'Rich Text & Markdown',
+	tag: 'Texte enrichi et Markdown',
 	inputs: [
 		{
 			name: 'content',

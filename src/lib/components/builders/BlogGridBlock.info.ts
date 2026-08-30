@@ -5,7 +5,7 @@ export const blogGridBlockInfo: RegisteredComponent = {
 	component: BlogGridBlock as any,
 	name: 'BlogGridBlock',
 	friendlyName: 'Grille d’articles',
-	tag: 'Content Grids',
+	tag: 'Grilles de contenu',
 	inputs: [
 		{
 			name: 'title',

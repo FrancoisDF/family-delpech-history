@@ -5,7 +5,7 @@ export const calloutBlockInfo: RegisteredComponent = {
 	component: CalloutBlock as any,
 	name: 'CalloutBlock',
 	friendlyName: 'Encadré d’information',
-	tag: 'Callouts & Alerts',
+	tag: 'Encadrés et alertes',
 	inputs: [
 		{
 			name: 'title',

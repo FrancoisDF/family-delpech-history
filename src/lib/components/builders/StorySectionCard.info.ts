@@ -5,7 +5,7 @@ export const storySectionCardInfo: RegisteredComponent = {
 	component: StorySectionCard as any,
 	name: 'StorySectionCard',
 	friendlyName: 'Carte de section historique',
-	tag: 'Story Section Card',
+	tag: 'Carte de section historique',
 	inputs: [
 		{
 			name: 'title',

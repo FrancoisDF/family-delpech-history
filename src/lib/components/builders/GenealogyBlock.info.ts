@@ -5,7 +5,7 @@ export const genealogyBlockInfo: RegisteredComponent = {
 	component: GenealogyBlock as any,
 	name: 'GenealogyBlock',
 	friendlyName: 'Arbre généalogique',
-	tag: 'Genealogy Tree',
+	tag: 'Arbre généalogique',
 	description: 'Interactive genealogical tree component',
 	image:
 		'https://cdn.builder.io/api/v1/image/assets/TEMP/5c7e8f9f0c4f8e7d6c5b4a3b2c1d0e9f?width=500',

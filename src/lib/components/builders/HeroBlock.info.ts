@@ -5,7 +5,7 @@ export const heroBlockInfo: RegisteredComponent = {
 	component: HeroBlock as any,
 	name: 'HeroBlock',
 	friendlyName: 'Bannière principale',
-	tag: 'Hero & Headers',
+	tag: 'Bannière et en-têtes',
 	inputs: [
 		{
 			name: 'variant',

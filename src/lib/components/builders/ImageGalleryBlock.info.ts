@@ -5,7 +5,7 @@ export const imageGalleryBlockInfo: RegisteredComponent = {
 	component: ImageGalleryBlock as any,
 	name: 'ImageGalleryBlock',
 	friendlyName: 'Galerie d’images',
-	tag: 'Galleries & Collections',
+	tag: 'Galeries et collections',
 	inputs: [
 		{
 			name: 'title',

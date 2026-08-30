@@ -5,7 +5,7 @@ export const textSectionBlockInfo: RegisteredComponent = {
 	component: TextSectionBlock as any,
 	name: 'TextSectionBlock',
 	friendlyName: 'Section de texte',
-	tag: 'Text & Paragraphs',
+	tag: 'Texte et paragraphes',
 	inputs: [
 		{
 			name: 'content',

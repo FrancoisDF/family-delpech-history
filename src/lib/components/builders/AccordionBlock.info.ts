@@ -5,7 +5,7 @@ export const accordionBlockInfo: RegisteredComponent = {
 	component: AccordionBlock as any,
 	name: 'AccordionBlock',
 	friendlyName: 'Accordéon de documents',
-	tag: 'Accordion block',
+	tag: 'Accordéon de documents',
 	inputs: [
 		{
 			name: 'title',

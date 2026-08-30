@@ -5,7 +5,7 @@ export const imageBlockInfo: RegisteredComponent = {
 	component: ImageBlock as any,
 	name: 'ImageBlock',
 	friendlyName: 'Image',
-	tag: 'Images & Media',
+	tag: 'Images et médias',
 	inputs: [
 		{
 			name: 'imageUrl',

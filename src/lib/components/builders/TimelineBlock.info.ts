@@ -5,7 +5,7 @@ export const timelineBlockInfo: RegisteredComponent = {
 	component: TimelineBlock as any,
 	name: 'TimelineBlock',
 	friendlyName: 'Frise chronologique',
-	tag: 'Timeline & History',
+	tag: 'Frise et histoire',
 	inputs: [
 		{
 			name: 'title',

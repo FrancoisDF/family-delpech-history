@@ -5,7 +5,7 @@ export const videoEmbedBlockInfo: RegisteredComponent = {
 	component: VideoEmbedBlock as any,
 	name: 'VideoEmbedBlock',
 	friendlyName: 'Vidéo intégrée',
-	tag: 'Images & Media',
+	tag: 'Images et médias',
 	inputs: [
 		{
 			name: 'videoUrl',

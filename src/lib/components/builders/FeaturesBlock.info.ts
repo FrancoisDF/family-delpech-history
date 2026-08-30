@@ -5,7 +5,7 @@ export const featuresBlockInfo: RegisteredComponent = {
 	component: FeaturesBlock as any,
 	name: 'FeaturesBlock',
 	friendlyName: 'Fonctionnalités',
-	tag: 'Features & Benefits',
+	tag: 'Fonctionnalités et avantages',
 	inputs: [
 		{
 			name: 'title',

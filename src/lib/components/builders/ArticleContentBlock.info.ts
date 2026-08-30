@@ -5,7 +5,7 @@ export const articleContentBlockInfo: RegisteredComponent = {
 	component: ArticleContentBlock as any,
 	name: 'ArticleContentBlock',
 	friendlyName: 'Contenu d’article',
-	tag: 'Text & Paragraphs',
+	tag: 'Texte et paragraphes',
 	inputs: [
 		{
 			name: 'content',

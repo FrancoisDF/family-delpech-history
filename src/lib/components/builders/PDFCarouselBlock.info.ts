@@ -5,7 +5,7 @@ export const pdfCarouselBlockInfo: RegisteredComponent = {
 	component: PDFCarouselBlock as any,
 	name: 'PDFCarouselBlock',
 	friendlyName: 'Carrousel de PDF',
-	tag: 'PDF Carousel',
+	tag: 'Carrousel de PDF',
 	inputs: [
 		{
 			name: 'title',

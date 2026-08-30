@@ -5,7 +5,7 @@ export const statsBlockInfo: RegisteredComponent = {
 	component: StatsBlock as any,
 	name: 'StatsBlock',
 	friendlyName: 'Statistiques',
-	tag: 'Stats & Metrics',
+	tag: 'Statistiques et indicateurs',
 	inputs: [
 		{
 			name: 'title',
