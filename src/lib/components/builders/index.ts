@@ -117,34 +117,118 @@ export {
 Builder.register('insertMenu', {
 	name: 'Composants de contenu d’article',
 	items: [
-		{ name: textSectionBlockInfo.friendlyName, item: textSectionBlockInfo.name },
-		{ name: imageBlockInfo.friendlyName, item: imageBlockInfo.name },
-		{ name: richTextBlockInfo.friendlyName, item: richTextBlockInfo.name },
-		{ name: articleSectionBlockInfo.friendlyName, item: articleSectionBlockInfo.name },
-		{ name: quoteBlockInfo.friendlyName, item: quoteBlockInfo.name },
-		{ name: calloutBlockInfo.friendlyName, item: calloutBlockInfo.name },
-		{ name: videoEmbedBlockInfo.friendlyName, item: videoEmbedBlockInfo.name },
-		{ name: dividerBlockInfo.friendlyName, item: dividerBlockInfo.name },
-		{ name: accordionBlockInfo.friendlyName, item: accordionBlockInfo.name },
-		{ name: articleContentBlockInfo.friendlyName, item: articleContentBlockInfo.name },
-		{ name: storySectionCardInfo.friendlyName, item: storySectionCardInfo.name },
-		{ name: pdfCarouselBlockInfo.friendlyName, item: pdfCarouselBlockInfo.name }
+		{
+			name: textSectionBlockInfo.tag,
+			item: textSectionBlockInfo.name,
+			friendlyName: textSectionBlockInfo.friendlyName
+		},
+		{
+			name: imageBlockInfo.tag,
+			item: imageBlockInfo.name,
+			friendlyName: imageBlockInfo.friendlyName
+		},
+		{
+			name: richTextBlockInfo.tag,
+			item: richTextBlockInfo.name,
+			friendlyName: richTextBlockInfo.friendlyName
+		},
+		{
+			name: articleSectionBlockInfo.tag,
+			item: articleSectionBlockInfo.name,
+			friendlyName: articleSectionBlockInfo.friendlyName
+		},
+		{
+			name: quoteBlockInfo.tag,
+			item: quoteBlockInfo.name,
+			friendlyName: quoteBlockInfo.friendlyName
+		},
+		{
+			name: calloutBlockInfo.tag,
+			item: calloutBlockInfo.name,
+			friendlyName: calloutBlockInfo.friendlyName
+		},
+		{
+			name: videoEmbedBlockInfo.tag,
+			item: videoEmbedBlockInfo.name,
+			friendlyName: videoEmbedBlockInfo.friendlyName
+		},
+		{
+			name: dividerBlockInfo.tag,
+			item: dividerBlockInfo.name,
+			friendlyName: dividerBlockInfo.friendlyName
+		},
+		{
+			name: accordionBlockInfo.tag,
+			item: accordionBlockInfo.name,
+			friendlyName: accordionBlockInfo.friendlyName
+		},
+		{
+			name: articleContentBlockInfo.tag,
+			item: articleContentBlockInfo.name,
+			friendlyName: articleContentBlockInfo.friendlyName
+		},
+		{
+			name: storySectionCardInfo.tag,
+			item: storySectionCardInfo.name,
+			friendlyName: storySectionCardInfo.friendlyName
+		},
+		{
+			name: pdfCarouselBlockInfo.tag,
+			item: pdfCarouselBlockInfo.name,
+			friendlyName: pdfCarouselBlockInfo.friendlyName
+		}
 	]
 });
 Builder.register('insertMenu', {
 	name: 'Sections de page',
 	items: [
-		{ name: heroBlockInfo.friendlyName, item: heroBlockInfo.name },
-		{ name: blogGridBlockInfo.friendlyName, item: blogGridBlockInfo.name },
-		{ name: articleCarouselBlockInfo.friendlyName, item: articleCarouselBlockInfo.name },
-		{ name: ctaBlockInfo.friendlyName, item: ctaBlockInfo.name },
-		{ name: featuresBlockInfo.friendlyName, item: featuresBlockInfo.name },
-		{ name: timelineBlockInfo.friendlyName, item: timelineBlockInfo.name },
-		{ name: statsBlockInfo.friendlyName, item: statsBlockInfo.name },
-		{ name: imageGalleryBlockInfo.friendlyName, item: imageGalleryBlockInfo.name },
-		{ name: twoColumnTextBlockInfo.friendlyName, item: twoColumnTextBlockInfo.name },
-		{ name: blogDetailBlockInfo.friendlyName, item: blogDetailBlockInfo.name },
-		{ name: genealogyBlockInfo.friendlyName, item: genealogyBlockInfo.name }
+		{ name: heroBlockInfo.tag, item: heroBlockInfo.name, friendlyName: heroBlockInfo.friendlyName },
+		{
+			name: blogGridBlockInfo.tag,
+			item: blogGridBlockInfo.name,
+			friendlyName: blogGridBlockInfo.friendlyName
+		},
+		{
+			name: articleCarouselBlockInfo.tag,
+			item: articleCarouselBlockInfo.name,
+			friendlyName: articleCarouselBlockInfo.friendlyName
+		},
+		{ name: ctaBlockInfo.tag, item: ctaBlockInfo.name, friendlyName: ctaBlockInfo.friendlyName },
+		{
+			name: featuresBlockInfo.tag,
+			item: featuresBlockInfo.name,
+			friendlyName: featuresBlockInfo.friendlyName
+		},
+		{
+			name: timelineBlockInfo.tag,
+			item: timelineBlockInfo.name,
+			friendlyName: timelineBlockInfo.friendlyName
+		},
+		{
+			name: statsBlockInfo.tag,
+			item: statsBlockInfo.name,
+			friendlyName: statsBlockInfo.friendlyName
+		},
+		{
+			name: imageGalleryBlockInfo.tag,
+			item: imageGalleryBlockInfo.name,
+			friendlyName: imageGalleryBlockInfo.friendlyName
+		},
+		{
+			name: twoColumnTextBlockInfo.tag,
+			item: twoColumnTextBlockInfo.name,
+			friendlyName: twoColumnTextBlockInfo.friendlyName
+		},
+		{
+			name: blogDetailBlockInfo.tag,
+			item: blogDetailBlockInfo.name,
+			friendlyName: blogDetailBlockInfo.friendlyName
+		},
+		{
+			name: genealogyBlockInfo.tag,
+			item: genealogyBlockInfo.name,
+			friendlyName: genealogyBlockInfo.friendlyName
+		}
 	]
 });
 
