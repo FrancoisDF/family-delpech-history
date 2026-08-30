@@ -4,7 +4,8 @@ import VideoEmbedBlock from './VideoEmbedBlock.svelte';
 export const videoEmbedBlockInfo: RegisteredComponent = {
 	component: VideoEmbedBlock as any,
 	name: 'VideoEmbedBlock',
-	tag: 'Images & Media',
+	friendlyName: 'Vidéo intégrée',
+	tag: 'Images et médias',
 	inputs: [
 		{
 			name: 'videoUrl',

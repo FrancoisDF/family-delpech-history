@@ -4,7 +4,8 @@ import ArticleSectionBlock from './ArticleSectionBlock.svelte';
 export const articleSectionBlockInfo: RegisteredComponent = {
 	component: ArticleSectionBlock as any,
 	name: 'ArticleSectionBlock',
-	tag: 'Content Sections',
+	friendlyName: 'Section d’article',
+	tag: 'Sections de contenu',
 	inputs: [
 		{
 			name: 'title',

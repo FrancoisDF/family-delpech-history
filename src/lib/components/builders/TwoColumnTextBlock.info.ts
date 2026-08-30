@@ -4,7 +4,8 @@ import TwoColumnTextBlock from './TwoColumnTextBlock.svelte';
 export const twoColumnTextBlockInfo: RegisteredComponent = {
 	component: TwoColumnTextBlock as any,
 	name: 'TwoColumnTextBlock',
-	tag: 'Layout & Columns',
+	friendlyName: 'Texte en deux colonnes',
+	tag: 'Mise en page et colonnes',
 	inputs: [
 		{
 			name: 'title',

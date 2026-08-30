@@ -4,7 +4,8 @@ import CTABlock from './CTABlock.svelte';
 export const ctaBlockInfo: RegisteredComponent = {
 	component: CTABlock as any,
 	name: 'CTABlock',
-	tag: 'Call to Action',
+	friendlyName: 'Appel à l’action',
+	tag: 'Appel à l’action',
 	inputs: [
 		{
 			name: 'title',

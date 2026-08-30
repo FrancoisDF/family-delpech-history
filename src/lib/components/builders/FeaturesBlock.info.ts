@@ -4,7 +4,8 @@ import FeaturesBlock from './FeaturesBlock.svelte';
 export const featuresBlockInfo: RegisteredComponent = {
 	component: FeaturesBlock as any,
 	name: 'FeaturesBlock',
-	tag: 'Features & Benefits',
+	friendlyName: 'Fonctionnalités',
+	tag: 'Fonctionnalités et avantages',
 	inputs: [
 		{
 			name: 'title',

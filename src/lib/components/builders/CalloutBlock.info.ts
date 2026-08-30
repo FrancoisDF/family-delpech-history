@@ -4,7 +4,8 @@ import CalloutBlock from './CalloutBlock.svelte';
 export const calloutBlockInfo: RegisteredComponent = {
 	component: CalloutBlock as any,
 	name: 'CalloutBlock',
-	tag: 'Callouts & Alerts',
+	friendlyName: 'Encadré d’information',
+	tag: 'Encadrés et alertes',
 	inputs: [
 		{
 			name: 'title',

@@ -4,7 +4,8 @@ import BlogDetailBlock from './BlogDetailBlock.svelte';
 export const blogDetailBlockInfo: RegisteredComponent = {
 	component: BlogDetailBlock as any,
 	name: 'BlogDetailBlock',
-	tag: 'Article Pages',
+	friendlyName: 'Page d’article',
+	tag: 'Pages d’articles',
 	inputs: [
 		{
 			name: 'title',

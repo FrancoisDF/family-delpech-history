@@ -4,7 +4,8 @@ import QuoteBlock from './QuoteBlock.svelte';
 export const quoteBlockInfo: RegisteredComponent = {
 	component: QuoteBlock as any,
 	name: 'QuoteBlock',
-	tag: 'Quotes & Highlights',
+	friendlyName: 'Citation',
+	tag: 'Citations et mises en avant',
 	inputs: [
 		{
 			name: 'quote',

@@ -4,7 +4,8 @@ import PDFCarouselBlock from './PDFCarouselBlock.svelte';
 export const pdfCarouselBlockInfo: RegisteredComponent = {
 	component: PDFCarouselBlock as any,
 	name: 'PDFCarouselBlock',
-	tag: 'PDF Carousel',
+	friendlyName: 'Carrousel de PDF',
+	tag: 'Carrousel de PDF',
 	inputs: [
 		{
 			name: 'title',
