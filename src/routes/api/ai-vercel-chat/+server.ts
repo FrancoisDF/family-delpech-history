@@ -27,6 +27,10 @@ function sse(data: unknown): string {
 	return `data: ${JSON.stringify(data)}\n\n`;
 }
 
+function embeddingCost(tokens: number, config: { embeddingInputCostPerMillion: number }): number {
+	return (tokens * config.embeddingInputCostPerMillion) / 1_000_000;
+}
+
 export const POST: RequestHandler = async ({ request, cookies }) => {
 	let config;
 	try {
@@ -83,8 +87,11 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 	}
 
 	let hits;
+	let embeddingTokens = 0;
 	try {
-		hits = await searchArchive(input.message, config);
+		const searchResult = await searchArchive(input.message, config);
+		hits = searchResult.hits;
+		embeddingTokens = searchResult.embeddingTokens;
 	} catch (cause) {
 		await recordFailedUsage(reservation, providerConfig.modelName, config).catch((recordError) =>
 			console.error('Failed to record retrieval failure', recordError)
@@ -96,18 +103,22 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 	if (hits.length === 0) {
 		await recordUsage(
 			reservation,
-			{ inputTokens: 0, outputTokens: 0, costUsd: 0 },
+			{
+					inputTokens: embeddingTokens,
+					outputTokens: 0,
+					costUsd: embeddingCost(embeddingTokens, config)
+				},
 			providerConfig.modelName,
 			config
 		).catch((cause) => console.error('Failed to reconcile empty retrieval', cause));
 		return new Response(
 			new ReadableStream({
 				start(controller) {
-					controller.enqueue(sse({ type: 'text', text: ARCHIVE_NOT_FOUND_MESSAGE }));
+					controller.enqueue(new TextEncoder().encode(sse({ type: 'text', text: ARCHIVE_NOT_FOUND_MESSAGE })));
 					controller.enqueue(
-						sse({ type: 'done', sources: [], inputTokens: 0, outputTokens: 0, totalTokens: 0 })
+						encoder.encode(sse({ type: 'done', sources: [], inputTokens: embeddingTokens, outputTokens: 0, totalTokens: embeddingTokens }))
 					);
-					controller.enqueue(sse('[DONE]'));
+					controller.enqueue(new TextEncoder().encode(sse('[DONE]')));
 					controller.close();
 				}
 			}),
@@ -144,39 +155,49 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 		score: Number(score.toFixed(3))
 	}));
 
+	const encoder = new TextEncoder();
 	const stream = new ReadableStream({
 		async start(controller) {
 			try {
-				for await (const text of result.textStream) controller.enqueue(sse({ type: 'text', text }));
+				for await (const text of result.textStream) {
+					controller.enqueue(encoder.encode(sse({ type: 'text', text })));
+				}
 				const usage = normalizeUsage(await result.usage);
-				const totalTokens = usage.promptTokens + usage.completionTokens;
-				await recordUsage(
-					reservation,
-					{
-						inputTokens: usage.promptTokens,
-						outputTokens: usage.completionTokens,
-						costUsd: calculateCost(usage.promptTokens, usage.completionTokens, config)
-					},
-					providerConfig.modelName,
-					config
-				);
+				const totalTokens = usage.promptTokens + usage.completionTokens + embeddingTokens;
+				try {
+					await recordUsage(
+						reservation,
+						{
+							inputTokens: usage.promptTokens + embeddingTokens,
+							outputTokens: usage.completionTokens,
+							costUsd:
+								calculateCost(usage.promptTokens, usage.completionTokens, config) +
+								embeddingCost(embeddingTokens, config)
+						},
+						providerConfig.modelName,
+						config
+					);
+				} catch (cause) {
+					console.error('Failed to reconcile completed AI usage; reservation remains conservative', cause);
+				}
 				controller.enqueue(
-					sse({
-						type: 'done',
-						sources,
-						inputTokens: usage.promptTokens,
-						outputTokens: usage.completionTokens,
-						totalTokens
-					})
+					encoder.encode(
+						sse({
+							type: 'done',
+							sources,
+							inputTokens: usage.promptTokens + embeddingTokens,
+							outputTokens: usage.completionTokens,
+							totalTokens
+						})
+					)
 				);
-				controller.enqueue(sse('[DONE]'));
+				controller.enqueue(encoder.encode(sse('[DONE]')));
 				controller.close();
 			} catch (cause) {
-				await recordFailedUsage(reservation, providerConfig.modelName, config).catch(
-					(recordError) => console.error('Failed to record generation failure', recordError)
+				console.error('AI generation error; preserving usage reservation', cause);
+				controller.enqueue(
+					encoder.encode(sse({ type: 'error', message: 'La réponse n’a pas pu être générée.' }))
 				);
-				console.error('AI generation error', cause);
-				controller.enqueue(sse({ type: 'error', message: 'La réponse n’a pas pu être générée.' }));
 				controller.close();
 			}
 		}

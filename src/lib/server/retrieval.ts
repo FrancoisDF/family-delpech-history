@@ -14,6 +14,12 @@ export interface ArchiveHit extends ArchiveSource {
 
 interface EmbeddingResponse {
 	data?: Array<{ embedding?: number[] }>;
+	usage?: { prompt_tokens?: number; input_tokens?: number };
+}
+
+export interface ArchiveSearchResult {
+	hits: ArchiveHit[];
+	embeddingTokens: number;
 }
 
 function isSafeSourceUrl(value: unknown): value is string {
@@ -83,7 +89,7 @@ async function postJson(
 export async function createQueryEmbedding(
 	query: string,
 	config = getAiRuntimeConfig()
-): Promise<number[]> {
+): Promise<{ embedding: number[]; inputTokens: number }> {
 	const result = (await postJson(
 		`${config.embeddingApiBase}/embeddings`,
 		{ input: query, model: config.embeddingModel },
@@ -93,14 +99,18 @@ export async function createQueryEmbedding(
 	if (!embedding || embedding.length === 0 || embedding.some((value) => !Number.isFinite(value))) {
 		throw new Error('Embedding provider returned an invalid vector');
 	}
-	return embedding;
+	return {
+		embedding,
+		inputTokens: result.usage?.prompt_tokens || result.usage?.input_tokens || Math.ceil(query.length / 4)
+	};
 }
 
 export async function searchArchive(
 	query: string,
 	config = getAiRuntimeConfig()
-): Promise<ArchiveHit[]> {
-	const embedding = await createQueryEmbedding(query, config);
+): Promise<ArchiveSearchResult> {
+	const queryEmbedding = await createQueryEmbedding(query, config);
+	const embedding = queryEmbedding.embedding;
 	const body = {
 		[config.vectorSearchParameter]: embedding,
 		match_threshold: config.vectorMatchThreshold,
@@ -114,10 +124,13 @@ export async function searchArchive(
 			authorization: `Bearer ${config.supabaseServiceRoleKey}`
 		}
 	);
-	return normalizeArchiveResults(result, config.vectorMatchThreshold).slice(
-		0,
-		config.vectorMatchCount
-	);
+	return {
+		hits: normalizeArchiveResults(result, config.vectorMatchThreshold).slice(
+			0,
+			config.vectorMatchCount
+		),
+		embeddingTokens: queryEmbedding.inputTokens
+	};
 }
 
 export function buildArchiveContext(hits: ArchiveHit[], maxCharacters = 12000): string {

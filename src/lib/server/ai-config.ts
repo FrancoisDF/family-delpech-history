@@ -20,6 +20,7 @@ export interface AiRuntimeConfig {
 	visitorSecret: string;
 	inputCostPerMillion: number;
 	outputCostPerMillion: number;
+	embeddingInputCostPerMillion: number;
 }
 
 function required(name: string): string {
@@ -69,13 +70,14 @@ export function getAiRuntimeConfig(): AiRuntimeConfig {
 		dailyVisitorTokenLimit: integerEnv('AI_DAILY_VISITOR_TOKEN_LIMIT', 5000),
 		burstLimit: integerEnv('AI_BURST_LIMIT', 8),
 		burstWindowSeconds: integerEnv('AI_BURST_WINDOW_SECONDS', 60),
-		maxMessageLength: integerEnv('AI_MAX_MESSAGE_LENGTH', 1200),
+		maxMessageLength: integerEnv('AI_MAX_MESSAGE_LENGTH', 2000),
 		maxHistoryMessages: integerEnv('AI_MAX_HISTORY_MESSAGES', 6),
 		maxOutputTokens: integerEnv('AI_MAX_OUTPUT_TOKENS', 320),
 		reserveCostUsd: numberEnv('AI_RESERVE_COST_USD', 0.01),
 		visitorSecret: required('AI_VISITOR_SECRET'),
-		inputCostPerMillion: numberEnv('AI_INPUT_COST_PER_MILLION', 0.25),
-		outputCostPerMillion: numberEnv('AI_OUTPUT_COST_PER_MILLION', 1.25)
+		inputCostPerMillion: numberEnv('AI_INPUT_COST_PER_MILLION', 0.8),
+		outputCostPerMillion: numberEnv('AI_OUTPUT_COST_PER_MILLION', 4),
+		embeddingInputCostPerMillion: numberEnv('EMBEDDING_INPUT_COST_PER_MILLION', 0.02)
 	};
 }
 

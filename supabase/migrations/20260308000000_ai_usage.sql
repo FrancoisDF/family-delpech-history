@@ -49,11 +49,16 @@ declare
 begin
   perform pg_advisory_xact_lock(hashtext('ai-budget-' || to_char(v_now, 'YYYY-MM')));
 
+  update ai_usage_events
+     set status = 'failed', completed_at = now()
+   where status = 'reserved'
+     and created_at < v_now - interval '10 minutes';
+
   select coalesce(sum(greatest(actual_cost_usd, estimated_cost_usd)), 0)
     into v_monthly_cost
     from ai_usage_events
    where created_at >= v_month_start
-     and status in ('reserved', 'completed');
+     and (status = 'completed' or (status = 'reserved' and created_at >= v_now - interval '10 minutes'));
   if v_monthly_cost + p_estimated_cost_usd > p_monthly_budget_usd then
     return jsonb_build_object('allowed', false, 'reason', 'monthly');
   end if;
@@ -62,9 +67,9 @@ begin
          coalesce(sum(estimated_tokens), 0)
     into v_daily_cost, v_daily_tokens
     from ai_usage_events
-   where visitor_hash = p_visitor_hash
+   where (visitor_hash = p_visitor_hash or ip_hash = p_ip_hash)
      and created_at >= v_day_start
-     and status in ('reserved', 'completed');
+     and (status = 'completed' or (status = 'reserved' and created_at >= v_now - interval '10 minutes'));
   if v_daily_cost + p_estimated_cost_usd > p_daily_budget_usd
      or v_daily_tokens + p_estimated_tokens > p_daily_token_limit then
     return jsonb_build_object('allowed', false, 'reason', 'daily');
@@ -73,9 +78,9 @@ begin
   select count(*)
     into v_burst_count
     from ai_usage_events
-   where visitor_hash = p_visitor_hash
+   where (visitor_hash = p_visitor_hash or ip_hash = p_ip_hash)
      and created_at >= v_now - make_interval(secs => p_burst_window_seconds)
-     and status in ('reserved', 'completed');
+     and (status = 'completed' or (status = 'reserved' and created_at >= v_now - interval '10 minutes'));
   if v_burst_count >= p_burst_limit then
     return jsonb_build_object('allowed', false, 'reason', 'burst');
   end if;

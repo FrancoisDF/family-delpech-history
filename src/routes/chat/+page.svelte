@@ -92,6 +92,7 @@
 		const decoder = new TextDecoder();
 		let buffer = '';
 		let content = '';
+		let completed = false;
 
 		const processEvent = (line: string) => {
 			if (!line.startsWith('data: ')) return;
@@ -102,6 +103,7 @@
 				content += event.text;
 				updateMessage(assistantId, { content, status: 'streaming' });
 			} else if (event.type === 'done') {
+				completed = true;
 				updateMessage(assistantId, { status: 'done', sources: event.sources || [] });
 			} else if (event.type === 'error') {
 				throw new Error(event.message || 'La réponse n’a pas pu être générée.');
@@ -117,6 +119,7 @@
 			if (done) break;
 		}
 		if (buffer.trim()) processEvent(buffer);
+		if (!completed) throw new Error('La réponse a été interrompue. Veuillez réessayer.');
 	}
 
 	async function handleSendMessage(text?: string) {
@@ -124,7 +127,10 @@
 		if (!content || isLoading) return;
 
 		const history = messages
-			.filter((message) => message.id !== 'welcome' && message.status !== 'loading')
+			.filter(
+					(message) =>
+						message.id !== 'welcome' && message.status !== 'loading' && message.status !== 'error'
+				)
 			.slice(-6)
 			.map((message) => ({
 				role: message.type,
@@ -161,7 +167,8 @@
 				body: JSON.stringify({ message: content, history })
 			});
 			if (!response.ok) {
-				const message = await response.text();
+				const body = await response.json().catch(() => null);
+					throw new Error(body?.message || 'Le service est momentanément indisponible.');
 				throw new Error(message || 'Le service est momentanément indisponible.');
 			}
 			await readStream(response, assistantId);
