@@ -9,6 +9,7 @@ const meta = {
 		title: { control: 'text' },
 		description: { control: 'text' },
 		audioUrl: { control: 'text' },
+		videoUrl: { control: 'text' },
 		year: { control: 'number' }
 	}
 } satisfies Meta<typeof StorySectionCard>;

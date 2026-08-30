@@ -734,6 +734,12 @@ export const EXTRACTABLE_COMPONENTS: ExtractableComponentConfig[] = [
 				description: 'Audio file URL for story narration'
 			},
 			{
+				fieldName: 'videoUrl',
+				fieldType: 'file',
+				importance: 'high',
+				description: 'Video file URL for story narration'
+			},
+			{
 				fieldName: 'tags',
 				fieldType: 'list',
 				importance: 'medium',

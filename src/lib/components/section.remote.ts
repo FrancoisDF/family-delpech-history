@@ -18,6 +18,7 @@ interface StorySection {
 	title: string;
 	description: string;
 	audioUrl: string;
+	videoUrl: string;
 	year: number;
 	tags: string[];
 	blog?: BlogPost | null;
@@ -33,6 +34,7 @@ const loadSections = async (storySectionsRaw: any[]): Promise<StorySection[]> =>
 					title: section.data?.title || '',
 					description: section.data?.description || '',
 					audioUrl: section.data?.audioUrl || '',
+					videoUrl: section.data?.videoUrl || '',
 					year: Number(section.data?.year ?? 1800),
 					tags: section.data?.tags,
 					blog: blog
