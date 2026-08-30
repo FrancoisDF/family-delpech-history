@@ -101,8 +101,7 @@ export async function createQueryEmbedding(
 	}
 	return {
 		embedding,
-		inputTokens:
-			result.usage?.prompt_tokens || result.usage?.input_tokens || Math.ceil(query.length / 4)
+		inputTokens: result.usage?.prompt_tokens || result.usage?.input_tokens || Math.ceil(query.length / 4)
 	};
 }
 
@@ -144,9 +143,4 @@ export function buildArchiveContext(hits: ArchiveHit[], maxCharacters = 12000): 
 		remaining -= content.length;
 	}
 	return sections.join('\n\n');
-}
-
-export function getPublicSourceUrl(source: ArchiveSource): string | undefined {
-	if (source.url && isSafeSourceUrl(source.url)) return source.url;
-	return undefined;
 }

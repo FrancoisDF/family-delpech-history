@@ -13,7 +13,7 @@ Instead of hardcoding which fields to extract, we maintain a **component configu
 - `src/lib/config/components-to-extract.ts` — Component configuration and metadata
 - `scripts/lib/component-extraction-helpers.mjs` — Extraction utility functions
 - `scripts/ingest-builder-content.mjs` — Ingestion script for Builder.io content
-- `scripts/ingest-all-content.mjs` — Unified ingestion (local docs + Builder.io)
+- `scripts/ingest-all-content.js` — Unified ingestion (local docs + Builder.io)
 
 ## How Extraction Works
 
@@ -374,12 +374,12 @@ PUBLIC_BUILDER_API_KEY=your_key npm run ingest
 
 ## Related Files
 
-- **Ingestion Scripts:** `scripts/ingest-builder-content.mjs`, `scripts/ingest-all-content.mjs`
+- **Ingestion Scripts:** `scripts/ingest-builder-content.mjs`, `scripts/ingest-all-content.js`
 - **Configuration:** `src/lib/config/components-to-extract.ts`
 - **Helpers:** `scripts/lib/component-extraction-helpers.mjs`
 - **Server Utilities:** `src/lib/server/builder.ts` (runtime Builder.io integration)
 - **Output:** `static/family-data.json` (extracted chunks)
-- **Embeddings:** `static/family-embeddings.json`, `static/family-vocab.json` (for RAG)
+- **Production retrieval:** Supabase vector corpus, configured as described in `README.md`
 
 ## FAQ
 

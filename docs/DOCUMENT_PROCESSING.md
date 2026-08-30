@@ -208,20 +208,11 @@ The script will:
 - ✅ Validate output format
 - ✅ Write `static/family-data.json`
 
-### Step 4: Precompute Embeddings (Optional)
+### Step 4: Configure production retrieval
 
-For better retrieval quality with TF-IDF embeddings:
+The production assistant does not use local TF-IDF files. Configure the existing Supabase vector RPC and matching embedding model as described in the root `README.md`, then apply the usage-accounting migration.
 
-```bash
-npm run prepare:embeddings
-```
-
-This creates:
-
-- `static/family-embeddings.json` - Precomputed TF-IDF vectors
-- `static/family-vocab.json` - Vocabulary and IDF weights
-
-The chat will automatically use these if available.
+The local `static/family-data.json` output is useful for inspecting extraction results and for genealogy-related article fallbacks; it does not update the production Supabase corpus.
 
 ### Step 5: Test in Chat Interface
 
@@ -274,10 +265,10 @@ Do not add any blank lines before the first `---`.
 
 **A:**
 
-1. Check that `static/family-data.json` was created successfully
-2. Run embeddings precomputation: `npm run prepare:embeddings`
-3. Try enabling the local LLM summarizer in `src/lib/ai/config.ts`
-4. Check browser console for errors
+1. Verify the Supabase vector-search RPC name and query parameter
+2. Verify that `EMBEDDING_MODEL` matches the model and dimensions used by the existing corpus
+3. Review and calibrate `SUPABASE_VECTOR_MATCH_THRESHOLD`
+4. Check the server logs and Supabase RPC response for retrieval errors
 
 ### Q: How to re-ingest documents?
 
@@ -316,31 +307,17 @@ Do not add any blank lines before the first `---`.
 
 ### For Better Retrieval Quality
 
-1. **Enable Embeddings:** Precompute TF-IDF vectors
-
-   ```bash
-   npm run prepare:embeddings
-   ```
-
-2. **Enable Summarizer:** Use local LLM to synthesize answers
-   - Set `ENABLE_LOCAL_LLM = true` in `src/lib/ai/config.ts`
-   - See docs/ON_DEVICE_RAG.md for details
-
-3. **Clean Document Text:** Remove special characters, excessive whitespace
+1. **Use the existing vector corpus:** Keep the embedding model, vector dimensions, and RPC contract aligned with Supabase.
+2. **Calibrate the threshold:** Use observed similarity scores to tune `SUPABASE_VECTOR_MATCH_THRESHOLD` without disabling the relevance gate.
+3. **Clean document text:** Remove special characters and excessive whitespace before a separate ingestion process updates the corpus.
    - Ensures better chunking at paragraph boundaries
    - Improves token matching during search
 
 ## Migration from Builder.io
 
-If you were previously using Builder.io:
+Builder and local ingestion scripts are manual extraction tools only. They write `static/family-data.json`; they do not update the production Supabase vector corpus.
 
-1. **Export Builder.io content** to Markdown/PDF files
-2. **Organize** into `./documents/` directory structure
-3. **Run:** `npm run ingest:documents`
-4. The new `family-data.json` replaces the old one
-5. Chat interface requires NO changes—same API
-
-The `ingest-builder-content.mjs` script is still available as `npm run prepare:rag:builder` if needed.
+For the production assistant, follow the Supabase RPC, embedding, and migration steps in the root `README.md`. If Builder content needs to enter the live corpus, run a separately managed embedding/upload workflow against Supabase.
 
 ## Example: Complete Setup from Scratch
 
@@ -365,10 +342,9 @@ cp ~/Downloads/family_records.pdf documents/1850s/
 # 4. Run ingestion
 npm run ingest:documents
 
-# 5. Precompute embeddings
-npm run prepare:embeddings
+# 5. Inspect the extracted static/family-data.json output
 
-# 6. Test in dev environment
+# 6. Test the application in dev environment
 npm run dev
 ```
 
@@ -391,12 +367,10 @@ See inline comments in the script for customization points.
 | `scripts/ingest-local-documents.mjs` | Main document ingestion pipeline       |
 | `scripts/config.documents.json`      | Configuration file (optional)          |
 | `documents/`                         | Your family document source directory  |
-| `static/family-data.json`            | Generated indexed chunks (do not edit) |
-| `static/family-embeddings.json`      | Generated TF-IDF vectors (optional)    |
-| `static/family-vocab.json`           | Generated vocabulary (optional)        |
+| `static/family-data.json`            | Generated extraction chunks (do not edit) |
 
 ## See Also
 
-- **docs/ON_DEVICE_RAG.md** - Architecture and RAG system details
-- **src/lib/ai/** - Search, embeddings, and generation code
+- **README.md** - Production assistant architecture and Supabase setup
 - **src/routes/chat/** - Chat interface implementation
+- **src/lib/server/retrieval.ts** - Server-side vector retrieval

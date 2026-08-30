@@ -101,14 +101,3 @@ export function normalizeUsage(usage: any): NormalizedUsage {
 		completionTokens: usage?.outputTokens || usage?.completionTokens || usage?.completion_tokens || 0
 	};
 }
-
-/**
- * Get provider information for logging/debugging
- */
-export function getProviderInfo(): string {
-	const config = getProviderConfig();
-	if (config.provider === 'openai') {
-		return `OpenAI-compatible (${config.baseUrl || 'api.openai.com'}) with model ${config.modelName}`;
-	}
-	return `Anthropic with model ${config.modelName}`;
-}

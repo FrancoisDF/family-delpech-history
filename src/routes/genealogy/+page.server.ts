@@ -2,7 +2,6 @@ import {
 	fetchBuilderPeopleWithRelationsServer,
 	fetchBuilderContentServer
 } from '$lib/server/builder';
-import { loadFamilyData } from '$lib/ai/data';
 import { getGEDCOMPeople } from '$lib/gedcom';
 import type { PageServerLoad } from './$types';
 import type { Person } from '$lib/models/person';

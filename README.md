@@ -27,7 +27,7 @@ pnpm build
 pnpm preview
 ```
 
-The production build does not ingest documents or regenerate embeddings. The archive corpus is managed independently in Supabase. The ingestion and local embedding scripts remain available for offline/manual workflows, but they are not part of the request path or deployment build.
+The production build does not ingest documents or regenerate embeddings. The archive corpus is managed independently in Supabase. The local document and Builder extraction scripts remain available for offline/manual workflows, but they are not part of the request path or deployment build.
 
 ## How the AI assistant works
 

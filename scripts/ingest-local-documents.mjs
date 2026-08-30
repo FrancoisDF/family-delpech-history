@@ -518,8 +518,8 @@ async function main() {
 	log('');
 	log('Next steps:');
 	log('  1. Verify the output looks correct');
-	log('  2. Run: npm run prepare:embeddings');
-	log('  3. Test in chat interface: npm run dev');
+	log('  2. Inspect static/family-data.json');
+	log('  3. Configure the production Supabase corpus separately');
 	log('');
 }
 
