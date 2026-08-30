@@ -5,6 +5,8 @@
 	import type { PageData } from './$types';
 	import ArticleCarouselBlock from '$lib/components/builders/ArticleCarouselBlock.svelte';
 	import ArticleHeaderBlock from '$lib/components/builders/ArticleHeaderBlock.svelte';
+	import ArticleSectionNavigation from '$lib/components/ArticleSectionNavigation.svelte';
+	import { normalizeArticleSectionNavigation } from '$lib/types/article-section-navigation';
 	import PageNotFound from '$lib/components/PageNotFound.svelte';
 	import CTABlock from '$lib/components/builders/CTABlock.svelte';
 	import PDFModal from '$lib/components/PDFModal.svelte';
@@ -28,6 +30,7 @@
 	const pageDescription =
 		post?.data?.excerpt ||
 		'Découvrez les histoires et les secrets de notre famille à travers 50 livres d\'histoire familiale du XIXe siècle.';
+	const sectionNavigation = normalizeArticleSectionNavigation(post?.data?.sectionNavigation);
 </script>
 
 <svelte:head>
@@ -49,12 +52,21 @@
 		onOpenPDFModal={openPDFModal}
 	/>
 
-	<Content
-		model="blog-articles"
-		content={post}
-		apiKey={PUBLIC_BUILDER_API_KEY}
-		customComponents={builderComponents}
-	/>
+	<div class="article-content-shell relative">
+		{#if sectionNavigation}
+			<div class="article-navigation-shell z-10 mx-auto max-w-7xl px-4 pb-6 sm:px-6 lg:absolute lg:inset-0 lg:px-8 lg:pb-0 lg:pointer-events-none">
+				<ArticleSectionNavigation config={sectionNavigation} />
+			</div>
+		{/if}
+
+		<Content
+			model="blog-articles"
+			content={post}
+			apiKey={PUBLIC_BUILDER_API_KEY}
+			customComponents={builderComponents}
+		/>
+	</div>
+
 
 	{#if post?.data?.tags && post.data?.tags.length > 0}
 		<ArticleCarouselBlock
