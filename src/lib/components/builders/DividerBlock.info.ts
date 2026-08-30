@@ -4,6 +4,7 @@ import DividerBlock from './DividerBlock.svelte';
 export const dividerBlockInfo: RegisteredComponent = {
 	component: DividerBlock as any,
 	name: 'DividerBlock',
+	friendlyName: 'Séparateur',
 	tag: 'Layout & Spacing',
 	inputs: [
 		{

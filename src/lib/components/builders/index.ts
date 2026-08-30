@@ -115,36 +115,36 @@ export {
 };
 
 Builder.register('insertMenu', {
-	name: 'Article Content Components',
+	name: 'Composants de contenu d’article',
 	items: [
-		{ name: textSectionBlockInfo.tag, item: textSectionBlockInfo.name },
-		{ name: imageBlockInfo.tag, item: imageBlockInfo.name },
-		{ name: richTextBlockInfo.tag, item: richTextBlockInfo.name },
-		{ name: articleSectionBlockInfo.tag, item: articleSectionBlockInfo.name },
-		{ name: quoteBlockInfo.tag, item: quoteBlockInfo.name },
-		{ name: calloutBlockInfo.tag, item: calloutBlockInfo.name },
-		{ name: videoEmbedBlockInfo.tag, item: videoEmbedBlockInfo.name },
-		{ name: dividerBlockInfo.tag, item: dividerBlockInfo.name },
-		{ name: accordionBlockInfo.tag, item: accordionBlockInfo.name },
-		{ name: articleContentBlockInfo.tag, item: articleContentBlockInfo.name },
-		{ name: storySectionCardInfo.tag, item: storySectionCardInfo.name },
-		{ name: pdfCarouselBlockInfo.tag, item: pdfCarouselBlockInfo.name }
+		{ name: textSectionBlockInfo.friendlyName, item: textSectionBlockInfo.name },
+		{ name: imageBlockInfo.friendlyName, item: imageBlockInfo.name },
+		{ name: richTextBlockInfo.friendlyName, item: richTextBlockInfo.name },
+		{ name: articleSectionBlockInfo.friendlyName, item: articleSectionBlockInfo.name },
+		{ name: quoteBlockInfo.friendlyName, item: quoteBlockInfo.name },
+		{ name: calloutBlockInfo.friendlyName, item: calloutBlockInfo.name },
+		{ name: videoEmbedBlockInfo.friendlyName, item: videoEmbedBlockInfo.name },
+		{ name: dividerBlockInfo.friendlyName, item: dividerBlockInfo.name },
+		{ name: accordionBlockInfo.friendlyName, item: accordionBlockInfo.name },
+		{ name: articleContentBlockInfo.friendlyName, item: articleContentBlockInfo.name },
+		{ name: storySectionCardInfo.friendlyName, item: storySectionCardInfo.name },
+		{ name: pdfCarouselBlockInfo.friendlyName, item: pdfCarouselBlockInfo.name }
 	]
 });
 Builder.register('insertMenu', {
-	name: 'Page Section Components',
+	name: 'Sections de page',
 	items: [
-		{ name: heroBlockInfo.tag, item: heroBlockInfo.name },
-		{ name: blogGridBlockInfo.tag, item: blogGridBlockInfo.name },
-		{ name: articleCarouselBlockInfo.tag, item: articleCarouselBlockInfo.name },
-		{ name: ctaBlockInfo.tag, item: ctaBlockInfo.name },
-		{ name: featuresBlockInfo.tag, item: featuresBlockInfo.name },
-		{ name: timelineBlockInfo.tag, item: timelineBlockInfo.name },
-		{ name: statsBlockInfo.tag, item: statsBlockInfo.name },
-		{ name: imageGalleryBlockInfo.tag, item: imageGalleryBlockInfo.name },
-		{ name: twoColumnTextBlockInfo.tag, item: twoColumnTextBlockInfo.name },
-		{ name: blogDetailBlockInfo.tag, item: blogDetailBlockInfo.name },
-		{ name: genealogyBlockInfo.tag, item: genealogyBlockInfo.name }
+		{ name: heroBlockInfo.friendlyName, item: heroBlockInfo.name },
+		{ name: blogGridBlockInfo.friendlyName, item: blogGridBlockInfo.name },
+		{ name: articleCarouselBlockInfo.friendlyName, item: articleCarouselBlockInfo.name },
+		{ name: ctaBlockInfo.friendlyName, item: ctaBlockInfo.name },
+		{ name: featuresBlockInfo.friendlyName, item: featuresBlockInfo.name },
+		{ name: timelineBlockInfo.friendlyName, item: timelineBlockInfo.name },
+		{ name: statsBlockInfo.friendlyName, item: statsBlockInfo.name },
+		{ name: imageGalleryBlockInfo.friendlyName, item: imageGalleryBlockInfo.name },
+		{ name: twoColumnTextBlockInfo.friendlyName, item: twoColumnTextBlockInfo.name },
+		{ name: blogDetailBlockInfo.friendlyName, item: blogDetailBlockInfo.name },
+		{ name: genealogyBlockInfo.friendlyName, item: genealogyBlockInfo.name }
 	]
 });
 

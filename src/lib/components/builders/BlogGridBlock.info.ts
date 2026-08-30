@@ -4,6 +4,7 @@ import BlogGridBlock from './BlogGridBlock.svelte';
 export const blogGridBlockInfo: RegisteredComponent = {
 	component: BlogGridBlock as any,
 	name: 'BlogGridBlock',
+	friendlyName: 'Grille d’articles',
 	tag: 'Content Grids',
 	inputs: [
 		{

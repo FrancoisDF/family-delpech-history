@@ -4,6 +4,7 @@ import StorySectionCard from './StorySectionCard.svelte';
 export const storySectionCardInfo: RegisteredComponent = {
 	component: StorySectionCard as any,
 	name: 'StorySectionCard',
+	friendlyName: 'Carte de section historique',
 	tag: 'Story Section Card',
 	inputs: [
 		{

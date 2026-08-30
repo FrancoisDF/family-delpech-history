@@ -4,6 +4,7 @@ import RichTextBlock from './RichTextBlock.svelte';
 export const richTextBlockInfo: RegisteredComponent = {
 	component: RichTextBlock as any,
 	name: 'RichTextBlock',
+	friendlyName: 'Texte enrichi',
 	tag: 'Rich Text & Markdown',
 	inputs: [
 		{

@@ -4,6 +4,7 @@ import ArticleContentBlock from './ArticleContentBlock.svelte';
 export const articleContentBlockInfo: RegisteredComponent = {
 	component: ArticleContentBlock as any,
 	name: 'ArticleContentBlock',
+	friendlyName: 'Contenu d’article',
 	tag: 'Text & Paragraphs',
 	inputs: [
 		{

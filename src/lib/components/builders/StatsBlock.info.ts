@@ -4,6 +4,7 @@ import StatsBlock from './StatsBlock.svelte';
 export const statsBlockInfo: RegisteredComponent = {
 	component: StatsBlock as any,
 	name: 'StatsBlock',
+	friendlyName: 'Statistiques',
 	tag: 'Stats & Metrics',
 	inputs: [
 		{

@@ -4,6 +4,7 @@ import type { RegisteredComponent } from '@builder.io/sdk-svelte';
 export const genealogyBlockInfo: RegisteredComponent = {
 	component: GenealogyBlock as any,
 	name: 'GenealogyBlock',
+	friendlyName: 'Arbre généalogique',
 	tag: 'Genealogy Tree',
 	description: 'Interactive genealogical tree component',
 	image:

@@ -4,6 +4,7 @@ import TextSectionBlock from './TextSectionBlock.svelte';
 export const textSectionBlockInfo: RegisteredComponent = {
 	component: TextSectionBlock as any,
 	name: 'TextSectionBlock',
+	friendlyName: 'Section de texte',
 	tag: 'Text & Paragraphs',
 	inputs: [
 		{

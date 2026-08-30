@@ -4,6 +4,7 @@ import AccordionBlock from './AccordionBlock.svelte';
 export const accordionBlockInfo: RegisteredComponent = {
 	component: AccordionBlock as any,
 	name: 'AccordionBlock',
+	friendlyName: 'Accordéon de documents',
 	tag: 'Accordion block',
 	inputs: [
 		{

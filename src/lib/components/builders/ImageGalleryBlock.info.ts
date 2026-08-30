@@ -4,6 +4,7 @@ import ImageGalleryBlock from './ImageGalleryBlock.svelte';
 export const imageGalleryBlockInfo: RegisteredComponent = {
 	component: ImageGalleryBlock as any,
 	name: 'ImageGalleryBlock',
+	friendlyName: 'Galerie d’images',
 	tag: 'Galleries & Collections',
 	inputs: [
 		{

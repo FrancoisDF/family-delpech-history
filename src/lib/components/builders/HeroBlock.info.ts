@@ -4,6 +4,7 @@ import HeroBlock from './HeroBlock.svelte';
 export const heroBlockInfo: RegisteredComponent = {
 	component: HeroBlock as any,
 	name: 'HeroBlock',
+	friendlyName: 'Bannière principale',
 	tag: 'Hero & Headers',
 	inputs: [
 		{
