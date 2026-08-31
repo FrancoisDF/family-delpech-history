@@ -22,6 +22,7 @@
 		title?: string;
 		description?: string;
 		audioUrl?: string;
+		videoUrl?: string;
 		year?: number;
 		isActive?: boolean;
 		tags?: string[];
@@ -34,6 +35,7 @@
 		title = '',
 		description = '',
 		audioUrl = '',
+		videoUrl = '',
 		year = 1800,
 		isActive = false,
 		tags = [],
@@ -180,6 +182,21 @@
 					<source src={audioUrl} type="audio/mpeg" />
 					Votre navigateur ne supporte pas l'élément audio.
 				</audio>
+			</div>
+		{/if}
+
+		{#if videoUrl}
+			<div class={`rounded-lg bg-primary-50 p-6 ${audioUrl ? 'mt-6' : ''}`}>
+				<div class="mb-3 flex items-center gap-2">
+					<svg class="h-5 w-5 text-primary-800" fill="currentColor" viewBox="0 0 20 20">
+						<path d="M6 4.75A1.75 1.75 0 013.25 6.2v7.6A1.75 1.75 0 016 15.25l8.1-4.05a1.34 1.34 0 000-2.4L6 4.75z" />
+					</svg>
+					<span class="text-sm font-medium text-primary-800">Récit Vidéo</span>
+				</div>
+				<video class="w-full rounded-md" controls controlsList="nodownload" preload="metadata">
+					<source src={videoUrl} />
+					Votre navigateur ne supporte pas l'élément vidéo.
+				</video>
 			</div>
 		{/if}
 

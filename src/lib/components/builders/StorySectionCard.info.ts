@@ -31,6 +31,13 @@ export const storySectionCardInfo: RegisteredComponent = {
 			allowedFileTypes: ['mp3', 'wav', 'ogg', 'mpeg'],
 			defaultValue: '',
 			required: false
+		},
+		{
+			name: 'videoUrl',
+			type: 'file',
+			allowedFileTypes: ['mp4', 'webm', 'ogv'],
+			defaultValue: '',
+			required: false
 		}
 	]
 };

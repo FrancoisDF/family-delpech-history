@@ -21,6 +21,7 @@
 		title: string;
 		description: string;
 		audioUrl: string;
+		videoUrl: string;
 		year: number;
 		tags?: string[];
 		blog?: BlogPost | null;
@@ -262,6 +263,7 @@
 								title={section.title}
 								description={section.description}
 								audioUrl={section.audioUrl}
+								videoUrl={section.videoUrl}
 								year={section.year}
 								tags={section.tags || []}
 								availablePosts={articles}
