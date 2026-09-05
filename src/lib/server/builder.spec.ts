@@ -120,3 +120,66 @@ describe('fetchAllBuilderPeopleServer', () => {
 		expect(result).toEqual([]);
 	});
 });
+
+describe('chronique normalization and resolution', () => {
+	beforeEach(() => {
+		vi.clearAllMocks();
+	});
+
+	it('normalizes Builder reference variants and preserves labels', () => {
+		expect(
+			normalizeBuilderReference({
+				article: { id: 'article-1' },
+				navigationLabel: 'Premier article'
+			})
+		).toEqual({
+			articleId: 'article-1',
+			label: 'Premier article'
+		});
+		expect(
+			normalizeBuilderReference({ value: { id: 'article-2', data: { title: 'Deuxième article' } } })
+		).toEqual({
+			articleId: 'article-2',
+			label: 'Deuxième article'
+		});
+	});
+
+	it('normalizes chronique metadata and removes duplicate references', () => {
+		const chronique = normalizeChronique({
+			id: 'chronique-1',
+			data: {
+				title: 'Une chronique',
+				handle: 'une-chronique',
+				introBlocks: [{ component: { name: 'RichTextBlock' } }],
+				referencedArticles: [{ id: 'article-1' }, { id: 'article-1' }, { id: 'article-2' }]
+			}
+		});
+
+		expect(chronique?.referencedArticles.map((reference) => reference.articleId)).toEqual([
+			'article-1',
+			'article-2'
+		]);
+		expect(chronique?.introBlocks).toHaveLength(1);
+	});
+
+	it('resolves canonical articles in configured reference order', async () => {
+		const { fetchEntries, fetchOneEntry } = await import('@builder.io/sdk-svelte');
+		vi.mocked(fetchEntries).mockResolvedValue([
+			{
+				id: 'chronique-1',
+				data: {
+					title: 'Une chronique',
+					handle: 'une-chronique',
+					referencedArticles: [{ id: 'article-2' }, { id: 'article-1' }]
+				}
+			}
+		]);
+		vi.mocked(fetchOneEntry)
+			.mockResolvedValueOnce({ id: 'article-2', data: { title: 'Deux' } })
+			.mockResolvedValueOnce({ id: 'article-1', data: { title: 'Un' } });
+
+		const result = await fetchResolvedChroniqueByHandleServer('une-chronique');
+
+		expect(result?.articles.map((article) => article.id)).toEqual(['article-2', 'article-1']);
+	});
+});

@@ -30,7 +30,7 @@ function getYear(date?: string): string | undefined {
 	return new Date(timestamp).getFullYear().toString();
 }
 
-function matchesFilters(
+export function _matchesFilters(
 	item: DiscoveryItem,
 	filters: { q: string; selectedTags: string[]; category: string; dateFrom: string; dateTo: string; type: string }
 ): boolean {
@@ -105,7 +105,7 @@ export const load: PageServerLoad = async ({ url }) => {
 	const allCategories = Array.from(allCategoriesSet).sort();
 	const allYears = Array.from(allYearsSet).sort().reverse();
 	const items = allItems.filter((item) =>
-		matchesFilters(item, { q, selectedTags, category, dateFrom, dateTo, type })
+		_matchesFilters(item, { q, selectedTags, category, dateFrom, dateTo, type })
 	);
 
 	return {

@@ -126,11 +126,11 @@ export function normalizeChronique(entry: BuilderContent): Chronique | null {
 	const seenArticleIds = new Set<string>();
 	const references = Array.isArray(data.referencedArticles)
 		? data.referencedArticles.flatMap((reference) => {
-			const normalized = normalizeBuilderReference(reference);
-			if (!normalized || seenArticleIds.has(normalized.articleId)) return [];
-			seenArticleIds.add(normalized.articleId);
-			return [normalized];
-		})
+				const normalized = normalizeBuilderReference(reference);
+				if (!normalized || seenArticleIds.has(normalized.articleId)) return [];
+				seenArticleIds.add(normalized.articleId);
+				return [normalized];
+			})
 		: [];
 
 	return {
@@ -182,7 +182,9 @@ export async function fetchResolvedChroniqueByHandleServer(
 	return { ...chronique, articles };
 }
 
-export async function fetchChroniquesReferencingArticleServer(articleId: string): Promise<Chronique[]> {
+export async function fetchChroniquesReferencingArticleServer(
+	articleId: string
+): Promise<Chronique[]> {
 	const chroniques = await fetchChroniquesServer();
 	return chroniques.filter((chronique) =>
 		chronique.referencedArticles.some((reference) => reference.articleId === articleId)

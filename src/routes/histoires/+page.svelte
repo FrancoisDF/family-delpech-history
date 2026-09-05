@@ -1,18 +1,17 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
 	import { generateBlogUrl } from '$lib/url-utils';
 	import type { PageData } from './$types';
 	import CTABlock from '$lib/components/builders/CTABlock.svelte';
 
 	let { data } = $props<{ data: PageData }>();
 
-	let searchQuery = $state(data.params.q);
-	let selectedTags = $state(data.params.tags);
-	let selectedCategory = $state(data.params.category);
-	let selectedType = $state(data.params.type);
-	let dateFrom = $state(data.params.dateFrom);
-	let dateTo = $state(data.params.dateTo);
+	let searchQuery = $state('');
+	let selectedTags = $state<string[]>([]);
+	let selectedCategory = $state('');
+	let selectedType = $state('all');
+	let dateFrom = $state('');
+	let dateTo = $state('');
 	let isFiltersExpanded = $state(false);
 	let timer: any;
 
@@ -35,7 +34,7 @@
 
 	function toggleTag(tagId: string) {
 		if (selectedTags.includes(tagId)) {
-			selectedTags = selectedTags.filter((id) => id !== tagId);
+			selectedTags = selectedTags.filter((id: string) => id !== tagId);
 		} else {
 			selectedTags = [...selectedTags, tagId];
 		}
@@ -51,7 +50,7 @@
 			if (dateFrom) params.set('dateFrom', dateFrom);
 		if (dateTo) params.set('dateTo', dateTo);
 
-		goto(`?${params.toString()}`, { keepFocus: true, noScroll: true });
+		goto(`?${params.toString()}`);
 	}
 
 	function getActiveFilterCount(): number {
@@ -166,10 +165,11 @@
 					<div class="grid gap-6 md:grid-cols-4">
 						<!-- Content Type Filter -->
 						<div>
-							<label class="mb-2 block text-sm font-semibold text-primary-700">Type :</label>
+							<label for="content-type-filter" class="mb-2 block text-sm font-semibold text-primary-700">Type :</label>
 							<select
-								bind:value={selectedType}
-								onchange={applyFilters}
+								id="content-type-filter"
+									bind:value={selectedType}
+									onchange={applyFilters}
 								class="block w-full rounded-lg border border-primary-200 bg-primary-50 px-3 py-2 text-primary-900 focus:border-accent focus:ring-accent sm:text-sm"
 							>
 								<option value="all">Tous les contenus</option>
@@ -181,10 +181,11 @@
 						<!-- Category Filter -->
 						{#if data.allCategories.length > 0}
 							<div>
-								<label class="mb-2 block text-sm font-semibold text-primary-700">Catégorie :</label>
+								<label for="category-filter" class="mb-2 block text-sm font-semibold text-primary-700">Catégorie :</label>
 								<select
-									bind:value={selectedCategory}
-									onchange={applyFilters}
+									id="category-filter"
+										bind:value={selectedCategory}
+										onchange={applyFilters}
 									class="block w-full rounded-lg border border-primary-200 bg-primary-50 px-3 py-2 text-primary-900 focus:border-accent focus:ring-accent sm:text-sm"
 								>
 									<option value="">Toutes les catégories</option>
@@ -198,10 +199,11 @@
 						<!-- Date From Filter -->
 						{#if data.allYears.length > 0}
 							<div>
-								<label class="mb-2 block text-sm font-semibold text-primary-700">À partir de :</label>
+								<label for="date-from-filter" class="mb-2 block text-sm font-semibold text-primary-700">À partir de :</label>
 								<select
-									bind:value={dateFrom}
-									onchange={applyFilters}
+									id="date-from-filter"
+										bind:value={dateFrom}
+										onchange={applyFilters}
 									class="block w-full rounded-lg border border-primary-200 bg-primary-50 px-3 py-2 text-primary-900 focus:border-accent focus:ring-accent sm:text-sm"
 								>
 									<option value="">Année de début</option>
@@ -215,10 +217,11 @@
 						<!-- Date To Filter -->
 						{#if data.allYears.length > 0}
 							<div>
-								<label class="mb-2 block text-sm font-semibold text-primary-700">Jusqu'à :</label>
+								<label for="date-to-filter" class="mb-2 block text-sm font-semibold text-primary-700">Jusqu'à :</label>
 								<select
-									bind:value={dateTo}
-									onchange={applyFilters}
+									id="date-to-filter"
+										bind:value={dateTo}
+										onchange={applyFilters}
 									class="block w-full rounded-lg border border-primary-200 bg-primary-50 px-3 py-2 text-primary-900 focus:border-accent focus:ring-accent sm:text-sm"
 								>
 									<option value="">Année de fin</option>
@@ -339,6 +342,9 @@
 								class="mt-auto inline-flex items-center gap-2 font-semibold text-accent transition-all duration-300 group-hover:gap-3"
 							>
 								<span>{post.type === 'chronique' ? 'Lire la chronique' : 'Lire plus'}</span>
+								{#if post.type === 'chronique'}
+									<span class="text-xs font-normal text-primary-600">({post.articleCount} articles)</span>
+								{/if}
 								<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path
 										stroke-linecap="round"

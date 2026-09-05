@@ -4,7 +4,9 @@
 	import PageNotFound from '$lib/components/PageNotFound.svelte';
 
 	let { data }: { data: PageData } = $props();
-	const pageTitle = data.chronique ? `${data.chronique.title} - Histoire de Famille` : 'Chronique introuvable';
+	let pageTitle = $derived(
+		data.chronique ? `${data.chronique.title} - Histoire de Famille` : 'Chronique introuvable'
+	);
 </script>
 
 <svelte:head>

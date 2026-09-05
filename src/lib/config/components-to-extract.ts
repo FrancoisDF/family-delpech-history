@@ -831,8 +831,18 @@ export const EXTRACTABLE_COMPONENTS: ExtractableComponentConfig[] = [
 				importance: 'critical',
 				description: 'Ordered canonical article references',
 				listItemFields: [
-					{ fieldName: 'id', fieldType: 'string', importance: 'critical', description: 'Referenced article ID' },
-					{ fieldName: 'title', fieldType: 'text', importance: 'high', description: 'Article navigation label' }
+					{
+						fieldName: 'id',
+						fieldType: 'string',
+						importance: 'critical',
+						description: 'Referenced article ID'
+					},
+					{
+						fieldName: 'title',
+						fieldType: 'text',
+						importance: 'high',
+						description: 'Article navigation label'
+					}
 				]
 			}
 		],
