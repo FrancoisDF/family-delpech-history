@@ -3,7 +3,6 @@
  *
  * Usage:
  *   BUILDER_PRIVATE_KEY=bpk-... npm run builder:push:chronique
- *   BUILDER_PRIVATE_KEY=bpk-... npm run builder:push:chronique -- --update
  *   npm run builder:push:chronique -- --dry-run
  */
 import dotenv from 'dotenv';
@@ -13,7 +12,6 @@ dotenv.config({ quiet: true });
 const MODEL_NAME = 'chronique';
 const ADMIN_API_URL = process.env.BUILDER_ADMIN_API_URL || 'https://cdn.builder.io/api/v2/admin';
 const privateKey = process.env.BUILDER_PRIVATE_KEY || process.env.BUILDER_PRIVATE_API_KEY;
-const shouldUpdate = process.argv.includes('--update');
 const dryRun = process.argv.includes('--dry-run');
 
 const modelFields = [
@@ -166,13 +164,6 @@ function addModelMutation() {
 	})}) { id name kind } }`;
 }
 
-function updateModelMutation(modelId) {
-	return `mutation UpdateChroniqueModel { updateModel(body: ${toGraphQLLiteral({
-		id: modelId,
-		data: { fields: modelFields }
-	})}) { id name kind } }`;
-}
-
 async function execute(query) {
 	const response = await fetch(ADMIN_API_URL, {
 		method: 'POST',
@@ -210,19 +201,15 @@ async function main() {
 	}
 
 	const existingModel = await findExistingModel();
-	if (existingModel && !shouldUpdate) {
+	if (existingModel) {
 		throw new Error(
-			`Builder model "${MODEL_NAME}" already exists (${existingModel.id}). Nothing changed. Re-run with --update to replace its fields.`
+			`Builder model "${MODEL_NAME}" already exists (${existingModel.id}). Nothing changed; configure it manually or remove it from Builder before running this command.`
 		);
 	}
 
-	const data = await execute(
-		existingModel ? updateModelMutation(existingModel.id) : addModelMutation()
-	);
-	const model = existingModel ? data.updateModel : data.addModel;
-	console.log(
-		`${existingModel ? 'Updated' : 'Created'} Builder model "${model.name}" (${model.id}) as ${model.kind}.`
-	);
+	const data = await execute(addModelMutation());
+	const model = data.addModel;
+	console.log(`Created Builder model "${model.name}" (${model.id}) as ${model.kind}.`);
 }
 
 main().catch((error) => {
