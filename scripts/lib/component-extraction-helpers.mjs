@@ -262,6 +262,23 @@ export const EXTRACTABLE_COMPONENTS = [
 				]
 			}
 		]
+	},
+	{
+		componentName: 'Chronique',
+		category: 'nested',
+		blockLevelExtraction: true,
+		extractableFields: [
+			{ fieldName: 'introBlocks', fieldType: 'list', importance: 'critical' },
+			{
+				fieldName: 'referencedArticles',
+				fieldType: 'list',
+				importance: 'critical',
+				listItemFields: [
+					{ fieldName: 'id', fieldType: 'string', importance: 'critical' },
+					{ fieldName: 'title', fieldType: 'text', importance: 'high' }
+				]
+			}
+		]
 	}
 ];
 

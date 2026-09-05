@@ -1,5 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { fetchBuilderPersonByIdServer, fetchAllBuilderPeopleServer } from './builder';
+import {
+	fetchBuilderPersonByIdServer,
+	fetchAllBuilderPeopleServer,
+	fetchResolvedChroniqueByHandleServer,
+	normalizeBuilderReference,
+	normalizeChronique
+} from './builder';
 
 // Mock the Builder SDK
 vi.mock('@builder.io/sdk-svelte', () => ({

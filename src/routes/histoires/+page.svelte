@@ -10,6 +10,7 @@
 	let searchQuery = $state(data.params.q);
 	let selectedTags = $state(data.params.tags);
 	let selectedCategory = $state(data.params.category);
+	let selectedType = $state(data.params.type);
 	let dateFrom = $state(data.params.dateFrom);
 	let dateTo = $state(data.params.dateTo);
 	let isFiltersExpanded = $state(false);
@@ -26,6 +27,7 @@
 		searchQuery = '';
 		selectedTags = [];
 		selectedCategory = '';
+		selectedType = 'all';
 		dateFrom = '';
 		dateTo = '';
 		applyFilters();
@@ -45,7 +47,8 @@
 		if (searchQuery) params.set('q', searchQuery);
 		if (selectedTags.length > 0) params.set('tags', selectedTags.join(','));
 		if (selectedCategory) params.set('category', selectedCategory);
-		if (dateFrom) params.set('dateFrom', dateFrom);
+			if (selectedType !== 'all') params.set('type', selectedType);
+			if (dateFrom) params.set('dateFrom', dateFrom);
 		if (dateTo) params.set('dateTo', dateTo);
 
 		goto(`?${params.toString()}`, { keepFocus: true, noScroll: true });
@@ -55,6 +58,7 @@
 		let count = 0;
 		if (searchQuery) count++;
 		if (selectedCategory) count++;
+		if (selectedType !== 'all') count++;
 		if (dateFrom) count++;
 		if (dateTo) count++;
 		count += selectedTags.length;
@@ -65,6 +69,7 @@
 		searchQuery = data.params.q;
 		selectedTags = data.params.tags;
 		selectedCategory = data.params.category;
+		selectedType = data.params.type;
 		dateFrom = data.params.dateFrom;
 		dateTo = data.params.dateTo;
 	});
@@ -158,7 +163,21 @@
 
 				<div class="space-y-6">
 					<!-- Filters Grid -->
-					<div class="grid gap-6 md:grid-cols-3">
+					<div class="grid gap-6 md:grid-cols-4">
+						<!-- Content Type Filter -->
+						<div>
+							<label class="mb-2 block text-sm font-semibold text-primary-700">Type :</label>
+							<select
+								bind:value={selectedType}
+								onchange={applyFilters}
+								class="block w-full rounded-lg border border-primary-200 bg-primary-50 px-3 py-2 text-primary-900 focus:border-accent focus:ring-accent sm:text-sm"
+							>
+								<option value="all">Tous les contenus</option>
+								<option value="articles">Articles</option>
+								<option value="chroniques">Chroniques</option>
+							</select>
+						</div>
+
 						<!-- Category Filter -->
 						{#if data.allCategories.length > 0}
 							<div>
@@ -237,10 +256,10 @@
 
 		<!-- Results Grid -->
 		<div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-			{#if data.articles.length > 0}
-				{#each data.articles as post (post.id)}
+			{#if data.items.length > 0}
+				{#each data.items as post (post.id)}
 					<a
-						href={`/histoires/${generateBlogUrl(post.id, post.title)}`}
+						href={post.type === 'chronique' ? `/chroniques/${post.handle}` : `/histoires/${generateBlogUrl(post.id, post.title)}`}
 						class="group block cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:shadow-xl"
 						aria-label={`Lire ${post.title}`}
 					>
@@ -279,7 +298,11 @@
 						<div class="flex flex-col p-6">
 							<!-- Meta Information -->
 							<div class="mb-3 flex flex-wrap items-center gap-2">
-								{#if post.category}
+								{#if post.type === 'chronique'}
+										<span class="inline-block rounded-full bg-accent px-3 py-1 text-xs font-bold uppercase tracking-wider text-white">
+											Chronique
+										</span>
+									{:else if post.category}
 									<span
 										class="inline-block rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent"
 									>
@@ -315,7 +338,7 @@
 							<div
 								class="mt-auto inline-flex items-center gap-2 font-semibold text-accent transition-all duration-300 group-hover:gap-3"
 							>
-								<span>Lire plus</span>
+								<span>{post.type === 'chronique' ? 'Lire la chronique' : 'Lire plus'}</span>
 								<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path
 										stroke-linecap="round"

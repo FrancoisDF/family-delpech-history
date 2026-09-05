@@ -10,6 +10,7 @@
 	import PageNotFound from '$lib/components/PageNotFound.svelte';
 	import CTABlock from '$lib/components/builders/CTABlock.svelte';
 	import PDFModal from '$lib/components/PDFModal.svelte';
+	import ChroniqueCallout from '$lib/components/ChroniqueCallout.svelte';
 
 	let { data } = $props<{ data: PageData }>();
 
@@ -68,7 +69,9 @@
 	</div>
 
 
-	{#if post?.data?.tags && post.data?.tags.length > 0}
+	<ChroniqueCallout chroniques={data.chroniques} />
+
+		{#if post?.data?.tags && post.data?.tags.length > 0}
 		<ArticleCarouselBlock
 			title="Articles Connexes"
 			tags={post.data?.tags || []}
