@@ -1,5 +1,4 @@
-import { json } from '@sveltejs/kit';
-import { getGEDCOMPeople, getGEDCOMStatistics } from '$lib/gedcom';
+import { getGEDCOMPeople, getGEDCOMStatistics } from '#lib/gedcom.js';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async () => {
@@ -8,7 +7,7 @@ export const GET: RequestHandler = async () => {
 		const people = await getGEDCOMPeople();
 
 		if (people.length === 0) {
-			return json(
+			return Response.json(
 				{
 					success: false,
 					message:
@@ -23,7 +22,7 @@ export const GET: RequestHandler = async () => {
 		// Get statistics
 		const statistics = getGEDCOMStatistics();
 
-		return json({
+		return Response.json({
 			success: true,
 			message: 'Genealogy data retrieved successfully',
 			people,
@@ -34,7 +33,7 @@ export const GET: RequestHandler = async () => {
 		const message = error instanceof Error ? error.message : 'Unknown error';
 		console.error('Error retrieving genealogy data:', error);
 
-		return json(
+		return Response.json(
 			{
 				success: false,
 				message: 'Failed to retrieve genealogy data',

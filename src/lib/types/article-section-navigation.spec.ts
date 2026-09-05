@@ -43,7 +43,10 @@ describe('normalizeArticleSectionNavigation', () => {
 		});
 
 		expect(
-			normalizeArticleSectionNavigation({ enabled: false, sections: [{ id: 'intro', title: 'Introduction' }] })
+			normalizeArticleSectionNavigation({
+				enabled: false,
+				sections: [{ id: 'intro', title: 'Introduction' }]
+			})
 		).toBeNull();
 		expect(normalizeArticleSectionNavigation({ enabled: true, sections: [] })).toBeNull();
 	});

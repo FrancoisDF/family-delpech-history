@@ -1,6 +1,6 @@
 import { fetchOneEntry, fetchEntries } from '@builder.io/sdk-svelte';
-import { PUBLIC_BUILDER_API_KEY } from '$env/static/public';
-import type { Person } from '$lib/models/person';
+import { PUBLIC_BUILDER_API_KEY } from '$app/env/public';
+import type { Person } from '#lib/models/person.js';
 
 export interface BuilderContent {
 	id?: string;
@@ -88,6 +88,7 @@ export function normalizeBuilderReference(value: unknown): ChroniqueReference | 
 		.map((candidate) => {
 			if (typeof candidate === 'string') return candidate;
 			const record = asRecord(candidate);
+
 			return (
 				asString(record?.id) ||
 				asString(readNestedValue(record, ['value', 'id'])) ||
@@ -231,11 +232,7 @@ export async function fetchBuilderContentByIdServer(
 			model,
 			apiKey: PUBLIC_BUILDER_API_KEY,
 			includeUnpublished,
-			options: {
-				query: {
-					id: id
-				}
-			}
+			options: { query: { id } }
 		});
 
 		return result || null;

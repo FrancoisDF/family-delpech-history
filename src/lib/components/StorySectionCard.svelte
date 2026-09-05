@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { isSectionCompleted, markSectionCompleted, unmarkSectionCompleted } from '$lib/progress';
+	import { isSectionCompleted, markSectionCompleted, unmarkSectionCompleted } from '#lib/progress.js';
 	import ArticleCarousel from './ArticleCarousel.svelte';
-	import { generateBlogUrl } from '$lib/url-utils';
+	import { generateBlogUrl } from '#lib/url-utils.js';
 
 	// Navigation is done via normal anchors now (SSR-friendly) — helper kept
 	

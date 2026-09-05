@@ -1,6 +1,6 @@
 import * as v from 'valibot';
 import { query } from '$app/server';
-import { fetchBuilderContentServer, fetchBuilderContentByIdServer } from '$lib/server/builder';
+import { fetchBuilderContentServer, fetchBuilderContentByIdServer } from '#lib/server/builder.js';
 
 interface BlogArticle {
 	id: string;

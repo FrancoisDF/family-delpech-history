@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { extractTagsId } from '$lib/url-utils';
+	import { extractTagsId } from '#lib/url-utils.js';
 	import { fetchArticlesByTags } from '../article.remote';
 	import ArticleCarousel from '../ArticleCarousel.svelte';
 

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { generateBlogUrl } from '$lib/url-utils';
+	import { generateBlogUrl } from '#lib/url-utils.js';
 	import type { PageData } from './$types';
-	import CTABlock from '$lib/components/builders/CTABlock.svelte';
+	import CTABlock from '#lib/components/builders/CTABlock.svelte';
 
 	let { data } = $props<{ data: PageData }>();
 
@@ -46,8 +46,8 @@
 		if (searchQuery) params.set('q', searchQuery);
 		if (selectedTags.length > 0) params.set('tags', selectedTags.join(','));
 		if (selectedCategory) params.set('category', selectedCategory);
-			if (selectedType !== 'all') params.set('type', selectedType);
-			if (dateFrom) params.set('dateFrom', dateFrom);
+		if (selectedType !== 'all') params.set('type', selectedType);
+		if (dateFrom) params.set('dateFrom', dateFrom);
 		if (dateTo) params.set('dateTo', dateTo);
 
 		goto(`?${params.toString()}`);
@@ -120,12 +120,7 @@
 				class="relative rounded-lg border border-primary-200 bg-white px-4 py-3 text-primary-700 transition-all hover:bg-primary-50 shadow-sm"
 				title={isFiltersExpanded ? 'Réduire les filtres' : 'Afficher les filtres'}
 			>
-				<svg
-					class="h-5 w-5"
-					fill="none"
-					stroke="currentColor"
-					viewBox="0 0 24 24"
-				>
+				<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path
 						stroke-linecap="round"
 						stroke-linejoin="round"
@@ -165,11 +160,14 @@
 					<div class="grid gap-6 md:grid-cols-4">
 						<!-- Content Type Filter -->
 						<div>
-							<label for="content-type-filter" class="mb-2 block text-sm font-semibold text-primary-700">Type :</label>
+							<label
+								for="content-type-filter"
+								class="mb-2 block text-sm font-semibold text-primary-700">Type :</label
+							>
 							<select
 								id="content-type-filter"
-									bind:value={selectedType}
-									onchange={applyFilters}
+								bind:value={selectedType}
+								onchange={applyFilters}
 								class="block w-full rounded-lg border border-primary-200 bg-primary-50 px-3 py-2 text-primary-900 focus:border-accent focus:ring-accent sm:text-sm"
 							>
 								<option value="all">Tous les contenus</option>
@@ -181,11 +179,14 @@
 						<!-- Category Filter -->
 						{#if data.allCategories.length > 0}
 							<div>
-								<label for="category-filter" class="mb-2 block text-sm font-semibold text-primary-700">Catégorie :</label>
+								<label
+									for="category-filter"
+									class="mb-2 block text-sm font-semibold text-primary-700">Catégorie :</label
+								>
 								<select
 									id="category-filter"
-										bind:value={selectedCategory}
-										onchange={applyFilters}
+									bind:value={selectedCategory}
+									onchange={applyFilters}
 									class="block w-full rounded-lg border border-primary-200 bg-primary-50 px-3 py-2 text-primary-900 focus:border-accent focus:ring-accent sm:text-sm"
 								>
 									<option value="">Toutes les catégories</option>
@@ -199,11 +200,14 @@
 						<!-- Date From Filter -->
 						{#if data.allYears.length > 0}
 							<div>
-								<label for="date-from-filter" class="mb-2 block text-sm font-semibold text-primary-700">À partir de :</label>
+								<label
+									for="date-from-filter"
+									class="mb-2 block text-sm font-semibold text-primary-700">À partir de :</label
+								>
 								<select
 									id="date-from-filter"
-										bind:value={dateFrom}
-										onchange={applyFilters}
+									bind:value={dateFrom}
+									onchange={applyFilters}
 									class="block w-full rounded-lg border border-primary-200 bg-primary-50 px-3 py-2 text-primary-900 focus:border-accent focus:ring-accent sm:text-sm"
 								>
 									<option value="">Année de début</option>
@@ -217,11 +221,14 @@
 						<!-- Date To Filter -->
 						{#if data.allYears.length > 0}
 							<div>
-								<label for="date-to-filter" class="mb-2 block text-sm font-semibold text-primary-700">Jusqu'à :</label>
+								<label
+									for="date-to-filter"
+									class="mb-2 block text-sm font-semibold text-primary-700">Jusqu'à :</label
+								>
 								<select
 									id="date-to-filter"
-										bind:value={dateTo}
-										onchange={applyFilters}
+									bind:value={dateTo}
+									onchange={applyFilters}
 									class="block w-full rounded-lg border border-primary-200 bg-primary-50 px-3 py-2 text-primary-900 focus:border-accent focus:ring-accent sm:text-sm"
 								>
 									<option value="">Année de fin</option>
@@ -262,7 +269,9 @@
 			{#if data.items.length > 0}
 				{#each data.items as post (post.id)}
 					<a
-						href={post.type === 'chronique' ? `/chroniques/${post.handle}` : `/histoires/${generateBlogUrl(post.id, post.title)}`}
+						href={post.type === 'chronique'
+							? `/chroniques/${post.handle}`
+							: `/histoires/${generateBlogUrl(post.id, post.title)}`}
 						class="group block cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:shadow-xl"
 						aria-label={`Lire ${post.title}`}
 					>
@@ -302,10 +311,12 @@
 							<!-- Meta Information -->
 							<div class="mb-3 flex flex-wrap items-center gap-2">
 								{#if post.type === 'chronique'}
-										<span class="inline-block rounded-full bg-accent px-3 py-1 text-xs font-bold uppercase tracking-wider text-white">
-											Chronique
-										</span>
-									{:else if post.category}
+									<span
+										class="inline-block rounded-full bg-accent px-3 py-1 text-xs font-bold uppercase tracking-wider text-white"
+									>
+										Chronique
+									</span>
+								{:else if post.category}
 									<span
 										class="inline-block rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent"
 									>
@@ -343,7 +354,9 @@
 							>
 								<span>{post.type === 'chronique' ? 'Lire la chronique' : 'Lire plus'}</span>
 								{#if post.type === 'chronique'}
-									<span class="text-xs font-normal text-primary-600">({post.articleCount} articles)</span>
+									<span class="text-xs font-normal text-primary-600"
+										>({post.articleCount} articles)</span
+									>
 								{/if}
 								<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path
@@ -359,9 +372,7 @@
 				{/each}
 			{:else}
 				<div class="col-span-full py-12 text-center">
-					<div
-						class="rounded-lg border-2 border-dashed border-primary-300 bg-primary-50 p-8"
-					>
+					<div class="rounded-lg border-2 border-dashed border-primary-300 bg-primary-50 p-8">
 						<svg
 							class="mx-auto mb-4 h-12 w-12 text-primary-400"
 							fill="none"
@@ -375,9 +386,7 @@
 								d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
 							/>
 						</svg>
-						<p class="text-lg text-primary-700">
-							Aucune histoire ne correspond à votre recherche.
-						</p>
+						<p class="text-lg text-primary-700">Aucune histoire ne correspond à votre recherche.</p>
 						<button
 							onclick={resetFilters}
 							class="mt-4 text-sm font-semibold text-accent hover:text-accent/80"
@@ -390,7 +399,7 @@
 		</div>
 	</div>
 </div>
-{#if data.siteConfig }
+{#if data.siteConfig}
 	<CTABlock
 		title={data.siteConfig.ctaBlockTitle as string}
 		description={data.siteConfig.ctaBlockDescription as string}

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import GenealogyBlock from '$lib/components/builders/GenealogyBlock.svelte';
-	import { searchPeopleByName, setPeopleData, filterPeopleByTag, filterPeopleByProfession, searchPeopleByNameInBuilder } from '$lib/genealogy';
-	import type { Person } from '$lib/models/person';
+	import GenealogyBlock from '#lib/components/builders/GenealogyBlock.svelte';
+	import { searchPeopleByName, setPeopleData, filterPeopleByTag, filterPeopleByProfession, searchPeopleByNameInBuilder } from '#lib/genealogy.js';
+	import type { Person } from '#lib/models/person.js';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();

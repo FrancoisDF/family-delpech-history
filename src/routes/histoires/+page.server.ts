@@ -3,7 +3,7 @@ import {
 	fetchChroniquesServer,
 	normalizeBlogArticle,
 	type DiscoveryItem
-} from '$lib/server/builder';
+} from '#lib/server/builder.js';
 import type { PageServerLoad } from './$types';
 
 function getTagValue(tagItem: unknown): { id?: string; label?: string } {
@@ -11,8 +11,12 @@ function getTagValue(tagItem: unknown): { id?: string; label?: string } {
 	const tag = (tagItem as Record<string, unknown>).tag;
 	if (!tag || typeof tag !== 'object') return {};
 	const rawTag = tag as Record<string, unknown>;
-	const value = rawTag.value && typeof rawTag.value === 'object' ? (rawTag.value as Record<string, unknown>) : null;
-	const valueData = value?.data && typeof value.data === 'object' ? (value.data as Record<string, unknown>) : null;
+	const value =
+		rawTag.value && typeof rawTag.value === 'object'
+			? (rawTag.value as Record<string, unknown>)
+			: null;
+	const valueData =
+		value?.data && typeof value.data === 'object' ? (value.data as Record<string, unknown>) : null;
 	return {
 		id: typeof rawTag.id === 'string' ? rawTag.id : undefined,
 		label:
@@ -32,7 +36,14 @@ function getYear(date?: string): string | undefined {
 
 export function _matchesFilters(
 	item: DiscoveryItem,
-	filters: { q: string; selectedTags: string[]; category: string; dateFrom: string; dateTo: string; type: string }
+	filters: {
+		q: string;
+		selectedTags: string[];
+		category: string;
+		dateFrom: string;
+		dateTo: string;
+		type: string;
+	}
 ): boolean {
 	if (filters.type === 'articles' && item.type !== 'article') return false;
 	if (filters.type === 'chroniques' && item.type !== 'chronique') return false;
@@ -93,7 +104,11 @@ export const load: PageServerLoad = async ({ url }) => {
 		const year = getYear(item.date);
 		if (year) allYearsSet.add(year);
 		for (const tag of Array.isArray(item.tags) ? item.tags.map(getTagValue) : []) {
-			if (tag.id && tag.label && (!allTagsMap.has(tag.id) || allTagsMap.get(tag.id) === 'Unknown Tag')) {
+			if (
+				tag.id &&
+				tag.label &&
+				(!allTagsMap.has(tag.id) || allTagsMap.get(tag.id) === 'Unknown Tag')
+			) {
 				allTagsMap.set(tag.id, tag.label);
 			}
 		}

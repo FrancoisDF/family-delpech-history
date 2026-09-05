@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { generateBlogUrl } from '$lib/url-utils';
-	import { fetchArticles } from '$lib/components/article.remote';
+	import { generateBlogUrl } from '#lib/url-utils.js';
+	import { fetchArticles } from '#lib/components/article.remote.js';
 
 	let {
 		title = 'Histoires de Famille',

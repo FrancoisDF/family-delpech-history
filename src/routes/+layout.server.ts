@@ -1,4 +1,4 @@
-import { fetchBuilderContentServer } from '$lib/server/builder';
+import { fetchBuilderContentServer } from '#lib/server/builder.js';
 import type { LayoutServerLoad } from './$types';
 
 // Ensure all routes use trailing slashes (e.g. `/about/`)

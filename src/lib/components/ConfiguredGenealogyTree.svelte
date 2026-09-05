@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Person } from '$lib/models/person';
+	import type { Person } from '#lib/models/person.js';
 
 	interface ConfiguredPerson {
 		id: string;

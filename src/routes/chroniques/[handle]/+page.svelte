@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import ChroniqueReader from '$lib/components/ChroniqueReader.svelte';
-	import PageNotFound from '$lib/components/PageNotFound.svelte';
+	import ChroniqueReader from '#lib/components/ChroniqueReader.svelte';
+	import PageNotFound from '#lib/components/PageNotFound.svelte';
 
 	let { data }: { data: PageData } = $props();
 	let pageTitle = $derived(

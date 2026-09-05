@@ -1,9 +1,9 @@
 <script lang="ts">
-	import TreeGenealogy from '$lib/components/TreeGenealogy.svelte';
-	import ConfiguredGenealogyTree from '$lib/components/ConfiguredGenealogyTree.svelte';
-	import PersonDetail from '$lib/components/PersonDetail.svelte';
-	import { getPerson } from '$lib/genealogy';
-	import type { Person } from '$lib/models/person';
+	import TreeGenealogy from '#lib/components/TreeGenealogy.svelte';
+	import ConfiguredGenealogyTree from '#lib/components/ConfiguredGenealogyTree.svelte';
+	import PersonDetail from '#lib/components/PersonDetail.svelte';
+	import { getPerson } from '#lib/genealogy.js';
+	import type { Person } from '#lib/models/person.js';
 
 	interface ConfiguredPerson {
 		id: string;

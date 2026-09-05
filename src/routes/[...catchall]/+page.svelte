@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { Content } from '@builder.io/sdk-svelte';
-	import { PUBLIC_BUILDER_API_KEY } from '$env/static/public';
-	import { builderComponents } from '$lib/components/builders';
-	import PageNotFound from '$lib/components/PageNotFound.svelte';
+	import { PUBLIC_BUILDER_API_KEY } from '$app/env/public';
+	import { builderComponents } from '#lib/components/builders/index.js';
+	import PageNotFound from '#lib/components/PageNotFound.svelte';
 
 	import type { PageData } from './$types';
-	import CTABlock from '$lib/components/builders/CTABlock.svelte';
+	import CTABlock from '#lib/components/builders/CTABlock.svelte';
 
 	let { data }: { data: PageData } = $props();
 	const pageTitle = data?.pageContent?.data?.title || '';

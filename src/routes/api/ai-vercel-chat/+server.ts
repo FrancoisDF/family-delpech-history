@@ -4,10 +4,10 @@
  * Uses token-efficient summary-based RAG (Phase 1)
  */
 
-import { json, error } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import type { RequestHandler } from '@sveltejs/kit';
 import { generateText } from 'ai';
-import { createModelForChat, getProviderInfo } from '$lib/ai/provider';
+import { createModelForChat, getProviderInfo } from '#lib/ai/provider.js';
 import {
 	buildSystemPrompt,
 	getSummarySummaries,
@@ -16,7 +16,7 @@ import {
 	extractSummaryIds,
 	type VercelChatRequest,
 	type VercelChatResponse
-} from '$lib/ai/vercel-generation';
+} from '#lib/ai/vercel-generation.js';
 
 const DAILY_TOKEN_BUDGET = 5000;
 
@@ -106,12 +106,12 @@ export const POST: RequestHandler = async ({ request }) => {
 			messages,
 			system: systemPrompt,
 			temperature: 0.7,
-			maxTokens: 500
+			maxOutputTokens: 500
 		});
 
 		// Extract token counts
-		const inputTokens = usage.promptTokens;
-		const outputTokens = usage.completionTokens;
+		const inputTokens = usage.inputTokens ?? 0;
+		const outputTokens = usage.outputTokens ?? 0;
 		const totalTokens = inputTokens + outputTokens;
 
 		// Check if response would exceed budget
@@ -134,7 +134,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			usedCachedContext: usedCachedContext
 		};
 
-		return json(response);
+		return Response.json(response);
 	} catch (err: any) {
 		console.error('Error in chat API:', err);
 

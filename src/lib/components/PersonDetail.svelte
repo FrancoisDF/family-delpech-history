@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { getRelatedArticles, getPerson } from '$lib/genealogy';
-	import ArticleCarousel from '$lib/components/ArticleCarousel.svelte';
-	import type { Person } from '$lib/models/person';
+	import { getRelatedArticles, getPerson } from '#lib/genealogy.js';
+	import ArticleCarousel from '#lib/components/ArticleCarousel.svelte';
+	import type { Person } from '#lib/models/person.js';
 
 	interface Props {
 		person: Person;

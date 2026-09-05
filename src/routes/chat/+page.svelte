@@ -17,10 +17,10 @@
 	}
 
 
-	import { searchFamilyData } from '$lib/ai/search';
-	import { ENABLE_LOCAL_LLM, DEFAULT_SYSTEM_PROMPT } from '$lib/ai/config';
-	import { generateBlogUrl } from '$lib/url-utils';
-	import { browser } from '$app/environment';
+	import { searchFamilyData } from '#lib/ai/search.js';
+	import { ENABLE_LOCAL_LLM, DEFAULT_SYSTEM_PROMPT } from '#lib/ai/config.js';
+	import { generateBlogUrl } from '#lib/url-utils.js';
+	import { browser } from '$app/env';
 	import { tick } from 'svelte';
 
 	interface LoadProgress {
@@ -51,7 +51,7 @@
 	async function ensureGenerationModuleLoaded(): Promise<void> {
 		if (!browser || generationModuleReady) return;
 		if (!generationModuleLoadPromise) {
-			generationModuleLoadPromise = import('$lib/ai/generation')
+			generationModuleLoadPromise = import('#lib/ai/generation.js')
 				.then((mod) => {
 					summarizeFromChunksFn = mod.summarizeFromChunks;
 					isSummarizerLoadingFn = mod.isSummarizerLoading;
@@ -129,10 +129,7 @@
 			if (stored) {
 				const parsed = JSON.parse(stored) as ChatMessage[];
 				// Convert timestamp strings back to Date objects
-				return parsed.map(m => ({
-					...m,
-					timestamp: new Date(m.timestamp)
-				}));
+				return parsed.map((m) => ({ ...m, timestamp: new Date(m.timestamp) }));
 			}
 		} catch (err) {
 			console.warn('Failed to load chat history:', err);
@@ -152,7 +149,7 @@
 	let systemPrompt = $state(DEFAULT_SYSTEM_PROMPT);
 
 	function updateMessageById(id: string, patch: Partial<ChatMessage>) {
-		messages = messages.map((m) => (m.id === id ? { ...m, ...patch } : m));
+		messages = messages.map((m) => m.id === id ? { ...m, ...patch } : m);
 	}
 
 	async function scrollToResponseTop() {
@@ -183,7 +180,7 @@
 		const userMessage: ChatMessage = {
 			id: Date.now().toString(),
 			type: 'user',
-			content: content,
+			content,
 			timestamp: new Date()
 		};
 
@@ -234,7 +231,7 @@
 				}
 
 				// Wait 100ms before processing the response
-				await new Promise(resolve => setTimeout(resolve, 100));
+				await new Promise((resolve) => setTimeout(resolve, 100));
 
 				const results = await searchFamilyData(userMessage.content, { topK: 4 });
 				let sourceReferences: Array<{
@@ -443,8 +440,14 @@
 							<div
 								class="flex h-8 w-8 items-center justify-center rounded-full bg-primary-900 text-cream"
 							>
-								<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-									<path d="M10 0a10 10 0 110 20 10 10 0 010-20zm0 2a8 8 0 100 16 8 8 0 000-16z" />
+								<svg
+									class="h-5 w-5"
+									fill="currentColor"
+									viewBox="0 0 20 20"
+								>
+									<path
+										d="M10 0a10 10 0 110 20 10 10 0 010-20zm0 2a8 8 0 100 16 8 8 0 000-16z"
+									></path>
 								</svg>
 							</div>
 						</div>
@@ -535,9 +538,17 @@
 
 					{#if message.type === 'user'}
 						<div class="flex-shrink-0">
-							<div class="bg-gold flex h-8 w-8 items-center justify-center rounded-full">
-								<svg class="h-5 w-5 text-primary-900" fill="currentColor" viewBox="0 0 20 20">
-									<path d="M10 0a10 10 0 110 20 10 10 0 010-20zm0 2a8 8 0 100 16 8 8 0 000-16z" />
+							<div
+								class="bg-gold flex h-8 w-8 items-center justify-center rounded-full"
+							>
+								<svg
+									class="h-5 w-5 text-primary-900"
+									fill="currentColor"
+									viewBox="0 0 20 20"
+								>
+									<path
+										d="M10 0a10 10 0 110 20 10 10 0 010-20zm0 2a8 8 0 100 16 8 8 0 000-16z"
+									></path>
 								</svg>
 							</div>
 						</div>
@@ -551,8 +562,14 @@
 						<div
 							class="flex h-8 w-8 items-center justify-center rounded-full bg-primary-900 text-cream"
 						>
-							<svg class="h-5 w-5 animate-spin" fill="currentColor" viewBox="0 0 20 20">
-								<path d="M10 0a10 10 0 110 20 10 10 0 010-20zm0 2a8 8 0 100 16 8 8 0 000-16z" />
+							<svg
+								class="h-5 w-5 animate-spin"
+								fill="currentColor"
+								viewBox="0 0 20 20"
+							>
+								<path
+									d="M10 0a10 10 0 110 20 10 10 0 010-20zm0 2a8 8 0 100 16 8 8 0 000-16z"
+								></path>
 							</svg>
 						</div>
 					</div>
@@ -563,7 +580,7 @@
 							<span class="animate-pulse delay-200">●</span>
 							<span class="ml-2 text-sm font-medium">
 								{#if currentProgress.status === 'downloading'}
-									Chargement IA&nbsp;: {currentProgress.percentage.toFixed(0)}%
+									Chargement IA : {currentProgress.percentage.toFixed(0)}%
 								{:else}
 									Traitement en cours...
 								{/if}
@@ -634,8 +651,14 @@
 					disabled={isLoading || !messageInput.trim()}
 					class="rounded-lg bg-primary-900 px-6 py-3 font-semibold text-cream transition-all hover:bg-primary-800 disabled:cursor-not-allowed disabled:opacity-50"
 				>
-					<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-						<path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5.951-2.975 5.951 2.975a1 1 0 001.169-1.409l-7-14z" />
+					<svg
+						class="h-5 w-5"
+						fill="currentColor"
+						viewBox="0 0 20 20"
+					>
+						<path
+							d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5.951-2.975 5.951 2.975a1 1 0 001.169-1.409l-7-14z"
+						></path>
 					</svg>
 				</button>
 			</form>
@@ -658,7 +681,7 @@
 						class="w-full rounded-lg border border-primary-300 bg-cream p-3 text-sm text-primary-900 outline-none transition-colors focus:border-primary-900 focus:bg-white"
 						rows="6"
 						placeholder="Décrivez comment l'assistant doit se comporter..."
-					/>
+					></textarea>
 				</div>
 
 				<div class="mb-6 rounded-lg bg-primary-50 p-3">
@@ -675,7 +698,7 @@
 						✓ Enregistrer
 					</button>
 					<button
-						onclick={() => (showSettings = false)}
+						onclick={() => showSettings = false}
 						class="rounded-lg border border-primary-300 px-4 py-2 text-primary-700 transition-all hover:border-primary-500 hover:bg-primary-50"
 					>
 						Annuler

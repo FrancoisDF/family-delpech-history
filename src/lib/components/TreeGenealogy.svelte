@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
-	import { getPersonWithRelations, getPerson } from '$lib/genealogy';
-	import type { Person, PersonWithRelations } from '$lib/models/person';
+	import { browser } from '$app/env';
+	import { getPersonWithRelations, getPerson } from '#lib/genealogy.js';
+	import type { Person, PersonWithRelations } from '#lib/models/person.js';
 
 	interface Props {
 		rootPersonId: string;
@@ -140,8 +140,18 @@
 											aria-label="Définir comme personne racine"
 											title="Afficher cet arbre généalogique en partant de cette personne"
 										>
-											<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+											<svg
+												class="h-4 w-4"
+												fill="none"
+												stroke="currentColor"
+												viewBox="0 0 24 24"
+											>
+												<path
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													stroke-width="2"
+													d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+												></path>
 											</svg>
 										</button>
 									{/if}
@@ -171,8 +181,18 @@
 							aria-label="Définir comme personne racine"
 							title="Afficher cet arbre généalogique en partant de cette personne"
 						>
-							<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+							<svg
+								class="h-4 w-4"
+								fill="none"
+								stroke="currentColor"
+								viewBox="0 0 24 24"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+								></path>
 							</svg>
 						</button>
 					{/if}
@@ -202,8 +222,18 @@
 											aria-label="Définir comme personne racine"
 											title="Afficher cet arbre généalogique en partant de cette personne"
 										>
-											<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+											<svg
+												class="h-4 w-4"
+												fill="none"
+												stroke="currentColor"
+												viewBox="0 0 24 24"
+											>
+												<path
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													stroke-width="2"
+													d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+												></path>
 											</svg>
 										</button>
 									{/if}
@@ -216,12 +246,17 @@
 				<!-- Children Section -->
 				{#if (rootPersonData.children ?? []).length > 0}
 					<div class="flex flex-col items-center gap-6">
-						<div class="h-6 w-px bg-gradient-to-b from-primary-300 to-transparent"></div>
-						<h3 class="text-sm font-semibold uppercase tracking-widest text-primary-600">Enfants ({(rootPersonData.children ?? []).length})</h3>
+						<div
+							class="h-6 w-px bg-gradient-to-b from-primary-300 to-transparent"
+						></div>
 
-						{#if expandedNodes.has(rootPersonData!.id)}
+						<h3
+							class="text-sm font-semibold uppercase tracking-widest text-primary-600"
+						>Enfants ({(rootPersonData.children ?? []).length})</h3>
+
+						{#if expandedNodes.has((rootPersonData!).id)}
 							<div class="flex flex-wrap justify-center gap-6">
-								{#each (rootPersonData.children ?? []) as childId}
+								{#each rootPersonData.children ?? [] as childId}
 									{#await getPerson(childId) then child}
 										{#if child}
 											<div class="relative">
@@ -242,8 +277,18 @@
 														aria-label="Définir comme personne racine"
 														title="Afficher cet arbre généalogique en partant de cette personne"
 													>
-														<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-															<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+														<svg
+															class="h-4 w-4"
+															fill="none"
+															stroke="currentColor"
+															viewBox="0 0 24 24"
+														>
+															<path
+																stroke-linecap="round"
+																stroke-linejoin="round"
+																stroke-width="2"
+																d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+															></path>
 														</svg>
 													</button>
 												{/if}
@@ -259,11 +304,9 @@
 						{/if}
 
 						<button
-							onclick={() => toggleNode(rootPersonData!.id)}
+							onclick={() => toggleNode((rootPersonData!).id)}
 							class="mt-4 rounded-lg border border-primary-300 px-4 py-2 text-sm font-medium text-primary-700 transition-colors hover:bg-primary-50 active:bg-primary-100"
-						>
-							{expandedNodes.has(rootPersonData!.id) ? '✕ Masquer les enfants' : '+ Afficher les enfants'}
-						</button>
+						>{expandedNodes.has((rootPersonData!).id) ? '✕ Masquer les enfants' : '+ Afficher les enfants'}</button>
 					</div>
 				{/if}
 			</div>

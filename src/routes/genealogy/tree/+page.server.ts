@@ -1,5 +1,5 @@
-import { loadGenealogyGraph, generateGraphFromPeople } from '$lib/server/genealogy-graph';
-import { getGEDCOMPeople } from '$lib/gedcom';
+import { loadGenealogyGraph, generateGraphFromPeople } from '#lib/server/genealogy-graph.js';
+import { getGEDCOMPeople } from '#lib/gedcom.js';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {

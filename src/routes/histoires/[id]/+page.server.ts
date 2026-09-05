@@ -1,6 +1,6 @@
-import { PUBLIC_BUILDER_API_KEY } from '$env/static/public';
-import { fetchChroniquesReferencingArticleServer } from '$lib/server/builder';
-import { extractIdFromUrl } from '$lib/url-utils';
+import { PUBLIC_BUILDER_API_KEY } from '$app/env/public';
+import { fetchChroniquesReferencingArticleServer } from '#lib/server/builder.js';
+import { extractIdFromUrl } from '#lib/url-utils.js';
 import { fetchOneEntry, getBuilderSearchParams } from '@builder.io/sdk-svelte';
 import type { PageServerLoad } from './$types';
 

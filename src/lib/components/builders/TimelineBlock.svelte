@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Timeline from '$lib/components/Timeline.svelte';
+	import Timeline from '#lib/components/Timeline.svelte';
 	import { fetchSections } from '../section.remote';
 	import { fetchRelatedArticles } from '../article.remote';
 
