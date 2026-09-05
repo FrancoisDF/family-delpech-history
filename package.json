@@ -8,6 +8,7 @@
 		"ingest": "node scripts/ingest-all-content.js",
 		"ingest:documents": "node scripts/ingest-local-documents.mjs",
 		"ingest:builder": "node scripts/ingest-builder-content.mjs",
+		"builder:push:chronique": "node scripts/push-chronique-model.mjs",
 		"prepare:rag": "node scripts/ingest-local-documents.mjs",
 		"prepare:rag:all": "node scripts/ingest-all-content.mjs",
 		"prepare:embeddings": "node scripts/precompute-embeddings.mjs",
