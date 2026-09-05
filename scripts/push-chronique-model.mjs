@@ -203,7 +203,7 @@ async function main() {
 	const existingModel = await findExistingModel();
 	if (existingModel) {
 		throw new Error(
-			`Builder model "${MODEL_NAME}" already exists (${existingModel.id}). Nothing changed; configure it manually or remove it from Builder before running this command.`
+			`Builder model "${MODEL_NAME}" already exists (${existingModel.id}, kind: ${existingModel.kind}). Nothing changed. The private key can see this model; if it is not visible in the Builder UI, verify that the key belongs to the same Space and open the Data Models area for kind "data".`
 		);
 	}
 
