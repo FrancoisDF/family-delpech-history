@@ -1,18 +1,21 @@
 /// <reference types="vitest/config" />
 import { sveltekit } from '@sveltejs/kit/vite';
 import path from 'node:path';
-import adapter from '@sveltejs/adapter-auto';
+import adapterAuto from '@sveltejs/adapter-auto';
+import adapterVercel from '@sveltejs/adapter-vercel';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import { defineConfig } from 'vitest/config';
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 import { playwright } from '@vitest/browser-playwright';
 const dirname = import.meta.dirname;
+const isVercel = process.env.VERCEL === '1' || Boolean(process.env.VERCEL_ENV);
+const adapter = isVercel ? adapterVercel() : adapterAuto();
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
 	plugins: [
 		sveltekit({
-			adapter: adapter(),
+			adapter,
 			preprocess: vitePreprocess(),
 			experimental: {
 				remoteFunctions: true
