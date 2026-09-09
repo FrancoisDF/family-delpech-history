@@ -1,17 +1,17 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
-	import { generateBlogUrl } from '$lib/url-utils';
+	import { generateBlogUrl } from '#lib/url-utils.js';
 	import type { PageData } from './$types';
-	import CTABlock from '$lib/components/builders/CTABlock.svelte';
+	import CTABlock from '#lib/components/builders/CTABlock.svelte';
 
 	let { data } = $props<{ data: PageData }>();
 
-	let searchQuery = $state(data.params.q);
-	let selectedTags = $state(data.params.tags);
-	let selectedCategory = $state(data.params.category);
-	let dateFrom = $state(data.params.dateFrom);
-	let dateTo = $state(data.params.dateTo);
+	let searchQuery = $state('');
+	let selectedTags = $state<string[]>([]);
+	let selectedCategory = $state('');
+	let selectedType = $state('all');
+	let dateFrom = $state('');
+	let dateTo = $state('');
 	let isFiltersExpanded = $state(false);
 	let timer: any;
 
@@ -26,6 +26,7 @@
 		searchQuery = '';
 		selectedTags = [];
 		selectedCategory = '';
+		selectedType = 'all';
 		dateFrom = '';
 		dateTo = '';
 		applyFilters();
@@ -33,7 +34,7 @@
 
 	function toggleTag(tagId: string) {
 		if (selectedTags.includes(tagId)) {
-			selectedTags = selectedTags.filter((id) => id !== tagId);
+			selectedTags = selectedTags.filter((id: string) => id !== tagId);
 		} else {
 			selectedTags = [...selectedTags, tagId];
 		}
@@ -45,16 +46,18 @@
 		if (searchQuery) params.set('q', searchQuery);
 		if (selectedTags.length > 0) params.set('tags', selectedTags.join(','));
 		if (selectedCategory) params.set('category', selectedCategory);
+		if (selectedType !== 'all') params.set('type', selectedType);
 		if (dateFrom) params.set('dateFrom', dateFrom);
 		if (dateTo) params.set('dateTo', dateTo);
 
-		goto(`?${params.toString()}`, { keepFocus: true, noScroll: true });
+		goto(`?${params.toString()}`);
 	}
 
 	function getActiveFilterCount(): number {
 		let count = 0;
 		if (searchQuery) count++;
 		if (selectedCategory) count++;
+		if (selectedType !== 'all') count++;
 		if (dateFrom) count++;
 		if (dateTo) count++;
 		count += selectedTags.length;
@@ -65,6 +68,7 @@
 		searchQuery = data.params.q;
 		selectedTags = data.params.tags;
 		selectedCategory = data.params.category;
+		selectedType = data.params.type;
 		dateFrom = data.params.dateFrom;
 		dateTo = data.params.dateTo;
 	});
@@ -116,12 +120,7 @@
 				class="relative rounded-lg border border-primary-200 bg-white px-4 py-3 text-primary-700 transition-all hover:bg-primary-50 shadow-sm"
 				title={isFiltersExpanded ? 'Réduire les filtres' : 'Afficher les filtres'}
 			>
-				<svg
-					class="h-5 w-5"
-					fill="none"
-					stroke="currentColor"
-					viewBox="0 0 24 24"
-				>
+				<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path
 						stroke-linecap="round"
 						stroke-linejoin="round"
@@ -158,12 +157,34 @@
 
 				<div class="space-y-6">
 					<!-- Filters Grid -->
-					<div class="grid gap-6 md:grid-cols-3">
+					<div class="grid gap-6 md:grid-cols-4">
+						<!-- Content Type Filter -->
+						<div>
+							<label
+								for="content-type-filter"
+								class="mb-2 block text-sm font-semibold text-primary-700">Type :</label
+							>
+							<select
+								id="content-type-filter"
+								bind:value={selectedType}
+								onchange={applyFilters}
+								class="block w-full rounded-lg border border-primary-200 bg-primary-50 px-3 py-2 text-primary-900 focus:border-accent focus:ring-accent sm:text-sm"
+							>
+								<option value="all">Tous les contenus</option>
+								<option value="articles">Articles</option>
+								<option value="chroniques">Chroniques</option>
+							</select>
+						</div>
+
 						<!-- Category Filter -->
 						{#if data.allCategories.length > 0}
 							<div>
-								<label class="mb-2 block text-sm font-semibold text-primary-700">Catégorie :</label>
+								<label
+									for="category-filter"
+									class="mb-2 block text-sm font-semibold text-primary-700">Catégorie :</label
+								>
 								<select
+									id="category-filter"
 									bind:value={selectedCategory}
 									onchange={applyFilters}
 									class="block w-full rounded-lg border border-primary-200 bg-primary-50 px-3 py-2 text-primary-900 focus:border-accent focus:ring-accent sm:text-sm"
@@ -179,8 +200,12 @@
 						<!-- Date From Filter -->
 						{#if data.allYears.length > 0}
 							<div>
-								<label class="mb-2 block text-sm font-semibold text-primary-700">À partir de :</label>
+								<label
+									for="date-from-filter"
+									class="mb-2 block text-sm font-semibold text-primary-700">À partir de :</label
+								>
 								<select
+									id="date-from-filter"
 									bind:value={dateFrom}
 									onchange={applyFilters}
 									class="block w-full rounded-lg border border-primary-200 bg-primary-50 px-3 py-2 text-primary-900 focus:border-accent focus:ring-accent sm:text-sm"
@@ -196,8 +221,12 @@
 						<!-- Date To Filter -->
 						{#if data.allYears.length > 0}
 							<div>
-								<label class="mb-2 block text-sm font-semibold text-primary-700">Jusqu'à :</label>
+								<label
+									for="date-to-filter"
+									class="mb-2 block text-sm font-semibold text-primary-700">Jusqu'à :</label
+								>
 								<select
+									id="date-to-filter"
 									bind:value={dateTo}
 									onchange={applyFilters}
 									class="block w-full rounded-lg border border-primary-200 bg-primary-50 px-3 py-2 text-primary-900 focus:border-accent focus:ring-accent sm:text-sm"
@@ -237,10 +266,12 @@
 
 		<!-- Results Grid -->
 		<div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-			{#if data.articles.length > 0}
-				{#each data.articles as post (post.id)}
+			{#if data.items.length > 0}
+				{#each data.items as post (post.id)}
 					<a
-						href={`/histoires/${generateBlogUrl(post.id, post.title)}`}
+						href={post.type === 'chronique'
+							? `/chroniques/${post.handle}`
+							: `/histoires/${generateBlogUrl(post.id, post.title)}`}
 						class="group block cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:shadow-xl"
 						aria-label={`Lire ${post.title}`}
 					>
@@ -279,7 +310,13 @@
 						<div class="flex flex-col p-6">
 							<!-- Meta Information -->
 							<div class="mb-3 flex flex-wrap items-center gap-2">
-								{#if post.category}
+								{#if post.type === 'chronique'}
+									<span
+										class="inline-block rounded-full bg-accent px-3 py-1 text-xs font-bold uppercase tracking-wider text-white"
+									>
+										Chronique
+									</span>
+								{:else if post.category}
 									<span
 										class="inline-block rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent"
 									>
@@ -315,7 +352,12 @@
 							<div
 								class="mt-auto inline-flex items-center gap-2 font-semibold text-accent transition-all duration-300 group-hover:gap-3"
 							>
-								<span>Lire plus</span>
+								<span>{post.type === 'chronique' ? 'Lire la chronique' : 'Lire plus'}</span>
+								{#if post.type === 'chronique'}
+									<span class="text-xs font-normal text-primary-600"
+										>({post.articleCount} articles)</span
+									>
+								{/if}
 								<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path
 										stroke-linecap="round"
@@ -330,9 +372,7 @@
 				{/each}
 			{:else}
 				<div class="col-span-full py-12 text-center">
-					<div
-						class="rounded-lg border-2 border-dashed border-primary-300 bg-primary-50 p-8"
-					>
+					<div class="rounded-lg border-2 border-dashed border-primary-300 bg-primary-50 p-8">
 						<svg
 							class="mx-auto mb-4 h-12 w-12 text-primary-400"
 							fill="none"
@@ -346,9 +386,7 @@
 								d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
 							/>
 						</svg>
-						<p class="text-lg text-primary-700">
-							Aucune histoire ne correspond à votre recherche.
-						</p>
+						<p class="text-lg text-primary-700">Aucune histoire ne correspond à votre recherche.</p>
 						<button
 							onclick={resetFilters}
 							class="mt-4 text-sm font-semibold text-accent hover:text-accent/80"
@@ -361,7 +399,7 @@
 		</div>
 	</div>
 </div>
-{#if data.siteConfig }
+{#if data.siteConfig}
 	<CTABlock
 		title={data.siteConfig.ctaBlockTitle as string}
 		description={data.siteConfig.ctaBlockDescription as string}

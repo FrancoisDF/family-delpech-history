@@ -36,7 +36,7 @@
 			<div>
 				<h4 class="mb-4 font-serif font-medium">Navigation</h4>
 				<ul class="space-y-2 text-sm">
-					{#each navigationLinks as link (link.url)}
+					{#each navigationLinks as link, index (`${link.url}-${index}`)}
 						<li>
 							<a href={link.url} class="text-white/70 transition-colors hover:text-accent">
 								{link.label}
@@ -50,7 +50,7 @@
 			<div>
 				<h4 class="mb-4 font-serif font-semibold">{infoTitle}</h4>
 				<ul class="space-y-2 text-sm">
-					{#each infoLinks as link (link.url)}
+					{#each infoLinks as link, index (`${link.url}-${index}`)}
 						<li>
 							<a href={link.url} class="text-white/70 transition-colors hover:text-accent">
 								{link.label}

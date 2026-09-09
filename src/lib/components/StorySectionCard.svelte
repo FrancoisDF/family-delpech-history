@@ -1,10 +1,15 @@
 <script lang="ts">
-	import { isSectionCompleted, markSectionCompleted, unmarkSectionCompleted } from '$lib/progress';
+	import {
+		isSectionCompleted,
+		markSectionCompleted,
+		unmarkSectionCompleted
+	} from '#lib/progress.js';
 	import ArticleCarousel from './ArticleCarousel.svelte';
-	import { generateBlogUrl } from '$lib/url-utils';
+	import { generateBlogUrl } from '#lib/url-utils.js';
+	import { getYouTubeEmbedUrl } from '#lib/youtube.js';
 
 	// Navigation is done via normal anchors now (SSR-friendly) — helper kept
-	
+
 	interface BlogPost {
 		id: string;
 		title: string;
@@ -44,6 +49,9 @@
 	} = $props();
 
 	let isCompleted: boolean = $state(false);
+	const videoEmbedUrl = $derived(getYouTubeEmbedUrl(videoUrl));
+	const hasVideo = $derived(Boolean(videoUrl));
+	const hasAudio = $derived(Boolean(audioUrl) && !hasVideo);
 
 	function handleAudioEnded() {
 		markSectionCompleted(id);
@@ -78,7 +86,6 @@
 	$effect(() => {
 		isCompleted = isSectionCompleted(id);
 	});
-
 
 	function extractTags(tags: any[]) {
 		return tags.map((tag) => tag.value?.data?.name.toLowerCase().trim() ?? null);
@@ -132,8 +139,7 @@
 
 	<div class="pl-10 sm:pl-12 md:pl-12">
 		<div class="mb-4 flex items-start justify-between">
-			<h3 class="font-serif text-3xl font-medium text-primary-800">{title}
-			</h3>
+			<h3 class="font-serif text-3xl font-medium text-primary-800">{title}</h3>
 			<!-- Main Blog Article Link -->
 			{#if blog}
 				<a
@@ -142,7 +148,12 @@
 				>
 					Lire l'article
 					<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M9 5l7 7-7 7"
+						/>
 					</svg>
 				</a>
 			{/if}
@@ -164,7 +175,7 @@
 		<p class="mb-8 text-lg leading-relaxed text-primary-700">{description}</p>
 
 		<!-- Audio Player -->
-		{#if audioUrl}
+		{#if hasAudio}
 			<div class="rounded-lg bg-primary-50 p-6">
 				<div class="mb-3 flex items-center gap-2">
 					<svg class="h-5 w-5 text-primary-800" fill="currentColor" viewBox="0 0 20 20">
@@ -179,24 +190,38 @@
 					controlsList="nodownload"
 					onended={handleAudioEnded}
 				>
-					<source src={audioUrl} type="audio/mpeg" />
+					<source src={audioUrl} type="audio/mp4" />
 					Votre navigateur ne supporte pas l'élément audio.
 				</audio>
 			</div>
 		{/if}
 
-		{#if videoUrl}
-			<div class={`rounded-lg bg-primary-50 p-6 ${audioUrl ? 'mt-6' : ''}`}>
+		{#if hasVideo}
+			<div class="rounded-lg bg-primary-50 p-6">
 				<div class="mb-3 flex items-center gap-2">
 					<svg class="h-5 w-5 text-primary-800" fill="currentColor" viewBox="0 0 20 20">
-						<path d="M6 4.75A1.75 1.75 0 013.25 6.2v7.6A1.75 1.75 0 016 15.25l8.1-4.05a1.34 1.34 0 000-2.4L6 4.75z" />
+						<path
+							d="M6 4.75A1.75 1.75 0 013.25 6.2v7.6A1.75 1.75 0 016 15.25l8.1-4.05a1.34 1.34 0 000-2.4L6 4.75z"
+						/>
 					</svg>
 					<span class="text-sm font-medium text-primary-800">Récit Vidéo</span>
 				</div>
-				<video class="w-full rounded-md" controls controlsList="nodownload" preload="metadata">
-					<source src={videoUrl} />
-					Votre navigateur ne supporte pas l'élément vidéo.
-				</video>
+				{#if videoEmbedUrl}
+					<div class="relative overflow-hidden rounded-md" style="aspect-ratio: 16 / 9">
+						<iframe
+							src={videoEmbedUrl}
+							title={title ? `Récit vidéo : ${title}` : 'Récit vidéo'}
+							class="absolute inset-0 h-full w-full"
+							allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+							allowfullscreen
+						></iframe>
+					</div>
+				{:else}
+					<video class="w-full rounded-md" controls controlsList="nodownload" preload="metadata">
+						<source src={videoUrl} />
+						Votre navigateur ne supporte pas l'élément vidéo.
+					</video>
+				{/if}
 			</div>
 		{/if}
 
@@ -227,25 +252,24 @@
 				</button> -->
 
 				<!-- {#if isExpanded} -->
-					<div class="space-y-6">
-						<div class="mb-4">
-							<h4 class="text-lg font-semibold text-primary-800">Articles Connexes</h4>
-							<p class="text-sm text-primary-600">
-								<!-- Articles associés aux thèmes : {tags.join(', ')} -->
-							</p>
-						</div>
-
-						{#if getFilteredPosts().length > 0}
-							<ArticleCarousel
-								articles={getFilteredPosts()}
-								mini={true}
-							/>
-						{:else}
-							<div class="rounded-lg border-2 border-dashed border-primary-200 bg-primary-50 p-6 text-center">
-								<p class="text-primary-700">Aucun article disponible pour ces thèmes.</p>
-							</div>
-						{/if}
+				<div class="space-y-6">
+					<div class="mb-4">
+						<h4 class="text-lg font-semibold text-primary-800">Articles Connexes</h4>
+						<p class="text-sm text-primary-600">
+							<!-- Articles associés aux thèmes : {tags.join(', ')} -->
+						</p>
 					</div>
+
+					{#if getFilteredPosts().length > 0}
+						<ArticleCarousel articles={getFilteredPosts()} mini={true} />
+					{:else}
+						<div
+							class="rounded-lg border-2 border-dashed border-primary-200 bg-primary-50 p-6 text-center"
+						>
+							<p class="text-primary-700">Aucun article disponible pour ces thèmes.</p>
+						</div>
+					{/if}
+				</div>
 				<!-- {/if} -->
 			</div>
 		{/if}

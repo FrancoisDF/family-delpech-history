@@ -1,11 +1,195 @@
 import { fetchOneEntry, fetchEntries } from '@builder.io/sdk-svelte';
-import { PUBLIC_BUILDER_API_KEY } from '$env/static/public';
-import type { Person } from '$lib/models/person';
+import { PUBLIC_BUILDER_API_KEY } from '$app/env/public';
+import type { Person } from '#lib/models/person.js';
 
 export interface BuilderContent {
 	id?: string;
 	name?: string;
 	data?: Record<string, unknown>;
+}
+
+export interface BlogArticle {
+	id: string;
+	title: string;
+	excerpt?: string;
+	date?: string;
+	readTime?: string;
+	featuredImage?: string;
+	featuredImageDisplayMode?: string;
+	category?: string;
+	slug?: string;
+	author?: string;
+	pdfFile?: string;
+	tags?: unknown[];
+	blocks?: unknown[];
+	sectionNavigation?: unknown;
+	builderContent?: BuilderContent;
+	[key: string]: unknown;
+}
+
+export interface ChroniqueReference {
+	articleId: string;
+	label?: string;
+}
+
+export interface Chronique {
+	id: string;
+	title: string;
+	handle: string;
+	excerpt?: string;
+	date?: string;
+	readTime?: string;
+	featuredImage?: string;
+	category?: string;
+	author?: string;
+	tags?: unknown[];
+	introBlocks: unknown[];
+	referencedArticles: ChroniqueReference[];
+	sectionNavigation?: unknown;
+}
+
+export interface ResolvedChronique extends Chronique {
+	articles: BlogArticle[];
+}
+
+export type DiscoveryItem =
+	| (BlogArticle & { type: 'article' })
+	| (Chronique & { type: 'chronique'; articleCount: number });
+
+function asRecord(value: unknown): Record<string, unknown> | null {
+	return value && typeof value === 'object' ? (value as Record<string, unknown>) : null;
+}
+
+function asString(value: unknown): string | undefined {
+	return typeof value === 'string' && value.trim() ? value.trim() : undefined;
+}
+
+function readNestedValue(value: unknown, keys: string[]): unknown {
+	let current: unknown = value;
+	for (const key of keys) {
+		const record = asRecord(current);
+		if (!record) return undefined;
+		current = record[key];
+	}
+	return current;
+}
+
+export function normalizeBuilderReference(value: unknown): ChroniqueReference | null {
+	const raw = asRecord(value);
+	const candidates = [
+		value,
+		raw?.article,
+		raw?.reference,
+		raw?.value,
+		readNestedValue(raw?.article, ['value']),
+		readNestedValue(raw?.reference, ['value'])
+	];
+	const articleId = candidates
+		.map((candidate) => {
+			if (typeof candidate === 'string') return candidate;
+			const record = asRecord(candidate);
+
+			return (
+				asString(record?.id) ||
+				asString(readNestedValue(record, ['value', 'id'])) ||
+				asString(readNestedValue(record, ['data', 'id']))
+			);
+		})
+		.find(Boolean);
+
+	if (!articleId) return null;
+
+	const label =
+		asString(raw?.navigationLabel) ||
+		asString(raw?.label) ||
+		asString(raw?.title) ||
+		asString(readNestedValue(raw?.article, ['title'])) ||
+		asString(readNestedValue(raw?.article, ['value', 'data', 'title'])) ||
+		asString(readNestedValue(raw?.value, ['data', 'title']));
+
+	return { articleId, label };
+}
+
+export function normalizeBlogArticle(entry: BuilderContent): BlogArticle | null {
+	if (!entry.id) return null;
+	const data = entry.data || {};
+	return {
+		id: entry.id,
+		...data,
+		title: asString(data.title) || entry.name || entry.id,
+		builderContent: entry
+	};
+}
+
+export function normalizeChronique(entry: BuilderContent): Chronique | null {
+	if (!entry.id) return null;
+	const data = entry.data || {};
+	const seenArticleIds = new Set<string>();
+	const references = Array.isArray(data.referencedArticles)
+		? data.referencedArticles.flatMap((reference) => {
+				const normalized = normalizeBuilderReference(reference);
+				if (!normalized || seenArticleIds.has(normalized.articleId)) return [];
+				seenArticleIds.add(normalized.articleId);
+				return [normalized];
+			})
+		: [];
+
+	return {
+		id: entry.id,
+		title: asString(data.title) || entry.name || entry.id,
+		handle: asString(data.handle) || entry.id,
+		excerpt: asString(data.excerpt),
+		date: asString(data.date),
+		readTime: asString(data.readTime),
+		featuredImage: asString(data.featuredImage),
+		category: asString(data.category),
+		author: asString(data.author),
+		tags: Array.isArray(data.tags) ? data.tags : [],
+		introBlocks: Array.isArray(data.introBlocks) ? data.introBlocks : [],
+		referencedArticles: references,
+		sectionNavigation: data.sectionNavigation
+	};
+}
+
+export async function fetchChroniquesServer(): Promise<Chronique[]> {
+	const entries = await fetchBuilderContentServer('chronique', {
+		limit: 100,
+		omit: 'data.introBlocks, meta, folders, variations'
+	});
+	return entries.flatMap((entry) => {
+		const chronique = normalizeChronique(entry);
+		return chronique ? [chronique] : [];
+	});
+}
+
+export async function fetchResolvedChroniqueByHandleServer(
+	handle: string
+): Promise<ResolvedChronique | null> {
+	const entry = await fetchBuilderContentByHandleServer('chronique', handle);
+	if (!entry) return null;
+
+	const chronique = normalizeChronique(entry);
+	if (!chronique) return null;
+
+	const articles = (
+		await Promise.all(
+			chronique.referencedArticles.map(async ({ articleId }) => {
+				const article = await fetchBuilderContentByIdServer('blog-articles', articleId);
+				return article ? normalizeBlogArticle(article) : null;
+			})
+		)
+	).filter((article): article is BlogArticle => article !== null);
+
+	return { ...chronique, articles };
+}
+
+export async function fetchChroniquesReferencingArticleServer(
+	articleId: string
+): Promise<Chronique[]> {
+	const chroniques = await fetchChroniquesServer();
+	return chroniques.filter((chronique) =>
+		chronique.referencedArticles.some((reference) => reference.articleId === articleId)
+	);
 }
 
 export async function fetchBuilderContentServer(
@@ -48,11 +232,7 @@ export async function fetchBuilderContentByIdServer(
 			model,
 			apiKey: PUBLIC_BUILDER_API_KEY,
 			includeUnpublished,
-			options: {
-				query: {
-					id: id
-				}
-			}
+			options: { query: { id } }
 		});
 
 		return result || null;

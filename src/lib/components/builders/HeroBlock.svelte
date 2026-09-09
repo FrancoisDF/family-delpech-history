@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { resolve } from '$app/paths';
-	import { browser } from '$app/environment';
+	import { browser } from '$app/env';
 
 	type VariantType = 'grayscale' | 'color' | 'image-focus';
 
@@ -165,13 +165,15 @@
 	<div class="relative z-10 mx-auto max-w-4xl rounded-lg bg-black/60 px-8 py-12 text-center sm:px-12 sm:py-16">
 		<h1
 			class="mb-6 font-serif text-5xl font-medium tracking-tight text-white md:text-6xl lg:text-7xl"
+		>{title}</h1>
+
+		<p
+			class="mb-8 text-xl leading-relaxed text-white/80 md:text-2xl lg:text-3xl"
+		>{description}</p>
+
+		<div
+			class="flex flex-col justify-center gap-4 sm:flex-row"
 		>
-			{title}
-		</h1>
-		<p class="mb-8 text-xl leading-relaxed text-white/80 md:text-2xl lg:text-3xl">
-			{description}
-		</p>
-		<div class="flex flex-col justify-center gap-4 sm:flex-row">
 			<a
 				href={resolve(primaryButtonLink as any)}
 				class="inline-block rounded-lg bg-primary-700 px-8 py-3 font-semibold text-white transition-colors hover:bg-primary-800"

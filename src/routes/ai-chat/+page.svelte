@@ -12,9 +12,9 @@
 		updateSessionContext,
 		isSessionContextHot,
 		type AISession
-	} from '$lib/ai/session';
-	import { estimateTokens } from '$lib/ai/vercel-generation';
-	import type { VercelChatResponse } from '$lib/ai/vercel-generation';
+	} from '#lib/ai/session.js';
+	import { estimateTokens } from '#lib/ai/vercel-generation.js';
+	import type { VercelChatResponse } from '#lib/ai/vercel-generation.js';
 
 	interface ChatMessage {
 		id: string;
@@ -112,9 +112,7 @@
 			// Format response with sources
 			let responseContent = data.response;
 			if (data.sourcesUsed && data.sourcesUsed.length > 0) {
-				const sourceList = data.sourcesUsed
-					.map((s) => `${s.title}`)
-					.join(', ');
+				const sourceList = data.sourcesUsed.map((s) => `${s.title}`).join(', ');
 				responseContent += `\n\n_(Sources: ${sourceList})_`;
 			}
 
@@ -147,9 +145,7 @@
 			}
 		} catch (err: any) {
 			console.error('Error sending message:', err);
-			error =
-				err.message ||
-				'Failed to send message. Please check your connection and try again.';
+			error = err.message || 'Failed to send message. Please check your connection and try again.';
 			isLoading = false;
 		} finally {
 			isLoading = false;
@@ -229,9 +225,7 @@
 						<div class="text-center">
 							<div class="mb-4 text-5xl">💬</div>
 							<h2 class="text-2xl font-bold text-slate-900">Start a Conversation</h2>
-							<p class="mt-2 text-slate-600">
-								Ask me anything about family history and genealogy
-							</p>
+							<p class="mt-2 text-slate-600">Ask me anything about family history and genealogy</p>
 							<p class="mt-4 text-sm text-slate-500">
 								Daily limit: {getDailyBudget().toLocaleString()} tokens
 							</p>
@@ -251,7 +245,9 @@
 									{msg.content}
 								</div>
 								{#if msg.tokensUsed}
-									<div class={`mt-2 text-xs ${msg.role === 'user' ? 'text-blue-100' : 'text-slate-500'}`}>
+									<div
+										class={`mt-2 text-xs ${msg.role === 'user' ? 'text-blue-100' : 'text-slate-500'}`}
+									>
 										{msg.tokensUsed} tokens
 									</div>
 								{/if}
@@ -278,11 +274,11 @@
 		{/if}
 
 		<!-- Session context indicator (Phase 2) -->
-		{#if sessionContextHot && getSessionContext()?.summariesUsed.length > 0}
+		{#if sessionContextHot && (getSessionContext()?.summariesUsed?.length ?? 0) > 0}
 			<div class="border-t border-blue-200 bg-blue-50 px-6 py-2">
 				<div class="mx-auto max-w-4xl text-xs text-blue-700">
-					💾 Cached context active: {getSessionContext()?.summariesUsed.length} summaries available for
-					reuse (saves tokens!)
+					💾 Cached context active: {getSessionContext()?.summariesUsed?.length ?? 0} summaries available
+					for reuse (saves tokens!)
 				</div>
 			</div>
 		{/if}

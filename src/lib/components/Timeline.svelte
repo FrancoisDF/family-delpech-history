@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
-	import { getLastListenedId } from '$lib/progress';
+	import { browser } from '$app/env';
+	import { getLastListenedId } from '#lib/progress.js';
 	import StorySectionCard from './StorySectionCard.svelte';
 	import { fetchSections } from './section.remote';
 	import { fetchRelatedArticles } from './article.remote';
@@ -33,8 +33,8 @@
 		showProgression?: boolean;
 	}>();
 
-	let sections: Section[] = initialSections ?? (await fetchSections()) ?? [];
-	let articles: BlogPost[] = initialArticles ?? (await fetchRelatedArticles()) ?? [];
+	let sections: Section[] = initialSections ?? await fetchSections() ?? [];
+	let articles: BlogPost[] = initialArticles ?? await fetchRelatedArticles() ?? [];
 
 	let timelineContainer = $state<HTMLElement>();
 	let scrubberContainer = $state<HTMLElement>();
@@ -98,15 +98,17 @@
 				// Debounce the active section update
 				clearTimeout(updateTimeout);
 				updateTimeout = setTimeout(() => {
-					if (visibleSections.size > 0) {
-						// Find the section with the highest intersection ratio
+						if (visibleSections.size > 0) {
+							// Find the section with the highest intersection ratio
 						let mostVisibleId = Array.from(visibleSections.entries()).reduce((prev, current) =>
 							current[1] > prev[1] ? current : prev
 						)[0];
 
-						activeSectionId = mostVisibleId;
-					}
-				}, 100);
+							activeSectionId = mostVisibleId;
+						}
+					},
+					100
+				);
 			},
 			{
 				root: null,
@@ -149,7 +151,7 @@
 		}
 
 		completedCount = count;
-		progressPercentage = (count / sections.length) * 100;
+		progressPercentage = count / sections.length * 100;
 	}
 
 	function scrollToSection(sectionId: string) {
@@ -211,7 +213,7 @@
 							fill-rule="evenodd"
 							d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
 							clip-rule="evenodd"
-						/>
+						></path>
 					</svg>
 					Continuer depuis la dernière écoute
 				</button>

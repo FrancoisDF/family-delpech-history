@@ -242,6 +242,7 @@ function getBuilderEntryInternalUrl(entry, model, entryId, title) {
 		const handle = ensureInternalPostHandle(entryId, title, d.handle || d.slug);
 		return `/histoires/${handle}`;
 	}
+	if (model === 'chronique') return `/chroniques/${d.handle || entryId}`;
 	return `/${model}/${entryId}`;
 }
 
@@ -469,7 +470,7 @@ async function main() {
 		'Fetching Builder.io content — this will read your PUBLIC_BUILDER_API_KEY from the environment.'
 	);
 
-	const models = ['blog-articles'];
+	const models = ['blog-articles', 'chronique'];
 	const out = [];
 
 	for (const model of models) {

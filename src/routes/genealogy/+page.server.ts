@@ -1,11 +1,11 @@
 import {
 	fetchBuilderPeopleWithRelationsServer,
 	fetchBuilderContentServer
-} from '$lib/server/builder';
-import { loadFamilyData } from '$lib/ai/data';
-import { getGEDCOMPeople } from '$lib/gedcom';
+} from '#lib/server/builder.js';
+import { loadFamilyData } from '#lib/ai/data.js';
+import { getGEDCOMPeople } from '#lib/gedcom.js';
 import type { PageServerLoad } from './$types';
-import type { Person } from '$lib/models/person';
+import type { Person } from '#lib/models/person.js';
 
 export const load: PageServerLoad = async (event) => {
 	try {

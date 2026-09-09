@@ -812,6 +812,41 @@ export const EXTRACTABLE_COMPONENTS: ExtractableComponentConfig[] = [
 			}
 		],
 		blockLevelExtraction: true
+	},
+
+	{
+		componentName: 'Chronique',
+		builderTag: 'Chronique',
+		category: 'nested',
+		extractableFields: [
+			{
+				fieldName: 'introBlocks',
+				fieldType: 'list',
+				importance: 'critical',
+				description: 'Opening Builder blocks for the chronique'
+			},
+			{
+				fieldName: 'referencedArticles',
+				fieldType: 'list',
+				importance: 'critical',
+				description: 'Ordered canonical article references',
+				listItemFields: [
+					{
+						fieldName: 'id',
+						fieldType: 'string',
+						importance: 'critical',
+						description: 'Referenced article ID'
+					},
+					{
+						fieldName: 'title',
+						fieldType: 'text',
+						importance: 'high',
+						description: 'Article navigation label'
+					}
+				]
+			}
+		],
+		blockLevelExtraction: true
 	}
 ];
 

@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import cytoscape from 'cytoscape';
 	import dagre from 'cytoscape-dagre';
-	import type { GenealogyGraph, GraphNode, GraphEdge } from '$lib/types/genealogy-graph';
+	import type { GenealogyGraph, GraphNode, GraphEdge } from '#lib/types/genealogy-graph.js';
 
 	interface Props {
 		graph: GenealogyGraph;

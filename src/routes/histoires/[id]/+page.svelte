@@ -1,15 +1,16 @@
 <script lang="ts">
 	import { Content } from '@builder.io/sdk-svelte';
-	import { PUBLIC_BUILDER_API_KEY } from '$env/static/public';
-	import { builderComponents } from '$lib/components/builders';
+	import { PUBLIC_BUILDER_API_KEY } from '$app/env/public';
+	import { builderComponents } from '#lib/components/builders/index.js';
 	import type { PageData } from './$types';
-	import ArticleCarouselBlock from '$lib/components/builders/ArticleCarouselBlock.svelte';
-	import ArticleHeaderBlock from '$lib/components/builders/ArticleHeaderBlock.svelte';
-	import ArticleSectionNavigation from '$lib/components/ArticleSectionNavigation.svelte';
-	import { normalizeArticleSectionNavigation } from '$lib/types/article-section-navigation';
-	import PageNotFound from '$lib/components/PageNotFound.svelte';
-	import CTABlock from '$lib/components/builders/CTABlock.svelte';
-	import PDFModal from '$lib/components/PDFModal.svelte';
+	import ArticleCarouselBlock from '#lib/components/builders/ArticleCarouselBlock.svelte';
+	import ArticleHeaderBlock from '#lib/components/builders/ArticleHeaderBlock.svelte';
+	import ArticleSectionNavigation from '#lib/components/ArticleSectionNavigation.svelte';
+	import { normalizeArticleSectionNavigation } from '#lib/types/article-section-navigation.js';
+	import PageNotFound from '#lib/components/PageNotFound.svelte';
+	import CTABlock from '#lib/components/builders/CTABlock.svelte';
+	import PDFModal from '#lib/components/PDFModal.svelte';
+	import ChroniqueCallout from '#lib/components/ChroniqueCallout.svelte';
 
 	let { data } = $props<{ data: PageData }>();
 
@@ -68,7 +69,9 @@
 	</div>
 
 
-	{#if post?.data?.tags && post.data?.tags.length > 0}
+	<ChroniqueCallout chroniques={data.chroniques} />
+
+		{#if post?.data?.tags && post.data?.tags.length > 0}
 		<ArticleCarouselBlock
 			title="Articles Connexes"
 			tags={post.data?.tags || []}

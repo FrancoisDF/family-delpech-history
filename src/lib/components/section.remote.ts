@@ -1,4 +1,4 @@
-import { fetchBuilderContentServer } from '$lib/server/builder';
+import { fetchBuilderContentServer } from '#lib/server/builder.js';
 import { query } from '$app/server';
 
 interface BlogPost {

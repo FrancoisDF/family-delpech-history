@@ -1,8 +1,8 @@
 <script lang="ts">
-	import GenealogyGraphView from '$lib/components/GenealogyGraphView.svelte';
-	import { getPerson } from '$lib/genealogy';
+	import GenealogyGraphView from '#lib/components/GenealogyGraphView.svelte';
+	import { getPerson } from '#lib/genealogy.js';
 	import type { PageData } from './$types';
-	import type { Person } from '$lib/models/person';
+	import type { Person } from '#lib/models/person.js';
 
 	let { data }: { data: PageData } = $props();
 

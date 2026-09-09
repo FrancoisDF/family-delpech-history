@@ -1,6 +1,6 @@
 import type { PageServerLoad } from './$types';
 import { fetchOneEntry, getBuilderSearchParams } from '@builder.io/sdk-svelte';
-import { PUBLIC_BUILDER_API_KEY } from '$env/static/public';
+import { PUBLIC_BUILDER_API_KEY } from '$app/env/public';
 
 export const load: PageServerLoad = async (event) => {
 	try {

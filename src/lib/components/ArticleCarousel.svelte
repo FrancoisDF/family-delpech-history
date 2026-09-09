@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { generateBlogUrl } from '$lib/url-utils';
+	import { generateBlogUrl } from '#lib/url-utils.js';
 
 	interface Article {
 		id: string;

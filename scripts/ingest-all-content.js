@@ -296,6 +296,7 @@ function getBuilderEntryInternalUrl(entry, model, entryId, title) {
 		const handle = ensureInternalPostHandle(entryId, title, d.handle || d.slug);
 		return `/histoires/${handle}`;
 	}
+	if (model === 'chronique') return `/chroniques/${d.handle || entryId}`;
 	return `/${model}/${entryId}`;
 }
 
@@ -327,7 +328,7 @@ async function fetchFromBuilder() {
 
 	try {
 		log('Fetching content from Builder.io...');
-		const models = ['blog-articles'];
+		const models = ['blog-articles', 'chronique'];
 		const allChunks = [];
 
 		// Statistics tracking

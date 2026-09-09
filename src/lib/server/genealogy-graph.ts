@@ -6,8 +6,8 @@ import type {
 	GraphNode,
 	GraphEdge,
 	CanvasBounds
-} from '$lib/types/genealogy-graph';
-import type { Person } from '$lib/models/person';
+} from '#lib/types/genealogy-graph.js';
+import type { Person } from '#lib/models/person.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.join(__dirname, '../../..');
