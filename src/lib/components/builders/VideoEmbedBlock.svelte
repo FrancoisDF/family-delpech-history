@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { getYouTubeEmbedUrl } from '#lib/youtube.js';
+
 	let {
 		videoUrl = '',
 		title = '',
@@ -8,6 +10,7 @@
 		connectBottom = false
 	} = $props();
 
+	const embedUrl = $derived(getYouTubeEmbedUrl(videoUrl));
 	const spacingTop = $derived(connectTop ? '' : 'pt-12');
 	const spacingBottom = $derived(connectBottom ? '' : 'pb-12');
 
@@ -35,9 +38,9 @@
 
 		<div class="{roundedClasses} {shadowClasses} overflow-hidden bg-white p-4">
 			<div style="aspect-ratio: {aspectRatio};" class="relative">
-				{#if videoUrl}
+				{#if embedUrl}
 					<iframe
-						src={videoUrl}
+						src={embedUrl}
 						title={title || 'Video'}
 						class="absolute inset-0 h-full w-full"
 						frameborder="0"

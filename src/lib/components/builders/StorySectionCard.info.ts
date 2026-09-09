@@ -28,14 +28,14 @@ export const storySectionCardInfo: RegisteredComponent = {
 		{
 			name: 'audioUrl',
 			type: 'file',
-			allowedFileTypes: ['mp3', 'wav', 'ogg', 'mpeg'],
+			allowedFileTypes: ['mp3', 'mp4', 'wav', 'ogg', 'mpeg'],
 			defaultValue: '',
 			required: false
 		},
 		{
 			name: 'videoUrl',
-			type: 'file',
-			allowedFileTypes: ['mp4', 'webm', 'ogv'],
+			type: 'string',
+			helperText: 'YouTube URL (watch, youtu.be, or embed format).',
 			defaultValue: '',
 			required: false
 		}
