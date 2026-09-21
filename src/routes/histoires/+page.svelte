@@ -72,6 +72,12 @@
 		dateFrom = data.params.dateFrom;
 		dateTo = data.params.dateTo;
 	});
+
+	function getDisplayDate(date: string | undefined, type: string): string | undefined {
+		if (!date) return undefined;
+		if (type !== 'chronique') return date;
+		return date.match(/\b(1[5-9]\d{2}|20\d{2})\b/)?.[1] || date;
+	}
 </script>
 
 <svelte:head>
@@ -337,9 +343,9 @@
 										{post.category}
 									</span>
 								{/if}
-								{#if post.date}
+								{#if getDisplayDate(post.date, post.type)}
 									<span class="text-xs font-medium text-primary-600">
-										{post.date}
+										{getDisplayDate(post.date, post.type)}
 									</span>
 								{/if}
 							</div>
