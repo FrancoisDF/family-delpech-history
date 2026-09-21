@@ -116,7 +116,7 @@
 		<div
 			class="mx-auto grid max-w-7xl gap-8 px-4 pb-6 sm:px-6 lg:grid-cols-[13rem_minmax(0,1fr)] lg:items-start lg:px-8 lg:pb-0"
 		>
-			<div class="lg:sticky lg:top-24">
+			<div class="contents lg:block lg:sticky lg:top-24">
 				<ArticleSectionNavigation config={navigation} />
 			</div>
 

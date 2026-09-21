@@ -79,9 +79,9 @@
 </script>
 
 {#if hasRenderedSections}
-	<div class="pointer-events-auto h-full">
+	<div class="contents pointer-events-auto lg:block lg:h-full">
 		<aside
-			class="sticky top-0 z-20 w-full bg-primary-50/95 backdrop-blur lg:top-24 lg:w-52 lg:bg-transparent lg:backdrop-blur-none"
+			class="sticky top-[65px] z-40 w-full bg-primary-50/95 backdrop-blur lg:top-24 lg:w-52 lg:bg-transparent lg:backdrop-blur-none"
 		>
 			<div
 				class="border-b border-primary-200 px-4 py-3 lg:border-l-2 lg:border-b-0 lg:py-0 lg:pl-5 lg:pr-0"

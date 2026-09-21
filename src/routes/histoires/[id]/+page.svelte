@@ -58,7 +58,7 @@
 	<div class="article-content-shell relative">
 		{#if sectionNavigation}
 			<div
-				class="article-navigation-shell z-10 mx-auto max-w-7xl px-4 pb-6 sm:px-6 lg:absolute lg:inset-0 lg:px-8 lg:pb-0 lg:pointer-events-none"
+				class="article-navigation-shell z-10 mx-auto max-w-7xl contents sm:px-6 lg:block lg:absolute lg:inset-0 lg:px-8 lg:pb-0 lg:pointer-events-none"
 			>
 				<ArticleSectionNavigation config={sectionNavigation} />
 			</div>
