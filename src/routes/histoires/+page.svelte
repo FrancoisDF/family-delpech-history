@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { generateBlogUrl } from '#lib/url-utils.js';
+	import { articleUrl, chroniqueUrl } from '#lib/url-utils.js';
 	import type { PageData } from './$types';
 	import CTABlock from '#lib/components/builders/CTABlock.svelte';
 
@@ -76,7 +76,10 @@
 
 <svelte:head>
 	<title>Histoires de Famille | Recherche</title>
-	<meta name="description" content="Parcourez les histoires et mémoires de notre famille." />
+	<meta
+		name="description"
+		content="Trouvez facilement les articles et chroniques de notre famille."
+	/>
 </svelte:head>
 
 <div class="min-h-screen bg-primary-50/30 pb-20 pt-10">
@@ -85,7 +88,7 @@
 		<div class="mb-12 text-center">
 			<h1 class="mb-4 font-serif text-4xl font-bold text-primary-900">Histoires de Famille</h1>
 			<p class="mx-auto max-w-2xl text-lg text-primary-700">
-				Explorez les récits, les anecdotes et les moments marquants de notre histoire commune.
+				Recherchez et parcourez les articles et les chroniques qui racontent notre histoire commune.
 			</p>
 		</div>
 
@@ -112,7 +115,7 @@
 					bind:value={searchQuery}
 					oninput={updateSearch}
 					class="block w-full rounded-lg border border-primary-200 bg-white py-3 pl-12 pr-3 text-primary-900 placeholder-primary-400 focus:border-accent focus:ring-accent sm:text-sm shadow-sm"
-					placeholder="Rechercher une histoire..."
+					placeholder="Rechercher un article ou une chronique..."
 				/>
 			</div>
 			<button
@@ -265,13 +268,24 @@
 		{/if}
 
 		<!-- Results Grid -->
+		<div class="mb-5 flex items-center justify-between text-sm text-primary-600">
+			<span
+				>{data.items.length} contenu{data.items.length === 1 ? '' : 's'} trouvé{data.items
+					.length === 1
+					? ''
+					: 's'}</span
+			>
+			<a class="font-semibold text-accent hover:text-accent/80" href="/chroniques"
+				>Voir les chroniques</a
+			>
+		</div>
 		<div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
 			{#if data.items.length > 0}
 				{#each data.items as post (post.id)}
 					<a
 						href={post.type === 'chronique'
-							? `/chroniques/${post.handle}`
-							: `/histoires/${generateBlogUrl(post.id, post.title)}`}
+							? chroniqueUrl(post.handle)
+							: articleUrl(post.id, post.title)}
 						class="group block cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:shadow-xl"
 						aria-label={`Lire ${post.title}`}
 					>
@@ -325,11 +339,7 @@
 								{/if}
 								{#if post.date}
 									<span class="text-xs font-medium text-primary-600">
-										{new Date(post.date).toLocaleDateString('fr-FR', {
-											year: 'numeric',
-											month: 'long',
-											day: 'numeric'
-										})}
+										{post.date}
 									</span>
 								{/if}
 							</div>
@@ -386,7 +396,9 @@
 								d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
 							/>
 						</svg>
-						<p class="text-lg text-primary-700">Aucune histoire ne correspond à votre recherche.</p>
+						<p class="text-lg text-primary-700">
+							Aucun article ou chronique ne correspond à votre recherche.
+						</p>
 						<button
 							onclick={resetFilters}
 							class="mt-4 text-sm font-semibold text-accent hover:text-accent/80"

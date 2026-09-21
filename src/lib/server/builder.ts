@@ -48,8 +48,13 @@ export interface Chronique {
 	sectionNavigation?: unknown;
 }
 
+export interface ResolvedChroniqueArticle {
+	article: BlogArticle;
+	reference: ChroniqueReference;
+}
+
 export interface ResolvedChronique extends Chronique {
-	articles: BlogArticle[];
+	articles: ResolvedChroniqueArticle[];
 }
 
 export type DiscoveryItem =
@@ -173,12 +178,13 @@ export async function fetchResolvedChroniqueByHandleServer(
 
 	const articles = (
 		await Promise.all(
-			chronique.referencedArticles.map(async ({ articleId }) => {
-				const article = await fetchBuilderContentByIdServer('blog-articles', articleId);
-				return article ? normalizeBlogArticle(article) : null;
+			chronique.referencedArticles.map(async (reference) => {
+				const entry = await fetchBuilderContentByIdServer('blog-articles', reference.articleId);
+				const article = entry ? normalizeBlogArticle(entry) : null;
+				return article ? { article, reference } : null;
 			})
 		)
-	).filter((article): article is BlogArticle => article !== null);
+	).filter((entry): entry is ResolvedChroniqueArticle => entry !== null);
 
 	return { ...chronique, articles };
 }

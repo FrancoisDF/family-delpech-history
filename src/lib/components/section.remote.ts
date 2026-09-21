@@ -1,6 +1,7 @@
 import { fetchBuilderContentServer } from '#lib/server/builder.js';
 import { query } from '$app/server';
 import { fetchChroniquesServer } from '#lib/server/builder.js';
+import { getYear } from '#lib/server/discovery.js';
 
 interface ChroniqueSection {
 	id: string;
@@ -11,8 +12,8 @@ interface ChroniqueSection {
 }
 
 function getChroniqueYear(date: string | undefined, title: string): number {
-	const match = `${date ?? ''} ${title}`.match(/\b(?:1[5-9]\d{2}|20\d{2})\b/);
-	return match ? Number(match[0]) : 1800;
+	const year = getYear(date) || getYear(title);
+	return year ? Number(year) : 1800;
 }
 
 export const fetchSections = query(async (): Promise<ChroniqueSection[]> => {

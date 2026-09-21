@@ -180,6 +180,32 @@ describe('chronique normalization and resolution', () => {
 
 		const result = await fetchResolvedChroniqueByHandleServer('une-chronique');
 
-		expect(result?.articles.map((article) => article.id)).toEqual(['article-2', 'article-1']);
+		expect(result?.articles.map((entry) => entry.article.id)).toEqual(['article-2', 'article-1']);
+	});
+
+	it('keeps references aligned when a referenced article is missing', async () => {
+		const { fetchEntries, fetchOneEntry } = await import('@builder.io/sdk-svelte');
+		vi.mocked(fetchEntries).mockResolvedValue([
+			{
+				id: 'chronique-1',
+				data: {
+					title: 'Une chronique',
+					handle: 'une-chronique',
+					referencedArticles: [
+						{ id: 'missing', navigationLabel: 'Manquant' },
+						{ id: 'article-1', navigationLabel: 'Premier' }
+					]
+				}
+			}
+		]);
+		vi.mocked(fetchOneEntry)
+			.mockResolvedValueOnce(null)
+			.mockResolvedValueOnce({ id: 'article-1', data: { title: 'Un' } });
+
+		const missingReferenceResult = await fetchResolvedChroniqueByHandleServer('une-chronique');
+
+		expect(missingReferenceResult?.articles).toHaveLength(1);
+		expect(missingReferenceResult?.articles[0].article.id).toBe('article-1');
+		expect(missingReferenceResult?.articles[0].reference.label).toBe('Premier');
 	});
 });

@@ -5,7 +5,7 @@
 		unmarkSectionCompleted
 	} from '#lib/progress.js';
 	import ArticleCarousel from './ArticleCarousel.svelte';
-	import { generateBlogUrl } from '#lib/url-utils.js';
+	import { articleUrl } from '#lib/url-utils.js';
 	import { getYouTubeEmbedUrl } from '#lib/youtube.js';
 
 	// Navigation is done via normal anchors now (SSR-friendly) — helper kept
@@ -95,7 +95,7 @@
 
 	// exported in case other modules need it.
 	export function getArticleHref(article: BlogPost) {
-		return `/histoires/${generateBlogUrl(article.id, article.title)}`;
+		return articleUrl(article.id, article.title);
 	}
 </script>
 
