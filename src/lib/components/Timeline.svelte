@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { browser } from '$app/env';
-	import { getLastListenedId } from '#lib/progress.js';
 	import StorySectionCard from './StorySectionCard.svelte';
 	import { fetchSections } from './section.remote';
 
@@ -26,7 +25,6 @@
 
 	let timelineContainer = $state<HTMLElement>();
 	let scrubberContainer = $state<HTMLElement>();
-	let lastListenedId = $state<string | null>(null);
 	let activeSectionId = $state<string | null>(null);
 	let progressPercentage = $state(0);
 	let completedCount = $state(0);
@@ -35,24 +33,9 @@
 	const uniqueYears = [...new Set(sections.map((s) => s.year))].sort((a, b) => b - a);
 
 	$effect(() => {
-		lastListenedId = getLastListenedId();
-		activeSectionId = lastListenedId;
-		// updateProgress();
-
-		// Scroll to last listened section if exists
-		// if (lastListenedId && timelineContainer) {
-		// 	setTimeout(() => {
-		// 		const activeElement = document.getElementById(`section-${lastListenedId}`);
-		// 		if (activeElement) {
-		// 			activeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-		// 		}
-		// 	}, 100);
-		// }
-
 		// Listen for progress updates to sync the progress bar
 		const handleProgressUpdated = () => {
 			updateProgress();
-			lastListenedId = getLastListenedId();
 		};
 
 		window.addEventListener('progressUpdated', handleProgressUpdated);
@@ -161,52 +144,9 @@
 		const section = sections.find((s) => s.id === activeSectionId);
 		return section?.year ?? null;
 	}
-
-	function continueListen() {
-		if (lastListenedId) {
-			scrollToSection(lastListenedId);
-			// Auto-play the audio after scrolling
-			setTimeout(() => {
-				const audio = document.getElementById(lastListenedId || '') as HTMLAudioElement;
-				if (audio && lastListenedId) {
-					audio.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-					// Try to play after a short delay
-					setTimeout(() => {
-						audio.play().catch(() => {
-							// Autoplay might be blocked by browser policy
-							console.log('Autoplay was blocked. User will need to click play.');
-						});
-					}, 300);
-				}
-			}, 200);
-		}
-	}
 </script>
 
 <div class="relative">
-	<!-- Continue Button (visible if there's progress) -->
-	{#if lastListenedId}
-		<div
-			class="sticky top-0 z-20 bg-gradient-to-b from-primary-50 to-transparent px-4 py-6 sm:px-6 lg:px-8"
-		>
-			<div class="mx-auto max-w-5xl">
-				<button
-					onclick={continueListen}
-					class="inline-flex items-center gap-3 rounded-lg bg-accent px-6 py-3 font-semibold text-white shadow-lg transition-all hover:scale-105 hover:shadow-xl"
-				>
-					<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-						<path
-							fill-rule="evenodd"
-							d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
-							clip-rule="evenodd"
-						></path>
-					</svg>
-					Continuer depuis la dernière écoute
-				</button>
-			</div>
-		</div>
-	{/if}
-
 	<!-- Progress Bar -->
 	{#if showProgression}
 		<div class="sticky top-14 z-20 bg-white px-4 py-4 shadow-sm sm:px-6 lg:px-8">
