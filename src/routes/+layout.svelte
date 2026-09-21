@@ -29,7 +29,6 @@
 		headerLinks: [
 			{ label: 'Accueil', url: '/', ariaLabel: "Retour à la page d'accueil" },
 			{ label: 'Histoires', url: '/histoires', ariaLabel: 'Voir tous les articles et chroniques' },
-			{ label: 'Chroniques', url: '/chroniques', ariaLabel: 'Voir toutes les chroniques' },
 			{ label: 'Questions', url: '/chat', ariaLabel: 'Poser une question à notre assistant' }
 		],
 		footerDescription:
@@ -37,7 +36,6 @@
 		footerLinks: [
 			{ label: 'Accueil', url: '/' },
 			{ label: 'Histoires', url: '/histoires' },
-			{ label: 'Chroniques', url: '/chroniques' },
 			{ label: 'Questions', url: '/chat' }
 		],
 		footerInfoTitle: 'Informations',
