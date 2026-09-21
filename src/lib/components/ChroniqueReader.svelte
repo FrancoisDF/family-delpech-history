@@ -15,7 +15,9 @@
 	$effect(() => {
 		if (!browser || !window.location.hash) return;
 		const targetId = decodeURIComponent(window.location.hash.slice(1));
-		requestAnimationFrame(() => document.getElementById(targetId)?.scrollIntoView({ block: 'start' }));
+		requestAnimationFrame(() =>
+			document.getElementById(targetId)?.scrollIntoView({ block: 'start' })
+		);
 	});
 
 	function scopeBuilderContent(
@@ -70,7 +72,10 @@
 	let articleEntries = $derived(
 		chronique.articles.map((entry) => ({
 			...entry,
-			content: scopeBuilderContent(entry.article.builderContent, chroniqueArticleAnchor(entry.article.id)),
+			content: scopeBuilderContent(
+				entry.article.builderContent,
+				chroniqueArticleAnchor(entry.article.id)
+			),
 			sectionId: chroniqueArticleAnchor(entry.article.id)
 		}))
 	);

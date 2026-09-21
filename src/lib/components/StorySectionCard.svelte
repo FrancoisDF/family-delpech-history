@@ -5,7 +5,7 @@
 		unmarkSectionCompleted
 	} from '#lib/progress.js';
 	import ArticleCarousel from './ArticleCarousel.svelte';
-	import { articleUrl } from '#lib/url-utils.js';
+	import { articleUrl, chroniqueUrl } from '#lib/url-utils.js';
 	import { getYouTubeEmbedUrl } from '#lib/youtube.js';
 
 	// Navigation is done via normal anchors now (SSR-friendly) — helper kept
@@ -144,11 +144,7 @@
 			<h3 class="font-serif text-3xl font-medium text-primary-800">{title}</h3>
 			{#if chroniqueHandle || blog}
 				<a
-					href={chroniqueHandle
-						? `/chroniques/${chroniqueHandle}`
-						: blog
-							? getArticleHref(blog)
-							: ''}
+					href={chroniqueHandle ? chroniqueUrl(chroniqueHandle) : blog ? getArticleHref(blog) : ''}
 					class="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 font-semibold text-white transition-all hover:shadow-lg hover:scale-105 flex-shrink-0"
 				>
 					{chroniqueHandle ? 'Lire la chronique' : "Lire l'article"}

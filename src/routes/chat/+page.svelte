@@ -16,10 +16,9 @@
 		}>;
 	}
 
-
 	import { searchFamilyData } from '#lib/ai/search.js';
 	import { ENABLE_LOCAL_LLM, DEFAULT_SYSTEM_PROMPT } from '#lib/ai/config.js';
-	import { generateBlogUrl } from '#lib/url-utils.js';
+	import { articleUrl } from '#lib/url-utils.js';
 	import { browser } from '$app/env';
 	import { tick } from 'svelte';
 
@@ -29,7 +28,11 @@
 		file?: string;
 	}
 
-	type SummarizeFromChunks = (chunks: any[], query: string, onToken?: (token: string) => void) => Promise<string | null>;
+	type SummarizeFromChunks = (
+		chunks: any[],
+		query: string,
+		onToken?: (token: string) => void
+	) => Promise<string | null>;
 	type IsSummarizerLoading = () => boolean;
 	type GetGeneratorProgress = () => LoadProgress;
 	type CancelModelLoading = () => void;
@@ -44,7 +47,7 @@
 	let getSystemPromptFn: GetSystemPrompt = () => DEFAULT_SYSTEM_PROMPT;
 	let setSystemPromptFn: SetSystemPrompt = () => {};
 	let loadGeneratorFn: LoadGenerator = async () => null;
-	
+
 	let generationModuleReady = false;
 	let generationModuleLoadPromise: Promise<void> | null = null;
 
@@ -61,7 +64,7 @@
 					setSystemPromptFn = mod.setSystemPrompt;
 					loadGeneratorFn = mod.loadGenerator;
 					generationModuleReady = true;
-					
+
 					// Pre-load the model in the background
 					if (ENABLE_LOCAL_LLM) {
 						loadGeneratorFn().catch(console.error);
@@ -82,7 +85,8 @@
 		if (browser && 'connection' in navigator) {
 			const conn = (navigator as any).connection;
 			if (conn.saveData || conn.effectiveType === '2g' || conn.effectiveType === '3g') {
-				networkWarning = "Connexion lente détectée. Le téléchargement de l'IA (~350MB) est plus rapide en WiFi.";
+				networkWarning =
+					"Connexion lente détectée. Le téléchargement de l'IA (~350MB) est plus rapide en WiFi.";
 			}
 		}
 	});
@@ -109,15 +113,15 @@
 	};
 
 	const STARTER_QUESTIONS = [
-		"Qui était Marie Antoinette ?",
-		"Quels étaient les métiers de nos ancêtres ?",
-		"Où habitait la famille au 19ème siècle ?",
-		"Raconte-moi une anecdote sur la famille."
+		'Qui était Marie Antoinette ?',
+		'Quels étaient les métiers de nos ancêtres ?',
+		'Où habitait la famille au 19ème siècle ?',
+		'Raconte-moi une anecdote sur la famille.'
 	];
 
 	const FOLLOW_UP_SUGGESTIONS = [
 		"Peux-tu m'en dire plus ?",
-		"Quelles sont les sources de cette information ?",
+		'Quelles sont les sources de cette information ?',
 		"Y a-t-il d'autres documents à ce sujet ?",
 		"Qui d'autre est mentionné ?"
 	];
@@ -149,7 +153,7 @@
 	let systemPrompt = $state(DEFAULT_SYSTEM_PROMPT);
 
 	function updateMessageById(id: string, patch: Partial<ChatMessage>) {
-		messages = messages.map((m) => m.id === id ? { ...m, ...patch } : m);
+		messages = messages.map((m) => (m.id === id ? { ...m, ...patch } : m));
 	}
 
 	async function scrollToResponseTop() {
@@ -163,7 +167,9 @@
 				.find((m) => m.type === 'assistant');
 
 			if (lastAssistantMessage) {
-				const messageElement = document.querySelector(`[data-message-id="${lastAssistantMessage.id}"]`);
+				const messageElement = document.querySelector(
+					`[data-message-id="${lastAssistantMessage.id}"]`
+				);
 				if (messageElement) {
 					messageElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
 				}
@@ -219,12 +225,13 @@
 		(async () => {
 			try {
 				await ensureGenerationModuleLoaded();
-				
+
 				if (ENABLE_LOCAL_LLM && isSummarizerLoadingFn()) {
 					const initMessage: ChatMessage = {
 						id: (Date.now() + 0.5).toString(),
 						type: 'assistant',
-						content: 'Initialisation de l\'IA locale... L\'IA est traitée directement sur votre appareil pour garantir votre confidentialité. Le premier téléchargement peut être volumineux (~350MB).',
+						content:
+							"Initialisation de l'IA locale... L'IA est traitée directement sur votre appareil pour garantir votre confidentialité. Le premier téléchargement peut être volumineux (~350MB).",
 						timestamp: new Date()
 					};
 					messages = [...messages, initMessage];
@@ -248,11 +255,12 @@
 					updateMessageById(assistantMessageId, {
 						status: 'done',
 						content:
-							"Désolé — je ne trouve aucune information pertinente dans nos archives familiales pour répondre à cette question."
+							'Désolé — je ne trouve aucune information pertinente dans nos archives familiales pour répondre à cette question.'
 					});
 				} else {
 					sourceReferences = results.map((r) => {
-						const isBuilderPost = r.chunk.sourceModel === 'blog-articles' || r.chunk.sourceModel === 'stories';
+						const isBuilderPost =
+							r.chunk.sourceModel === 'blog-articles' || r.chunk.sourceModel === 'stories';
 						return {
 							title: r.chunk.title,
 							url: r.chunk.url,
@@ -289,18 +297,18 @@
 							});
 							scrollToResponseTop();
 						});
-						
+
 						if (summary) {
 							updateMessageById(assistantMessageId, { status: 'done', content: summary });
 						} else {
-							assistantContent = 'Voici ce que j\'ai trouvé dans les archives :\n\n';
+							assistantContent = "Voici ce que j'ai trouvé dans les archives :\n\n";
 							for (const r of results) {
 								assistantContent += `• ${r.chunk.title} — "${cleanChunkText(r.chunk.text)}" (source: ${r.chunk.url})\n\n`;
 							}
 							updateMessageById(assistantMessageId, { status: 'done', content: assistantContent });
 						}
 					} else {
-						assistantContent = 'Voici ce que j\'ai trouvé dans les archives :\n\n';
+						assistantContent = "Voici ce que j'ai trouvé dans les archives :\n\n";
 						for (const r of results) {
 							assistantContent += `• ${r.chunk.title} — "${cleanChunkText(r.chunk.text)}" (source: ${r.chunk.url})\n\n`;
 						}
@@ -309,12 +317,15 @@
 				}
 			} catch (err) {
 				console.error('Search failed', err);
-				messages = [...messages, {
-					id: (Date.now() + 2).toString(),
-					type: 'assistant',
-					content: "Erreur interne: impossible de rechercher dans les archives familiales.",
-					timestamp: new Date()
-				}];
+				messages = [
+					...messages,
+					{
+						id: (Date.now() + 2).toString(),
+						type: 'assistant',
+						content: 'Erreur interne: impossible de rechercher dans les archives familiales.',
+						timestamp: new Date()
+					}
+				];
 			} finally {
 				isLoading = false;
 				(async () => {
@@ -434,19 +445,18 @@
 	<div bind:this={chatContainer} class="chat-container flex-1 px-4 py-8 sm:px-6 lg:px-8">
 		<div class="mx-auto max-w-2xl space-y-6 pb-32">
 			{#each messages as message, i (message.id)}
-				<div data-message-id={message.id} class="flex gap-4" class:justify-end={message.type === 'user'}>
+				<div
+					data-message-id={message.id}
+					class="flex gap-4"
+					class:justify-end={message.type === 'user'}
+				>
 					{#if message.type === 'assistant'}
 						<div class="flex-shrink-0">
 							<div
 								class="flex h-8 w-8 items-center justify-center rounded-full bg-primary-900 text-cream"
 							>
-								<svg
-									class="h-5 w-5"
-									fill="currentColor"
-									viewBox="0 0 20 20"
-								>
-									<path
-										d="M10 0a10 10 0 110 20 10 10 0 010-20zm0 2a8 8 0 100 16 8 8 0 000-16z"
+								<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+									<path d="M10 0a10 10 0 110 20 10 10 0 010-20zm0 2a8 8 0 100 16 8 8 0 000-16z"
 									></path>
 								</svg>
 							</div>
@@ -470,14 +480,19 @@
 										{#each message.sources as source}
 											<div class="space-y-1">
 												<a
-													href={source.isBuilder && source.sourceId ? `/histoires/${generateBlogUrl(source.sourceId, source.title)}` : source.url}
-													target={source.isBuilder ? undefined : "_blank"}
-													rel={source.isBuilder ? undefined : "noopener noreferrer"}
+													href={source.isBuilder && source.sourceId
+														? articleUrl(source.sourceId, source.title)
+														: source.url}
+													target={source.isBuilder ? undefined : '_blank'}
+													rel={source.isBuilder ? undefined : 'noopener noreferrer'}
 													class="block text-xs text-accent hover:underline"
 													title={source.title}
 												>
 													{#if source.isBuilder}
-														<span class="inline-block rounded bg-accent/20 px-2 py-1 text-primary-900">📖 {source.title}</span>
+														<span
+															class="inline-block rounded bg-accent/20 px-2 py-1 text-primary-900"
+															>📖 {source.title}</span
+														>
 													{:else}
 														<span>📄 {source.title}</span>
 													{/if}
@@ -487,9 +502,14 @@
 													<a
 														href={source.originPostUrl}
 														class="block text-[11px] text-primary-700 hover:underline"
-														title={source.originPostTitle ? `Trouvé dans: ${source.originPostTitle}` : 'Trouvé dans un article'}
+														title={source.originPostTitle
+															? `Trouvé dans: ${source.originPostTitle}`
+															: 'Trouvé dans un article'}
 													>
-														Trouvé dans: <span class="inline-block rounded bg-accent/10 px-2 py-0.5 text-primary-900">📖 {source.originPostTitle || 'Article'}</span>
+														Trouvé dans: <span
+															class="inline-block rounded bg-accent/10 px-2 py-0.5 text-primary-900"
+															>📖 {source.originPostTitle || 'Article'}</span
+														>
 													</a>
 												{/if}
 											</div>
@@ -525,10 +545,7 @@
 							</div>
 						{/if}
 
-						<span
-							class="mt-1 text-xs text-primary-600"
-							class:text-right={message.type === 'user'}
-						>
+						<span class="mt-1 text-xs text-primary-600" class:text-right={message.type === 'user'}>
 							{message.timestamp.toLocaleTimeString('fr-FR', {
 								hour: '2-digit',
 								minute: '2-digit'
@@ -538,16 +555,9 @@
 
 					{#if message.type === 'user'}
 						<div class="flex-shrink-0">
-							<div
-								class="bg-gold flex h-8 w-8 items-center justify-center rounded-full"
-							>
-								<svg
-									class="h-5 w-5 text-primary-900"
-									fill="currentColor"
-									viewBox="0 0 20 20"
-								>
-									<path
-										d="M10 0a10 10 0 110 20 10 10 0 010-20zm0 2a8 8 0 100 16 8 8 0 000-16z"
+							<div class="bg-gold flex h-8 w-8 items-center justify-center rounded-full">
+								<svg class="h-5 w-5 text-primary-900" fill="currentColor" viewBox="0 0 20 20">
+									<path d="M10 0a10 10 0 110 20 10 10 0 010-20zm0 2a8 8 0 100 16 8 8 0 000-16z"
 									></path>
 								</svg>
 							</div>
@@ -562,18 +572,15 @@
 						<div
 							class="flex h-8 w-8 items-center justify-center rounded-full bg-primary-900 text-cream"
 						>
-							<svg
-								class="h-5 w-5 animate-spin"
-								fill="currentColor"
-								viewBox="0 0 20 20"
-							>
-								<path
-									d="M10 0a10 10 0 110 20 10 10 0 010-20zm0 2a8 8 0 100 16 8 8 0 000-16z"
+							<svg class="h-5 w-5 animate-spin" fill="currentColor" viewBox="0 0 20 20">
+								<path d="M10 0a10 10 0 110 20 10 10 0 010-20zm0 2a8 8 0 100 16 8 8 0 000-16z"
 								></path>
 							</svg>
 						</div>
 					</div>
-					<div class="flex flex-col gap-2 rounded-lg bg-white p-4 text-primary-900 shadow-sm min-w-[200px]">
+					<div
+						class="flex flex-col gap-2 rounded-lg bg-white p-4 text-primary-900 shadow-sm min-w-[200px]"
+					>
 						<div class="flex items-center gap-2">
 							<span class="animate-pulse">●</span>
 							<span class="animate-pulse delay-100">●</span>
@@ -618,7 +625,9 @@
 									</p>
 								{/if}
 								<p class="mt-1 text-[10px] text-primary-500 leading-tight">
-									L'IA est en cours de chargement sur votre appareil. Ce processus est nécessaire pour garantir la confidentialité et la rapidité des réponses. Merci de patienter, ce chargement n'a lieu qu'une seule fois.
+									L'IA est en cours de chargement sur votre appareil. Ce processus est nécessaire
+									pour garantir la confidentialité et la rapidité des réponses. Merci de patienter,
+									ce chargement n'a lieu qu'une seule fois.
 								</p>
 							</div>
 						{/if}
@@ -629,7 +638,9 @@
 	</div>
 
 	<!-- Input Area -->
-	<div class="sticky bottom-0 border-t border-primary-200 bg-white px-4 py-6 shadow-lg sm:px-6 lg:px-8 z-40">
+	<div
+		class="sticky bottom-0 border-t border-primary-200 bg-white px-4 py-6 shadow-lg sm:px-6 lg:px-8 z-40"
+	>
 		<div class="mx-auto max-w-4xl w-full">
 			<form
 				onsubmit={(e) => {
@@ -651,11 +662,7 @@
 					disabled={isLoading || !messageInput.trim()}
 					class="rounded-lg bg-primary-900 px-6 py-3 font-semibold text-cream transition-all hover:bg-primary-800 disabled:cursor-not-allowed disabled:opacity-50"
 				>
-					<svg
-						class="h-5 w-5"
-						fill="currentColor"
-						viewBox="0 0 20 20"
-					>
+					<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
 						<path
 							d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5.951-2.975 5.951 2.975a1 1 0 001.169-1.409l-7-14z"
 						></path>
@@ -669,7 +676,9 @@
 	{#if showSettings}
 		<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
 			<div class="w-full max-w-2xl rounded-lg bg-white p-6 shadow-xl">
-				<h2 class="mb-4 font-serif text-2xl font-bold text-primary-900">Personnalité de l'Assistant</h2>
+				<h2 class="mb-4 font-serif text-2xl font-bold text-primary-900">
+					Personnalité de l'Assistant
+				</h2>
 
 				<div class="mb-4">
 					<label for="prompt" class="mb-2 block text-sm font-semibold text-primary-900">
@@ -680,13 +689,13 @@
 						bind:value={systemPrompt}
 						class="w-full rounded-lg border border-primary-300 bg-cream p-3 text-sm text-primary-900 outline-none transition-colors focus:border-primary-900 focus:bg-white"
 						rows="6"
-						placeholder="Décrivez comment l'assistant doit se comporter..."
-					></textarea>
+						placeholder="Décrivez comment l'assistant doit se comporter..."></textarea>
 				</div>
 
 				<div class="mb-6 rounded-lg bg-primary-50 p-3">
 					<p class="text-xs text-primary-700">
-						<strong>Conseil:</strong> Décrivez le rôle, le ton, et le style de réponse souhaité. Par exemple: "Je suis une femme âgée qui raconte l'histoire de ma famille avec tendresse..."
+						<strong>Conseil:</strong> Décrivez le rôle, le ton, et le style de réponse souhaité. Par exemple:
+						"Je suis une femme âgée qui raconte l'histoire de ma famille avec tendresse..."
 					</p>
 				</div>
 
@@ -698,7 +707,7 @@
 						✓ Enregistrer
 					</button>
 					<button
-						onclick={() => showSettings = false}
+						onclick={() => (showSettings = false)}
 						class="rounded-lg border border-primary-300 px-4 py-2 text-primary-700 transition-all hover:border-primary-500 hover:bg-primary-50"
 					>
 						Annuler
@@ -720,6 +729,10 @@
 	:global(.chat-container) {
 		scroll-behavior: smooth;
 	}
-	.delay-100 { animation-delay: 0.1s; }
-	.delay-200 { animation-delay: 0.2s; }
+	.delay-100 {
+		animation-delay: 0.1s;
+	}
+	.delay-200 {
+		animation-delay: 0.2s;
+	}
 </style>

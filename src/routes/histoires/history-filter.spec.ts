@@ -45,7 +45,12 @@ describe('history discovery filters', () => {
 	});
 
 	it('supports French editorial years in ranges and facets', () => {
-		const article = { id: 'article-1', title: 'Article', date: '12 juin 1904', type: 'article' } as DiscoveryItem;
+		const article = {
+			id: 'article-1',
+			title: 'Article',
+			date: '12 juin 1904',
+			type: 'article'
+		} as DiscoveryItem;
 
 		expect(getYear(article.date)).toBe('1904');
 		expect(_matchesFilters(article, { ...filters, dateFrom: '1900', dateTo: '1910' })).toBe(true);
@@ -59,6 +64,11 @@ describe('history discovery filters', () => {
 			{ id: 'same', title: 'Alpha', date: '1910', type: 'article' }
 		] as DiscoveryItem[];
 
-		expect(sortDiscoveryItems(items).map((item) => item.id)).toEqual(['same', 'new', 'old', 'undated']);
+		expect(sortDiscoveryItems(items).map((item) => item.id)).toEqual([
+			'same',
+			'new',
+			'old',
+			'undated'
+		]);
 	});
 });
