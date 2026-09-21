@@ -3,38 +3,21 @@
 	import { getLastListenedId } from '#lib/progress.js';
 	import StorySectionCard from './StorySectionCard.svelte';
 	import { fetchSections } from './section.remote';
-	import { fetchRelatedArticles } from './article.remote';
-
-	interface BlogPost {
-		id: string;
-		title: string;
-		excerpt?: string;
-		date?: string;
-		readTime?: string;
-		featuredImage?: string;
-		category?: string;
-		slug?: string;
-	}
 
 	interface Section {
 		id: string;
 		title: string;
 		description: string;
-		audioUrl: string;
-		videoUrl: string;
 		year: number;
-		tags?: string[];
-		blog?: BlogPost | null;
+		chroniqueHandle: string;
 	}
 
-	let { sections: initialSections, articles: initialArticles, showProgression = true } = $props<{
+	let { sections: initialSections, showProgression = true } = $props<{
 		sections?: Section[];
-		articles?: BlogPost[];
 		showProgression?: boolean;
 	}>();
 
-	let sections: Section[] = initialSections ?? await fetchSections() ?? [];
-	let articles: BlogPost[] = initialArticles ?? await fetchRelatedArticles() ?? [];
+	let sections: Section[] = initialSections ?? (await fetchSections());
 
 	let timelineContainer = $state<HTMLElement>();
 	let scrubberContainer = $state<HTMLElement>();
@@ -98,17 +81,15 @@
 				// Debounce the active section update
 				clearTimeout(updateTimeout);
 				updateTimeout = setTimeout(() => {
-						if (visibleSections.size > 0) {
-							// Find the section with the highest intersection ratio
+					if (visibleSections.size > 0) {
+						// Find the section with the highest intersection ratio
 						let mostVisibleId = Array.from(visibleSections.entries()).reduce((prev, current) =>
 							current[1] > prev[1] ? current : prev
 						)[0];
 
-							activeSectionId = mostVisibleId;
-						}
-					},
-					100
-				);
+						activeSectionId = mostVisibleId;
+					}
+				}, 100);
 			},
 			{
 				root: null,
@@ -151,7 +132,7 @@
 		}
 
 		completedCount = count;
-		progressPercentage = count / sections.length * 100;
+		progressPercentage = (count / sections.length) * 100;
 	}
 
 	function scrollToSection(sectionId: string) {
@@ -264,13 +245,9 @@
 								id={section.id}
 								title={section.title}
 								description={section.description}
-								audioUrl={section.audioUrl}
-								videoUrl={section.videoUrl}
+								chroniqueHandle={section.chroniqueHandle}
 								year={section.year}
-								tags={section.tags || []}
-								availablePosts={articles}
 								isActive={activeSectionId === section.id}
-								blog={section.blog || null}
 							/>
 						</div>
 					{/each}
@@ -282,7 +259,9 @@
 				bind:this={scrubberContainer}
 				class="hidden w-16 lg:flex lg:flex-col lg:items-center lg:py-8 sticky top-28 h-fit"
 			>
-				<div class="space-y-2 flex flex-col justify-center bg-gradient-to-b from-primary-900/5 to-primary-900/10 rounded-lg p-3">
+				<div
+					class="space-y-2 flex flex-col justify-center bg-gradient-to-b from-primary-900/5 to-primary-900/10 rounded-lg p-3"
+				>
 					{#each sections as section (section.id)}
 						{@const isActive = activeSectionId === section.id}
 						<button

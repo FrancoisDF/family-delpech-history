@@ -33,6 +33,7 @@
 		tags?: string[];
 		availablePosts?: BlogPost[];
 		blog?: BlogPost | null;
+		chroniqueHandle?: string;
 	}
 
 	let {
@@ -45,7 +46,8 @@
 		isActive = false,
 		tags = [],
 		availablePosts = [],
-		blog = null
+		blog = null,
+		chroniqueHandle = ''
 	} = $props();
 
 	let isCompleted: boolean = $state(false);
@@ -140,13 +142,16 @@
 	<div class="pl-10 sm:pl-12 md:pl-12">
 		<div class="mb-4 flex items-start justify-between">
 			<h3 class="font-serif text-3xl font-medium text-primary-800">{title}</h3>
-			<!-- Main Blog Article Link -->
-			{#if blog}
+			{#if chroniqueHandle || blog}
 				<a
-					href={getArticleHref(blog)}
+					href={chroniqueHandle
+						? `/chroniques/${chroniqueHandle}`
+						: blog
+							? getArticleHref(blog)
+							: ''}
 					class="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 font-semibold text-white transition-all hover:shadow-lg hover:scale-105 flex-shrink-0"
 				>
-					Lire l'article
+					{chroniqueHandle ? 'Lire la chronique' : "Lire l'article"}
 					<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
 							stroke-linecap="round"
