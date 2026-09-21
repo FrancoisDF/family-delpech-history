@@ -115,61 +115,65 @@
 
 	<div class="article-content-shell relative">
 		<div
-			class="mx-auto max-w-7xl px-4 pb-6 sm:px-6 lg:absolute lg:inset-0 lg:px-8 lg:pb-0 lg:pointer-events-none"
+			class="mx-auto grid max-w-7xl gap-8 px-4 pb-6 sm:px-6 lg:grid-cols-[13rem_minmax(0,1fr)] lg:items-start lg:px-8 lg:pb-0"
 		>
-			<ArticleSectionNavigation config={navigation} />
-		</div>
+			<div class="lg:sticky lg:top-24">
+				<ArticleSectionNavigation config={navigation} />
+			</div>
 
-		<section id={`${toAnchorId(chronique.id)}-introduction`} class="scroll-mt-28">
-			<Content
-				model="chronique"
-				content={introContent}
-				apiKey={PUBLIC_BUILDER_API_KEY}
-				customComponents={builderComponents}
-			/>
-		</section>
-
-		{#each articleEntries as entry, index (entry.sectionId)}
-			<section id={entry.sectionId} class="scroll-mt-28 border-t border-primary-200 pt-12">
-				<div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-					<div class="mb-5 flex flex-wrap items-center gap-3">
-						<span
-							class="flex h-8 w-8 items-center justify-center rounded-full bg-primary-800 text-sm font-semibold text-white"
-						>
-							{index + 1}
-						</span>
-						<span class="text-sm font-semibold uppercase tracking-widest text-primary-600"
-							>Article de la chronique</span
-						>
-						<a
-							href={articleUrl(entry.article.id, entry.article.title)}
-							class="text-sm font-semibold text-accent transition-colors hover:text-accent/80"
-						>
-							Lire l’article
-						</a>
-					</div>
-				</div>
-				<ArticleHeaderBlock
-					title={entry.article.title}
-					excerpt={entry.article.excerpt || ''}
-					date={entry.article.date || ''}
-					readTime={entry.article.readTime || ''}
-					category={entry.article.category || ''}
-					featuredImage={entry.article.featuredImage || ''}
-					featuredImageDisplayMode={entry.article.featuredImageDisplayMode || 'cover'}
-					author={entry.article.author || ''}
-					pdfFile=""
-					onOpenPDFModal={() => {}}
-				/>
-				{#if entry.content}
+			<div class="min-w-0">
+				<section id={`${toAnchorId(chronique.id)}-introduction`} class="scroll-mt-28">
 					<Content
-						model="blog-articles"
-						content={entry.content}
+						model="chronique"
+						content={introContent}
 						apiKey={PUBLIC_BUILDER_API_KEY}
 						customComponents={builderComponents}
 					/>
-				{/if}
-			</section>
-		{/each}
+				</section>
+
+				{#each articleEntries as entry, index (entry.sectionId)}
+					<section id={entry.sectionId} class="scroll-mt-28 border-t border-primary-200 pt-12">
+						<div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+							<div class="mb-5 flex flex-wrap items-center gap-3">
+								<span
+									class="flex h-8 w-8 items-center justify-center rounded-full bg-primary-800 text-sm font-semibold text-white"
+								>
+									{index + 1}
+								</span>
+								<span class="text-sm font-semibold uppercase tracking-widest text-primary-600"
+									>Article de la chronique</span
+								>
+								<a
+									href={articleUrl(entry.article.id, entry.article.title)}
+									class="text-sm font-semibold text-accent transition-colors hover:text-accent/80"
+								>
+									Lire l’article
+								</a>
+							</div>
+						</div>
+						<ArticleHeaderBlock
+							title={entry.article.title}
+							excerpt={entry.article.excerpt || ''}
+							date={entry.article.date || ''}
+							readTime={entry.article.readTime || ''}
+							category={entry.article.category || ''}
+							featuredImage={entry.article.featuredImage || ''}
+							featuredImageDisplayMode={entry.article.featuredImageDisplayMode || 'cover'}
+							author={entry.article.author || ''}
+							pdfFile=""
+							onOpenPDFModal={() => {}}
+						/>
+						{#if entry.content}
+							<Content
+								model="blog-articles"
+								content={entry.content}
+								apiKey={PUBLIC_BUILDER_API_KEY}
+								customComponents={builderComponents}
+							/>
+						{/if}
+					</section>
+				{/each}
+			</div>
+		</div>
 	</div>
 </div>
