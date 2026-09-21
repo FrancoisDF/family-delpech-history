@@ -30,7 +30,7 @@
 		: 'Histoire de Famille';
 	const pageDescription =
 		post?.data?.excerpt ||
-		'Découvrez les histoires et les secrets de notre famille à travers 50 livres d\'histoire familiale du XIXe siècle.';
+		"Découvrez les histoires et les secrets de notre famille à travers 50 livres d'histoire familiale du XIXe siècle.";
 	const sectionNavigation = normalizeArticleSectionNavigation(post?.data?.sectionNavigation);
 </script>
 
@@ -53,9 +53,13 @@
 		onOpenPDFModal={openPDFModal}
 	/>
 
+	<ChroniqueCallout chroniques={data.chroniques} articleId={post.id} />
+
 	<div class="article-content-shell relative">
 		{#if sectionNavigation}
-			<div class="article-navigation-shell z-10 mx-auto max-w-7xl px-4 pb-6 sm:px-6 lg:absolute lg:inset-0 lg:px-8 lg:pb-0 lg:pointer-events-none">
+			<div
+				class="article-navigation-shell z-10 mx-auto max-w-7xl contents sm:px-6 lg:block lg:absolute lg:inset-0 lg:px-8 lg:pb-0 lg:pointer-events-none"
+			>
 				<ArticleSectionNavigation config={sectionNavigation} />
 			</div>
 		{/if}
@@ -68,17 +72,14 @@
 		/>
 	</div>
 
-
-	<ChroniqueCallout chroniques={data.chroniques} />
-
-		{#if post?.data?.tags && post.data?.tags.length > 0}
+	{#if post?.data?.tags && post.data?.tags.length > 0}
 		<ArticleCarouselBlock
 			title="Articles Connexes"
 			tags={post.data?.tags || []}
 			itemsPerSlide={3}
 		/>
 	{/if}
-	{#if data.siteConfig }
+	{#if data.siteConfig}
 		<CTABlock
 			title={data.siteConfig.ctaBlockTitle as string}
 			description={data.siteConfig.ctaBlockDescription as string}

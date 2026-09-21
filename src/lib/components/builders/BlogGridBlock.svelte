@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { generateBlogUrl } from '#lib/url-utils.js';
+	import { articleUrl } from '#lib/url-utils.js';
 	import { fetchArticles } from '#lib/components/article.remote.js';
 
 	let {
@@ -45,7 +45,7 @@
 			<div class="grid gap-8" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
 				{#each posts as post (post.id)}
 					<a
-						href={`/histoires/${generateBlogUrl(post.id, post.title)}`}
+						href={articleUrl(post.id, post.title)}
 						class="group block cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:shadow-xl"
 						aria-label={`Lire ${post.title}`}
 					>

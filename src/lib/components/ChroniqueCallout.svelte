@@ -1,7 +1,8 @@
 <script lang="ts">
 	import type { Chronique } from '#lib/server/builder.js';
+	import { chroniqueArticleUrl } from '#lib/url-utils.js';
 
-	let { chroniques }: { chroniques: Chronique[] } = $props();
+	let { chroniques, articleId }: { chroniques: Chronique[]; articleId: string } = $props();
 </script>
 
 {#if chroniques.length > 0}
@@ -14,7 +15,9 @@
 					À lire dans son contexte
 				</p>
 				<h2 class="mt-1 font-serif text-xl font-semibold text-primary-900">
-					Voir cet article dans sa chronique complète
+					{chroniques.length === 1
+						? 'Cet article fait partie de la chronique'
+						: 'Lire cet article dans ses chroniques'}
 				</h2>
 			</div>
 			<nav
@@ -23,10 +26,10 @@
 			>
 				{#each chroniques as chronique (chronique.id)}
 					<a
-						href={`/chroniques/${chronique.handle}`}
-						class="inline-flex items-center gap-2 font-semibold text-accent transition-colors hover:text-accent/80"
+						href={chroniqueArticleUrl(chronique.handle, articleId)}
+						class="inline-flex items-center gap-2 font-semibold text-accent transition-colors hover:text-accent/80 focus-visible:rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
 					>
-						{chronique.title}
+						Lire dans « {chronique.title} »
 						<svg
 							class="h-4 w-4"
 							fill="none"

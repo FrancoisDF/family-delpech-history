@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import { chroniqueUrl } from '#lib/url-utils.js';
 
 	let { data }: { data: PageData } = $props();
 </script>
@@ -8,7 +9,7 @@
 	<title>Chroniques | Histoire de Famille</title>
 	<meta
 		name="description"
-		content="Parcourez nos chroniques et leurs histoires réunies dans un même récit."
+		content="Parcourez nos chroniques et leurs articles réunis dans un même récit."
 	/>
 </svelte:head>
 
@@ -22,16 +23,20 @@
 			</div>
 			<h1 class="font-serif text-4xl font-bold text-primary-900">Les chroniques</h1>
 			<p class="mx-auto mt-4 max-w-2xl text-lg text-primary-700">
-				Des parcours de lecture qui réunissent plusieurs histoires pour mieux les découvrir.
+				Des parcours de lecture qui réunissent plusieurs articles pour mieux les découvrir.
 			</p>
+			<a href="/histoires" class="mt-5 inline-flex font-semibold text-accent hover:text-accent/80">
+				Rechercher dans tous les articles et chroniques →
+			</a>
 		</div>
 
 		{#if data.chroniques.length > 0}
 			<div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
 				{#each data.chroniques as chronique (chronique.id)}
 					<a
-						href={`/chroniques/${chronique.handle}`}
-						class="group block overflow-hidden rounded-2xl border border-accent/20 bg-white shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+						href={chroniqueUrl(chronique.handle)}
+						class="group block overflow-hidden rounded-2xl border border-accent/20 bg-white shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+						aria-label={`Lire la chronique ${chronique.title}`}
 					>
 						<div
 							class="relative h-56 overflow-hidden bg-gradient-to-br from-primary-100 to-accent/20"
@@ -73,6 +78,9 @@
 										>{chronique.category}</span
 									>
 								{/if}
+								{#if chronique.date}
+									<span class="text-xs text-primary-600">{chronique.date}</span>
+								{/if}
 							</div>
 							<h2
 								class="font-serif text-2xl font-medium text-primary-800 transition-colors group-hover:text-accent"
@@ -102,6 +110,9 @@
 				class="rounded-xl border-2 border-dashed border-primary-300 bg-primary-50 p-10 text-center text-primary-700"
 			>
 				Aucune chronique n’est disponible pour le moment.
+				<a href="/histoires" class="font-semibold text-accent hover:text-accent/80"
+					>Consultez les articles.</a
+				>
 			</div>
 		{/if}
 	</div>

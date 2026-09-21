@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { generateBlogUrl } from '#lib/url-utils.js';
+	import { articleUrl } from '#lib/url-utils.js';
 
 	interface Article {
 		id: string;
@@ -67,7 +67,7 @@
 	// Navigation is done via normal anchors now (SSR-friendly) — helper kept
 	// exported in case other modules need it.
 	export function getArticleHref(article: Article) {
-		return `/histoires/${generateBlogUrl(article.id, article.title)}`;
+		return articleUrl(article.id, article.title);
 	}
 </script>
 
@@ -84,19 +84,25 @@
 				<!-- Scroll Container -->
 				<div
 					bind:this={scrollContainer}
-					class={mini ? 'flex gap-4 overflow-x-auto scroll-smooth pb-2' : 'flex gap-8 overflow-x-auto scroll-smooth pb-4'}
+					class={mini
+						? 'flex gap-4 overflow-x-auto scroll-smooth pb-2'
+						: 'flex gap-8 overflow-x-auto scroll-smooth pb-4'}
 					style="scroll-behavior: smooth; scrollbar-width: none;"
 				>
 					{#each articles as article (article.id)}
 						<a
 							data-carousel-item
 							href={getArticleHref(article)}
-							class={mini ? 'group w-56 flex-shrink-0 overflow-hidden rounded-lg bg-white shadow-sm transition-all duration-300 hover:shadow-md' : 'group w-full flex-shrink-0 overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:shadow-xl sm:w-1/2 lg:w-1/3'}
+							class={mini
+								? 'group w-56 flex-shrink-0 overflow-hidden rounded-lg bg-white shadow-sm transition-all duration-300 hover:shadow-md'
+								: 'group w-full flex-shrink-0 overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:shadow-xl sm:w-1/2 lg:w-1/3'}
 							aria-label={`Lire l'article ${article.title}`}
 						>
 							<!-- Featured Image -->
 							<div
-								class={mini ? 'relative h-32 overflow-hidden bg-gradient-to-br from-primary-100 to-primary-200' : 'relative h-56 overflow-hidden bg-gradient-to-br from-primary-100 to-primary-200'}
+								class={mini
+									? 'relative h-32 overflow-hidden bg-gradient-to-br from-primary-100 to-primary-200'
+									: 'relative h-56 overflow-hidden bg-gradient-to-br from-primary-100 to-primary-200'}
 							>
 								{#if article.featuredImage}
 									<img
@@ -149,7 +155,9 @@
 
 								<!-- Title -->
 								<h3
-									class={mini ? 'line-clamp-2 font-serif text-sm font-medium text-primary-800 transition-colors duration-300 group-hover:text-accent' : 'mb-3 line-clamp-2 font-serif text-lg font-medium text-primary-800 transition-colors duration-300 group-hover:text-accent'}
+									class={mini
+										? 'line-clamp-2 font-serif text-sm font-medium text-primary-800 transition-colors duration-300 group-hover:text-accent'
+										: 'mb-3 line-clamp-2 font-serif text-lg font-medium text-primary-800 transition-colors duration-300 group-hover:text-accent'}
 								>
 									{article.title}
 								</h3>

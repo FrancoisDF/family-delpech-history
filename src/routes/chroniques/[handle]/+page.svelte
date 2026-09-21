@@ -22,7 +22,7 @@
 	<PageNotFound
 		title="Chronique non trouvée"
 		message="La chronique que vous recherchez n’existe pas ou a été supprimée."
-		ctaText="Retour aux histoires"
-		ctaHref="/histoires"
+		ctaText="Retour aux chroniques"
+		ctaHref="/chroniques"
 	/>
 {/if}

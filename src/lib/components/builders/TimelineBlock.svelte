@@ -1,12 +1,11 @@
 <script lang="ts">
 	import Timeline from '#lib/components/Timeline.svelte';
 	import { fetchSections } from '../section.remote';
-	import { fetchRelatedArticles } from '../article.remote';
 
 	let {
 		title = 'Un Voyage à Travers le Temps',
 		description = 'Écoutez et suivez votre progression à travers les différentes périodes de notre histoire',
-		showProgression = true,
+		showProgression = true
 	}: {
 		title?: string;
 		description?: string;
@@ -14,8 +13,6 @@
 	} = $props();
 
 	let sections = await fetchSections();
-	// let articles = await fetchRelatedArticles();
-	let articles = undefined;
 </script>
 
 <section class="">
@@ -29,5 +26,5 @@
 			</p>
 		</div>
 	</div>
-	<Timeline {sections} {articles} {showProgression} />
+	<Timeline {sections} {showProgression} anchorId="chroniques" />
 </section>

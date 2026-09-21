@@ -31,19 +31,37 @@ export function toKebabCase(str: string): string {
 		.replace(/-+/g, '-'); // collapse multiple hyphens
 }
 
-/**
- * Extracts the ID from a blog URL (first 6 characters)
- */
 export function extractIdFromUrl(urlParam: string): string {
 	return urlParam.split('-')[0];
 }
 
-/**
- * Generates a blog URL in the format: {randomID}{camelCaseTitle}
- */
+export function articleUrl(id: string, title: string): string {
+	return `/histoires/${generateBlogUrl(id, title)}`;
+}
+
+export function chroniqueUrl(handle: string): string {
+	return `/chroniques/${encodeURIComponent(handle)}`;
+}
+
+export function chroniqueArticleAnchor(articleId: string): string {
+	return `article-${toAnchorId(articleId)}`;
+}
+
+export function chroniqueArticleUrl(handle: string, articleId: string): string {
+	return `${chroniqueUrl(handle)}#${chroniqueArticleAnchor(articleId)}`;
+}
+
+export function toAnchorId(value: string): string {
+	return value
+		.normalize('NFKD')
+		.replace(/[\u0300-\u036f]/g, '')
+		.replace(/[^a-zA-Z0-9_-]+/g, '-')
+		.replace(/^-+|-+$/g, '')
+		.toLowerCase();
+}
+
 export function generateBlogUrl(id: string, title: string): string {
 	const slug = toKebabCase(title || '');
-	// Keep the id as the first token (extractIdFromUrl relies on first 6 chars)
 	return slug ? `${id}-${slug}` : id;
 }
 

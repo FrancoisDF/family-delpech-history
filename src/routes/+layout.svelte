@@ -28,7 +28,7 @@
 		headerLogo: 'Histoire de Famille',
 		headerLinks: [
 			{ label: 'Accueil', url: '/', ariaLabel: "Retour à la page d'accueil" },
-			{ label: 'Histoires', url: '/histoires', ariaLabel: 'Voir toutes les histoires' },
+			{ label: 'Histoires', url: '/histoires', ariaLabel: 'Voir tous les articles et chroniques' },
 			{ label: 'Questions', url: '/chat', ariaLabel: 'Poser une question à notre assistant' }
 		],
 		footerDescription:
@@ -47,10 +47,19 @@
 		footerCopyright: '© 2024 Histoire de Famille. Tous droits réservés.'
 	};
 
-	// Merge server-loaded config with defaults to ensure all fields are present
+	function ensureChroniqueLink(links: SiteConfig['headerLinks'] | SiteConfig['footerLinks']) {
+		const resolvedLinks = links ?? [];
+		return resolvedLinks.some((link) => link.url === '/chroniques')
+			? resolvedLinks
+			: [...resolvedLinks, { label: 'Chroniques', url: '/chroniques' }];
+	}
+
+	const siteConfig = data?.siteConfig as SiteConfig | null | undefined;
 	const config: SiteConfig = {
 		...defaultConfig,
-		...(data.siteConfig || {})
+		...(siteConfig || {}),
+		headerLinks: ensureChroniqueLink(siteConfig?.headerLinks ?? defaultConfig.headerLinks),
+		footerLinks: ensureChroniqueLink(siteConfig?.footerLinks ?? defaultConfig.footerLinks)
 	};
 </script>
 

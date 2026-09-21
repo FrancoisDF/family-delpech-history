@@ -5,7 +5,7 @@
 		unmarkSectionCompleted
 	} from '#lib/progress.js';
 	import ArticleCarousel from './ArticleCarousel.svelte';
-	import { generateBlogUrl } from '#lib/url-utils.js';
+	import { articleUrl, chroniqueUrl } from '#lib/url-utils.js';
 	import { getYouTubeEmbedUrl } from '#lib/youtube.js';
 
 	// Navigation is done via normal anchors now (SSR-friendly) — helper kept
@@ -33,6 +33,7 @@
 		tags?: string[];
 		availablePosts?: BlogPost[];
 		blog?: BlogPost | null;
+		chroniqueHandle?: string;
 	}
 
 	let {
@@ -45,7 +46,8 @@
 		isActive = false,
 		tags = [],
 		availablePosts = [],
-		blog = null
+		blog = null,
+		chroniqueHandle = ''
 	} = $props();
 
 	let isCompleted: boolean = $state(false);
@@ -93,7 +95,7 @@
 
 	// exported in case other modules need it.
 	export function getArticleHref(article: BlogPost) {
-		return `/histoires/${generateBlogUrl(article.id, article.title)}`;
+		return articleUrl(article.id, article.title);
 	}
 </script>
 
@@ -138,15 +140,14 @@
 	</div>
 
 	<div class="pl-10 sm:pl-12 md:pl-12">
-		<div class="mb-4 flex items-start justify-between">
+		<div class="mb-4 flex flex-col items-start gap-4 md:flex-row md:items-start md:justify-between">
 			<h3 class="font-serif text-3xl font-medium text-primary-800">{title}</h3>
-			<!-- Main Blog Article Link -->
-			{#if blog}
+			{#if chroniqueHandle || blog}
 				<a
-					href={getArticleHref(blog)}
-					class="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 font-semibold text-white transition-all hover:shadow-lg hover:scale-105 flex-shrink-0"
+					href={chroniqueHandle ? chroniqueUrl(chroniqueHandle) : blog ? getArticleHref(blog) : ''}
+					class="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 font-semibold text-white transition-all hover:shadow-lg hover:scale-105 shrink-0"
 				>
-					Lire l'article
+					{chroniqueHandle ? 'Lire la chronique' : "Lire l'article"}
 					<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
 							stroke-linecap="round"
@@ -156,19 +157,6 @@
 						/>
 					</svg>
 				</a>
-			{/if}
-			{#if isCompleted}
-				<div class="ml-4 flex-shrink-0">
-					<div class="flex h-8 w-8 items-center justify-center rounded-full bg-accent">
-						<svg class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-							<path
-								fill-rule="evenodd"
-								d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-								clip-rule="evenodd"
-							/>
-						</svg>
-					</div>
-				</div>
 			{/if}
 		</div>
 
