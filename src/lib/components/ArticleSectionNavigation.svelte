@@ -80,42 +80,44 @@
 
 {#if hasRenderedSections}
 	<div class="pointer-events-auto h-full">
-		<aside class="w-full lg:sticky lg:top-24 lg:w-52">
-			<div class="border-l-2 border-primary-200 pl-5">
+		<aside
+			class="sticky top-16 z-20 w-full bg-primary-50/95 backdrop-blur lg:top-24 lg:w-52 lg:bg-transparent lg:backdrop-blur-none"
+		>
+			<div
+				class="border-b border-primary-200 px-4 py-3 lg:border-l-2 lg:border-b-0 lg:py-0 lg:pl-5 lg:pr-0"
+			>
 				{#if config.title}
-				<h2 class="hidden font-serif text-xl font-semibold text-primary-900 lg:block">{config.title}</h2>
-				{/if}
-				{#if config.description}
-				<p class="mt-2 hidden text-sm leading-relaxed text-primary-700 lg:block">{config.description}</p>
+					<h2 class="hidden font-serif text-xl font-semibold text-primary-900 lg:block">
+						{config.title}
+					</h2>
 				{/if}
 
-			<nav aria-label={config.title || 'Sections de l’article'} class="mt-0 lg:mt-6">
-					<ol class="space-y-4">
+				<nav
+					aria-label={config.title || 'Sections de l’article'}
+					class="mt-0 overflow-x-auto lg:mt-6 lg:overflow-visible"
+				>
+					<ol class="flex w-max gap-3 lg:block lg:w-auto lg:space-y-4">
 						{#each renderedSections as section, index (section.id)}
-							<li>
+							<li class="shrink-0">
 								<a
 									href={`#${section.id}`}
 									onclick={() => selectSection(section.id)}
 									aria-current={activeId === section.id ? 'location' : undefined}
-								class={`group flex gap-3 text-left ${
-									activeId === section.id ? 'text-accent' : 'text-primary-700 hover:text-accent'
-								}`}
-								>
-									<span
-									class={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
-										activeId === section.id
-											? 'bg-accent text-white'
-											: 'bg-primary-100 text-primary-700 group-hover:bg-accent/15 group-hover:text-accent'
+									class={`group flex gap-3 text-left ${
+										activeId === section.id ? 'text-accent' : 'text-primary-700 hover:text-accent'
 									}`}
 								>
-									{index + 1}
-								</span>
-									<span class="sr-only lg:not-sr-only lg:block lg:font-medium">{section.title}</span>
-									{#if section.description}
-										<span class="mt-1 hidden text-xs leading-relaxed text-primary-600 lg:block">
-											{section.description}
-										</span>
-									{/if}
+									<span
+										class={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
+											activeId === section.id
+												? 'bg-accent text-white'
+												: 'bg-primary-100 text-primary-700 group-hover:bg-accent/15 group-hover:text-accent'
+										}`}
+									>
+										{index + 1}
+									</span>
+									<span class="sr-only lg:not-sr-only lg:block lg:font-medium">{section.title}</span
+									>
 								</a>
 							</li>
 						{/each}
@@ -123,6 +125,5 @@
 				</nav>
 			</div>
 		</aside>
-
 	</div>
 {/if}

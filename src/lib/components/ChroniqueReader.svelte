@@ -83,7 +83,7 @@
 <div class="bg-primary-50/30">
 	<div class="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8">
 		<a
-			href="/chroniques"
+			href="/#chroniques"
 			class="inline-flex items-center gap-2 text-primary-900 transition-colors hover:text-accent"
 		>
 			<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
@@ -91,7 +91,7 @@
 					d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 111.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
 				></path>
 			</svg>
-			Retour aux chroniques
+			Retour à la timeline des chroniques
 		</a>
 	</div>
 
@@ -158,6 +158,7 @@
 							category={entry.article.category || ''}
 							featuredImage={entry.article.featuredImage || ''}
 							featuredImageDisplayMode={entry.article.featuredImageDisplayMode || 'cover'}
+							showBackLink={false}
 							author={entry.article.author || ''}
 							pdfFile=""
 							onOpenPDFModal={() => {}}
