@@ -62,8 +62,7 @@
 				{ id: `${toAnchorId(chronique.id)}-introduction`, title: 'Introduction' },
 				...chronique.articles.map((entry, index) => ({
 					id: chroniqueArticleAnchor(entry.article.id),
-					title: entry.reference.label || entry.article.title || `Article ${index + 1}`,
-					description: entry.article.excerpt
+					title: entry.reference.label || entry.article.title || `Article ${index + 1}`
 				}))
 			]
 		})
