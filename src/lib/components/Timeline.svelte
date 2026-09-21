@@ -12,9 +12,14 @@
 		chroniqueHandle: string;
 	}
 
-	let { sections: initialSections, showProgression = true } = $props<{
+	let {
+		sections: initialSections,
+		showProgression = true,
+		anchorId
+	} = $props<{
 		sections?: Section[];
 		showProgression?: boolean;
+		anchorId?: string;
 	}>();
 
 	let sections: Section[] = initialSections ?? (await fetchSections());
@@ -223,7 +228,11 @@
 	{/if}
 
 	<!-- Timeline Container -->
-	<div bind:this={timelineContainer} class="relative px-4 py-16 sm:px-6 lg:px-8">
+	<div
+		bind:this={timelineContainer}
+		id={anchorId}
+		class="relative scroll-mt-16 px-4 py-16 sm:px-6 lg:px-8"
+	>
 		<div class="mx-auto max-w-7xl flex gap-8">
 			<!-- Main Content -->
 			<div class="flex-1 relative">

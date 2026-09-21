@@ -15,7 +15,7 @@
 	let sections = await fetchSections();
 </script>
 
-<section id="chroniques" class="">
+<section class="">
 	<div class="px-4 py-12 sm:px-6 lg:px-8">
 		<div class="mx-auto max-w-6xl">
 			<h2 class="mb-8 text-center font-serif text-4xl font-bold text-primary-900">
@@ -26,5 +26,5 @@
 			</p>
 		</div>
 	</div>
-	<Timeline {sections} {showProgression} />
+	<Timeline {sections} {showProgression} anchorId="chroniques" />
 </section>
