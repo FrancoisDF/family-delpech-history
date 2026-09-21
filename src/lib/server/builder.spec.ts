@@ -3,6 +3,7 @@ import {
 	fetchBuilderPersonByIdServer,
 	fetchAllBuilderPeopleServer,
 	fetchResolvedChroniqueByHandleServer,
+	fetchChroniquesReferencingArticleServer,
 	normalizeBuilderReference,
 	normalizeChronique
 } from './builder';
@@ -207,5 +208,54 @@ describe('chronique normalization and resolution', () => {
 		expect(missingReferenceResult?.articles).toHaveLength(1);
 		expect(missingReferenceResult?.articles[0].article.id).toBe('article-1');
 		expect(missingReferenceResult?.articles[0].reference.label).toBe('Premier');
+	});
+
+	it('finds the single chronique containing an article', async () => {
+		const { fetchEntries } = await import('@builder.io/sdk-svelte');
+		vi.mocked(fetchEntries).mockResolvedValue([
+			{
+				id: 'chronique-1',
+				data: {
+					title: 'Une chronique',
+					handle: 'une-chronique',
+					referencedArticles: [{ id: 'article-1' }]
+				}
+			}
+		]);
+
+		const result = await fetchChroniquesReferencingArticleServer('article-1');
+
+		expect(result).toHaveLength(1);
+		expect(result[0].handle).toBe('une-chronique');
+	});
+
+	it('returns every chronique containing an article', async () => {
+		const { fetchEntries } = await import('@builder.io/sdk-svelte');
+		vi.mocked(fetchEntries).mockResolvedValue([
+			{
+				id: 'chronique-1',
+				data: { referencedArticles: [{ id: 'article-1' }] }
+			},
+			{
+				id: 'chronique-2',
+				data: { referencedArticles: [{ id: 'article-1' }] }
+			}
+		]);
+
+		const result = await fetchChroniquesReferencingArticleServer('article-1');
+
+		expect(result.map((chronique) => chronique.id)).toEqual(['chronique-1', 'chronique-2']);
+	});
+
+	it('returns no chroniques when an article is not referenced', async () => {
+		const { fetchEntries } = await import('@builder.io/sdk-svelte');
+		vi.mocked(fetchEntries).mockResolvedValue([
+			{
+				id: 'chronique-1',
+				data: { referencedArticles: [{ id: 'article-2' }] }
+			}
+		]);
+
+		expect(await fetchChroniquesReferencingArticleServer('article-1')).toEqual([]);
 	});
 });

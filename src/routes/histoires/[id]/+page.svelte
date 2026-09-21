@@ -53,6 +53,8 @@
 		onOpenPDFModal={openPDFModal}
 	/>
 
+	<ChroniqueCallout chroniques={data.chroniques} articleId={post.id} />
+
 	<div class="article-content-shell relative">
 		{#if sectionNavigation}
 			<div
@@ -69,8 +71,6 @@
 			customComponents={builderComponents}
 		/>
 	</div>
-
-	<ChroniqueCallout chroniques={data.chroniques} articleId={post.id} />
 
 	{#if post?.data?.tags && post.data?.tags.length > 0}
 		<ArticleCarouselBlock
