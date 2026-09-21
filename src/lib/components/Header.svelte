@@ -5,7 +5,11 @@
 		ariaLabel?: string;
 	}
 
-	let { siteName = 'Histoire de Famille', logo = '/assets/favicon.png', links = [] } = $props<{
+	let {
+		siteName = 'Histoire de Famille',
+		logo = '/assets/favicon.png',
+		links = []
+	} = $props<{
 		siteName?: string | null;
 		logo?: string | null;
 		links?: HeaderLink[] | null;
@@ -15,7 +19,11 @@
 
 	// Safe getters with defaults
 	const headerLogo = logo || 'Histoire de Famille';
-	const headerLinks = links && Array.isArray(links) && links.length > 0 ? links : [];
+	let headerLinks = $derived(
+		links && Array.isArray(links) && links.length > 0
+			? links.filter((link) => link.url !== '/chroniques')
+			: []
+	);
 </script>
 
 <nav class="sticky top-0 z-50 border-b border-primary-100 bg-white shadow-sm">
@@ -25,7 +33,7 @@
 			<img src={headerLogo} alt="Logo" class="h-8 w-8" />
 			<span class="text-lg font-medium text-primary-800 sm:inline">{siteName}</span>
 		</a>
-		
+
 		<!-- Desktop Navigation -->
 		<div class="hidden items-center gap-8 md:flex">
 			{#each headerLinks as link (link.url)}
