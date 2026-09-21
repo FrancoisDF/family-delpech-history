@@ -12,6 +12,10 @@
 
 	let { chronique }: { chronique: ResolvedChronique } = $props();
 
+	function getYear(date: string): string {
+		return date.match(/\b\d{4}\b/)?.[0] ?? date;
+	}
+
 	$effect(() => {
 		if (!browser || !window.location.hash) return;
 		const targetId = decodeURIComponent(window.location.hash.slice(1));
@@ -103,7 +107,7 @@
 				Chronique
 			</span>
 			{#if chronique.date}
-				<span class="text-sm font-medium text-primary-600">{chronique.date}</span>
+				<span class="text-sm font-medium text-primary-600">{getYear(chronique.date)}</span>
 			{/if}
 		</div>
 		<h1 class="font-serif text-4xl font-bold text-primary-900 md:text-5xl">{chronique.title}</h1>
