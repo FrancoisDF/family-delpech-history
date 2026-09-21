@@ -140,12 +140,12 @@
 	</div>
 
 	<div class="pl-10 sm:pl-12 md:pl-12">
-		<div class="mb-4 flex items-start justify-between">
+		<div class="mb-4 flex flex-col items-start gap-4 md:flex-row md:items-start md:justify-between">
 			<h3 class="font-serif text-3xl font-medium text-primary-800">{title}</h3>
 			{#if chroniqueHandle || blog}
 				<a
 					href={chroniqueHandle ? chroniqueUrl(chroniqueHandle) : blog ? getArticleHref(blog) : ''}
-					class="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 font-semibold text-white transition-all hover:shadow-lg hover:scale-105 flex-shrink-0"
+					class="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 font-semibold text-white transition-all hover:shadow-lg hover:scale-105 shrink-0"
 				>
 					{chroniqueHandle ? 'Lire la chronique' : "Lire l'article"}
 					<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
