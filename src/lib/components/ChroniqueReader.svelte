@@ -147,7 +147,7 @@
 									>Article de la chronique</span
 								>
 								<a
-									href={articleUrl(entry.article.id, entry.article.title)}
+									href={articleUrl(entry.article.id, entry.article.title, entry.article.handle, entry.article.slug)}
 									class="text-sm font-semibold text-accent transition-colors hover:text-accent/80"
 								>
 									Lire l’article

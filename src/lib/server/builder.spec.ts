@@ -4,6 +4,7 @@ import {
 	fetchAllBuilderPeopleServer,
 	fetchResolvedChroniqueByHandleServer,
 	fetchChroniquesReferencingArticleServer,
+	findContentIdByHandleServer,
 	normalizeBuilderReference,
 	normalizeChronique
 } from './builder';
@@ -119,6 +120,40 @@ describe('fetchAllBuilderPeopleServer', () => {
 		const result = await fetchAllBuilderPeopleServer();
 
 		expect(result).toEqual([]);
+	});
+});
+
+describe('content handle resolution', () => {
+	beforeEach(() => {
+		vi.clearAllMocks();
+	});
+
+	it('resolves stored handles, title-derived handles and legacy URLs', async () => {
+		const { fetchEntries } = await import('@builder.io/sdk-svelte');
+		vi.mocked(fetchEntries).mockResolvedValue([
+			{ id: 'article-1', data: { title: 'Une histoire', handle: 'ma-selection' } },
+			{ id: 'article-2', data: { title: 'Été à Paris' } }
+		]);
+
+		expect(await findContentIdByHandleServer('blog-articles', 'ma-selection')).toBe('article-1');
+		expect(await findContentIdByHandleServer('blog-articles', 'ete-a-paris')).toBe('article-2');
+		expect(await findContentIdByHandleServer('blog-articles', 'article-1-une-histoire')).toBe('article-1');
+	});
+
+	it('does not resolve ambiguous title-derived handles to an arbitrary article', async () => {
+		const { fetchEntries } = await import('@builder.io/sdk-svelte');
+		vi.mocked(fetchEntries).mockResolvedValue([
+			{ id: 'article-1', data: { title: 'Une histoire' } },
+			{ id: 'article-2', data: { title: 'Une histoire' } }
+		]);
+
+		expect(await findContentIdByHandleServer('blog-articles', 'une-histoire')).toBeNull();
+	});
+
+	it('derives a chronique handle from its title when none is stored', () => {
+		expect(normalizeChronique({ id: 'chronique-1', data: { title: 'Été à Paris' } })?.handle).toBe(
+			'ete-a-paris'
+		);
 	});
 });
 

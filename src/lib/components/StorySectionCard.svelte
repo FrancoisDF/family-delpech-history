@@ -95,7 +95,7 @@
 
 	// exported in case other modules need it.
 	export function getArticleHref(article: BlogPost) {
-		return articleUrl(article.id, article.title);
+		return articleUrl(article.id, article.title, article.handle, article.slug);
 	}
 </script>
 

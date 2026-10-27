@@ -51,10 +51,10 @@ function toKebabCase(str) {
 		.normalize('NFKD')
 		.replace(/[\u0300-\u036f]/g, '')
 		.replace(/[^\w\s-]/g, '')
-		.trim()
+		.replace(/[\s_]+/g, '-')
 		.toLowerCase()
-		.replace(/\s+/g, '-')
-		.replace(/-+/g, '-');
+		.replace(/-+/g, '-')
+		.replace(/^-+|-+$/g, '');
 }
 
 function stripHtml(html) {
@@ -229,21 +229,17 @@ function extractBuilderPostText(entry) {
 		.trim();
 }
 
-function ensureInternalPostHandle(entryId, title, handleCandidate) {
-	const handle = String(handleCandidate || '').trim();
-	if (handle && (handle === entryId || handle.startsWith(`${entryId}-`))) return handle;
-	const slug = toKebabCase(title || '');
-	return slug ? `${entryId}-${slug}` : entryId;
-}
-
 function getBuilderEntryInternalUrl(entry, model, entryId, title) {
 	const d = entry?.data || {};
 	if (model === 'blog-articles') {
-		const handle = ensureInternalPostHandle(entryId, title, d.handle || d.slug);
-		return `/histoires/${handle}`;
+		const handle = String(d.handle || '').trim() || String(d.slug || '').trim() || toKebabCase(title) || entryId;
+		return `/histoires/${encodeURIComponent(handle)}`;
 	}
-	if (model === 'chronique') return `/chroniques/${d.handle || entryId}`;
-	return `/${model}/${entryId}`;
+	if (model === 'chronique') {
+		const handle = String(d.handle || '').trim() || toKebabCase(title) || entryId;
+		return `/chroniques/${encodeURIComponent(handle)}`;
+	}
+	return `/${encodeURIComponent(model)}/${encodeURIComponent(entryId)}`;
 }
 
 function stableIdForUrl(url) {
@@ -481,7 +477,7 @@ async function main() {
 			const id =
 				entry?.id || entry?.data?.id || `${model}-${Math.random().toString(36).slice(2, 9)}`;
 			const title = entry?.data?.title || entry?.name || `${model} ${id}`;
-			const postUrl = getBuilderEntryInternalUrl(entry, model, id, title);
+			const postUrl = getBuilderEntryInternalUrl(entry, model, id, entry?.data?.title || entry?.name);
 
 			const text = extractBuilderPostText(entry);
 			if (!text || text.length < 10) continue;
