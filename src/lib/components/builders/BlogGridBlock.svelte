@@ -45,7 +45,7 @@
 			<div class="grid gap-8" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
 				{#each posts as post (post.id)}
 					<a
-						href={articleUrl(post.id, post.title)}
+						href={articleUrl(post.id, post.title, post.handle, post.slug)}
 						class="group block cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:shadow-xl"
 						aria-label={`Lire ${post.title}`}
 					>

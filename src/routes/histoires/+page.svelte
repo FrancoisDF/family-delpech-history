@@ -291,7 +291,7 @@
 					<a
 						href={post.type === 'chronique'
 							? chroniqueUrl(post.handle)
-							: articleUrl(post.id, post.title)}
+							: articleUrl(post.id, post.title, post.handle, post.slug)}
 						class="group block cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:shadow-xl"
 						aria-label={`Lire ${post.title}`}
 					>

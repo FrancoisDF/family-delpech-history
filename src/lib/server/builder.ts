@@ -1,6 +1,7 @@
 import { fetchOneEntry, fetchEntries } from '@builder.io/sdk-svelte';
 import { PUBLIC_BUILDER_API_KEY } from '$app/env/public';
 import type { Person } from '#lib/models/person.js';
+import { contentHandle } from '#lib/url-utils.js';
 
 export interface BuilderContent {
 	id?: string;
@@ -18,6 +19,7 @@ export interface BlogArticle {
 	featuredImageDisplayMode?: string;
 	category?: string;
 	slug?: string;
+	handle?: string;
 	author?: string;
 	pdfFile?: string;
 	tags?: unknown[];
@@ -139,10 +141,11 @@ export function normalizeChronique(entry: BuilderContent): Chronique | null {
 			})
 		: [];
 
+	const title = asString(data.title) || entry.name || entry.id;
 	return {
 		id: entry.id,
-		title: asString(data.title) || entry.name || entry.id,
-		handle: asString(data.handle) || entry.id,
+		title,
+		handle: contentHandle(entry.id, title, asString(data.handle)),
 		excerpt: asString(data.excerpt),
 		date: asString(data.date),
 		readTime: asString(data.readTime),
@@ -170,7 +173,11 @@ export async function fetchChroniquesServer(): Promise<Chronique[]> {
 export async function fetchResolvedChroniqueByHandleServer(
 	handle: string
 ): Promise<ResolvedChronique | null> {
-	const entry = await fetchBuilderContentByHandleServer('chronique', handle);
+	let entry = await fetchBuilderContentByHandleServer('chronique', handle);
+	if (!entry) {
+		const id = await findContentIdByHandleServer('chronique', handle);
+		entry = id ? await fetchBuilderContentByIdServer('chronique', id) : null;
+	}
 	if (!entry) return null;
 
 	const chronique = normalizeChronique(entry);
@@ -196,6 +203,44 @@ export async function fetchChroniquesReferencingArticleServer(
 	return chroniques.filter((chronique) =>
 		chronique.referencedArticles.some((reference) => reference.articleId === articleId)
 	);
+}
+
+export async function findContentIdByHandleServer(
+	model: 'blog-articles' | 'chronique',
+	handle: string
+): Promise<string | null> {
+	const matches: string[] = [];
+	const legacyMatches: string[] = [];
+	const limit = 100;
+	let offset = 0;
+	let entries: BuilderContent[];
+
+	do {
+		entries = await fetchBuilderContentServer(model, {
+			limit,
+			offset,
+			omit: 'data.blocks, data.introBlocks, meta, folders, variations'
+		});
+		for (const entry of entries) {
+			if (!entry.id) continue;
+			const title = asString(entry.data?.title) || entry.name || entry.id;
+			const canonical = contentHandle(
+				entry.id,
+				title,
+				asString(entry.data?.handle),
+				model === 'blog-articles' ? asString(entry.data?.slug) : undefined
+			);
+			if (canonical === handle) matches.push(entry.id);
+			if (entry.id === handle || (model === 'blog-articles' && handle.startsWith(`${entry.id}-`))) {
+				legacyMatches.push(entry.id);
+			}
+		}
+		offset += limit;
+	} while (entries.length === limit);
+
+	if (matches.length === 1) return matches[0];
+	if (matches.length > 1) return null;
+	return legacyMatches.length === 1 ? legacyMatches[0] : null;
 }
 
 export async function fetchBuilderContentServer(

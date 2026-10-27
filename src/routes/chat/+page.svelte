@@ -18,8 +18,7 @@
 
 	import { searchFamilyData } from '#lib/ai/search.js';
 	import { ENABLE_LOCAL_LLM, DEFAULT_SYSTEM_PROMPT } from '#lib/ai/config.js';
-	import { articleUrl } from '#lib/url-utils.js';
-	import { browser } from '$app/env';
+		import { browser } from '$app/env';
 	import { tick } from 'svelte';
 
 	interface LoadProgress {
@@ -480,9 +479,7 @@
 										{#each message.sources as source}
 											<div class="space-y-1">
 												<a
-													href={source.isBuilder && source.sourceId
-														? articleUrl(source.sourceId, source.title)
-														: source.url}
+													href={source.url}
 													target={source.isBuilder ? undefined : '_blank'}
 													rel={source.isBuilder ? undefined : 'noopener noreferrer'}
 													class="block text-xs text-accent hover:underline"

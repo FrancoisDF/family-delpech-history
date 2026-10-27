@@ -9,6 +9,8 @@
 		readTime: string;
 		featuredImage?: string;
 		category?: string;
+		handle?: string;
+		slug?: string;
 	}
 
 	let {
@@ -67,7 +69,7 @@
 	// Navigation is done via normal anchors now (SSR-friendly) — helper kept
 	// exported in case other modules need it.
 	export function getArticleHref(article: Article) {
-		return articleUrl(article.id, article.title);
+		return articleUrl(article.id, article.title, article.handle, article.slug);
 	}
 </script>
 

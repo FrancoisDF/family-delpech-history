@@ -27,16 +27,17 @@ export function toKebabCase(str: string): string {
 		.replace(/[^\w\s-]/g, '') // remove other punctuation
 		.trim()
 		.toLowerCase()
-		.replace(/\s+/g, '-') // spaces -> hyphens
-		.replace(/-+/g, '-'); // collapse multiple hyphens
+		.replace(/[\s_]+/g, '-')
+		.replace(/-+/g, '-')
+		.replace(/^-|-$/g, '');
 }
 
-export function extractIdFromUrl(urlParam: string): string {
-	return urlParam.split('-')[0];
+export function contentHandle(id: string, title: string, handle?: string, slug?: string): string {
+	return handle?.trim() || slug?.trim() || toKebabCase(title) || id;
 }
 
-export function articleUrl(id: string, title: string): string {
-	return `/histoires/${generateBlogUrl(id, title)}`;
+export function articleUrl(id: string, title: string, handle?: string, slug?: string): string {
+	return `/histoires/${encodeURIComponent(contentHandle(id, title, handle, slug))}`;
 }
 
 export function chroniqueUrl(handle: string): string {
@@ -60,13 +61,6 @@ export function toAnchorId(value: string): string {
 		.toLowerCase();
 }
 
-export function generateBlogUrl(id: string, title: string): string {
-	const slug = toKebabCase(title || '');
-	return slug ? `${id}-${slug}` : id;
-}
-
-export function extractTagsId(tags: any[]) {
-	return tags.map((item) => {
-		return item.tag.id;
-	});
+export function extractTagsId(tags: any[]): string[] {
+	return tags.flatMap((item) => (typeof item?.tag?.id === 'string' ? [item.tag.id] : []));
 }

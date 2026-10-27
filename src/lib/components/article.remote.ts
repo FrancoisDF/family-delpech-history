@@ -10,7 +10,8 @@ interface BlogArticle {
 	readTime: string;
 	featuredImage?: string;
 	category?: string;
-	slug: string;
+	slug?: string;
+	handle?: string;
 	content?: unknown;
 	author?: string;
 	tags?: any[];
